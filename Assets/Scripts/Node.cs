@@ -31,7 +31,7 @@ public class Node : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void Update () { //THIS SHOULD BE IMPROVED ON ONCE MORE COMPLEX NODE AI IS ADDED.
 		if(Random.value < spawnChance)
 		{
 			if (links.Length > 0)
@@ -57,6 +57,7 @@ public class Node : MonoBehaviour {
 
 	public void reciveIdea(string ideaStr)
 	{
+		//ADD CODE TO CHANGE VALUES AND SUCH HERE!
 		print("recieved: " + ideaStr);
 	}
 
