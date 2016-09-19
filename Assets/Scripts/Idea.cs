@@ -10,19 +10,6 @@ public class Idea : MonoBehaviour {
 	public float totalTime;
 	Transform t;
 
-    string[] ideas = new string[] {
-        "Feminism",
-        "Mens Rights Movement",
-        "Censorship/Privacy violation is a problem",
-        "Censorship/Privacy violation is necessary",
-        "Conservative",
-        "Liberal",
-        "Violent Extremism",
-        "Pacifism",
-        "Xenophobia",
-        "Globalism"
-    };
-
     // Use this for initialization
     void Start () {
 		totalTime = (origin - destination).magnitude/speed;
