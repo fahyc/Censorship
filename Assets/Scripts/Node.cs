@@ -40,7 +40,7 @@ public class Node : MonoBehaviour {
 			}
 			else
 			{
-				print("orphaned node");
+				//print("orphaned node");
 			}
 		}
 	}
@@ -58,7 +58,7 @@ public class Node : MonoBehaviour {
 	public void reciveIdea(string ideaStr)
 	{
 		//ADD CODE TO CHANGE VALUES AND SUCH HERE!
-		print("recieved: " + ideaStr);
+		//print("recieved: " + ideaStr);
 	}
 
 
@@ -82,4 +82,15 @@ public class Node : MonoBehaviour {
 		print("Error, one way connection detected between " + node + ", and " + this);
 		return null;
 	}
+
+    void OnMouseOver()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            for(int i = 0; i < ideas.Length; i++)
+            {
+                Global.text += ideas[i] + "\n";
+            }
+        }
+    }
 }
