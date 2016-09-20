@@ -25,6 +25,7 @@ public class blockScript : MonoBehaviour {
 			temp.origin = transform.position;
 			temp.destination = dest;
 			temp.transform.position = transform.position;
+			temp.dest = idea.originObj;
 		}
 
 	}
