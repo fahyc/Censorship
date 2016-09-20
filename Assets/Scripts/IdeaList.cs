@@ -23,10 +23,6 @@ class IdeaList : MonoBehaviour {
 
 		staticDict = ideaDict;
 	}
-	
-	void Update() {
-		// TODO: check value of each AbstractIdea and fire an event if high enough
-	}
 }
 	
 [Serializable]
@@ -36,8 +32,27 @@ class AbstractIdea : System.Object {
 	public int opposite;
 	public float value;
 	public Color color;
+    public Event[] events;
+    int eventIndex = 0;
 
-	public void updateValue(float amt) {
+    [Serializable]
+    public struct Event
+    {
+        public string name;
+        public string description;
+        public float threshold;
+    }
+
+    public void updateValue(float amt) {
 		value = value + (amt / IdeaList.nodeCount);
+
+        Debug.Log("update value for " + name + " : " + value);
+
+        if (eventIndex < events.Length && value > events[eventIndex].threshold)
+        {
+            // trigger event and display description
+            Global.text = events[eventIndex].description;
+            eventIndex++;
+        }
 	}
 }

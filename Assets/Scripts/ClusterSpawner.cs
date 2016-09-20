@@ -23,6 +23,7 @@ public class ClusterSpawner : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		nodes = new Node[quantity];
+        IdeaList.nodeCount += quantity;
 		for(int i = 0; i < quantity; i++)
 		{
 			
