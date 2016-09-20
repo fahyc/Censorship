@@ -32,6 +32,7 @@ public class Idea : MonoBehaviour {
     void Start () {
 		totalTime = (origin - destination).magnitude/speed;
 		t = transform;
+		GetComponent<SpriteRenderer>().color = IdeaList.staticList[IdeaList.staticDict[ideaStr]].color;
 	}
 
     // Update is called once per frame
