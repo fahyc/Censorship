@@ -45,5 +45,15 @@ namespace ExtensionMethods
 			}
 			return output;
 		}
+		public static void print<T>(this T[] array)
+		{
+			string output = "[";
+			for(int i = 0; i < array.Length; i++)
+			{
+				output += array[i].ToString() + ",";
+			}
+			output += "]";
+			Debug.Log(output);
+		}
 	}
 }

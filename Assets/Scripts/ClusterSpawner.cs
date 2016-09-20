@@ -45,7 +45,12 @@ public class ClusterSpawner : MonoBehaviour {
 				nodes[i] = spawn;
 				spawn.links = nodes;
 				float[] ideaStrengths = new float[IdeaList.staticList.Length];
-				ideaStrengths[IdeaList.staticDict[mainIdea]] += mainStrength;
+				for(int j = 0; j < ideaStrengths.Length; j++)
+				{
+					ideaStrengths[j] = Random.Range(0f, 1f);
+				}
+				ideaStrengths[IdeaList.staticDict[mainIdea]] = Mathf.Max( mainStrength, ideaStrengths[IdeaList.staticDict[mainIdea]]);
+				ideaStrengths.print();
 				spawn.ideaStrengths = ideaStrengths;
 			}
 		}
