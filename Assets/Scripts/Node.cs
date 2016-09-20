@@ -169,9 +169,15 @@ public class Node : MonoBehaviour {
         if (Input.GetMouseButtonDown(0))
         {
             Global.text = "";
-            Global.text += ideasList[importantIndex].name + ": " + ideasList[importantIndex].description + "\n";
-            Global.text += ideasList[secondImportantIndex].name + ": " + ideasList[secondImportantIndex].description + "\n";
-            Global.text += ideasList[thirdImportantIndex].name + ": " + ideasList[thirdImportantIndex].description + "\n";
+            Global.text += "<size=16><b><color=#" + ColorToHex(ideasList[importantIndex].color) + ">" + ideasList[importantIndex].name + "</color></b></size>" + ": " + ideasList[importantIndex].description + "\n\n";
+            Global.text += "<size=16><b><color=#" + ColorToHex(ideasList[secondImportantIndex].color) + ">" + ideasList[secondImportantIndex].name + "</color></b></size>" + ": " + ideasList[secondImportantIndex].description + "\n\n";
+            Global.text += "<size=16><b><color=#" + ColorToHex(ideasList[thirdImportantIndex].color) + ">" + ideasList[thirdImportantIndex].name + "</color></b></size>" + ": " + ideasList[thirdImportantIndex].description + "\n\n";
         }
+    }
+
+    string ColorToHex(Color32 color)
+    {
+        string hex = color.r.ToString("X2") + color.g.ToString("X2") + color.b.ToString("X2");
+        return hex;
     }
 }

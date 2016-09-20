@@ -12,4 +12,12 @@ public class LinkScript : MonoBehaviour {
 	void Update () {
 	
 	}
+
+    void OnMouseOver()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            print("selected a link");
+        }
+    }
 }

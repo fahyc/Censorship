@@ -64,8 +64,14 @@ public class Idea : MonoBehaviour {
     {
         if (Input.GetMouseButtonDown(0)) {
             Global.text = "";
-            Global.text = ideaStr + ": " + IdeaList.staticList[index].description;
+            Global.text = "<size=16><b><color=#" + ColorToHex(IdeaList.staticList[index].color) + ">" + ideaStr + "</color></b></size>" + ": " + IdeaList.staticList[index].description;
         }
+    }
+
+    string ColorToHex(Color32 color)
+    {
+        string hex = color.r.ToString("X2") + color.g.ToString("X2") + color.b.ToString("X2");
+        return hex;
     }
 
 }
