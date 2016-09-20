@@ -11,11 +11,10 @@ public class Idea : MonoBehaviour {
 	public float totalTime;
 	Transform t;
 
-<<<<<<< HEAD
 	public Node dest;
 
 	public float minTimeToTarget = .1f; //how long should the minimum lifetime of an idea be? Used to fix a memory leak. 
-
+	/*
     string[] ideas = new string[] {
         "Feminism",
         "Mens Rights Movement",
@@ -28,9 +27,7 @@ public class Idea : MonoBehaviour {
         "Xenophobia",
         "Globalism"
     };
-
-=======
->>>>>>> 823173d626b0c4ab224f39c7f2d72ed4be297a60
+	*/
     // Use this for initialization
     void Start () {
 		totalTime = (origin - destination).magnitude/speed;
