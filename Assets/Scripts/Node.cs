@@ -135,7 +135,16 @@ public class Node : MonoBehaviour {
         // If it's just a normal idea being sent towards a node, it'll a
         else
         {
-            
+            //No real good way to do this atm and I don't wanna mess with how we're sending info between nodes so just do a linear search
+            for(int x=0; x<ideasList.Length; x++)
+            {
+                if(ideaStr == ideasList[x].name)
+                {
+                    ideaStrengths[x] += baseInfluence;
+                    Debug.Log("Increasing " + ideasList[x].name + " by " + baseInfluence);
+                    break;
+                }
+            }
         }
 		//ADD CODE TO CHANGE VALUES AND SUCH HERE!
 		//print("recieved: " + ideaStr);
