@@ -39,6 +39,13 @@ public class Node : MonoBehaviour {
 			ideaStrengths = new float[ideasList.Length];
 			print("Error! ideaStrengths is null");
 		}
+        else
+        {
+            for (int i=0; i<ideaStrengths.Length; i++)
+            {
+                IdeaList.staticList[i].updateValue(ideaStrengths[i]);
+            }
+        }
 
 
         linkObj = new LineRenderer[links.Length];
@@ -46,7 +53,7 @@ public class Node : MonoBehaviour {
 		//ideaStrengths = new int[ideas.Length];
 		for(int i = 0; i < links.Length; i++)
 		{
-			print(links[i]);
+			// print(links[i]);
 			LineRenderer link = links[i].LinkedTo(this);
 			if(link == null)
 			{
@@ -136,6 +143,8 @@ public class Node : MonoBehaviour {
 
 	public void reciveIdea(string ideaStr)
 	{
+        float prevVal = ideaStrengths[importantIndex];
+
         if (ideasList[importantIndex].name == ideaStr)
         {
             ideaStrengths[importantIndex] += baseInfluence * 2;
@@ -167,9 +176,12 @@ public class Node : MonoBehaviour {
                 }
             }
         }
-		//ADD CODE TO CHANGE VALUES AND SUCH HERE!
-		//print("recieved: " + ideaStr);
-		//Destroy(gameObject);
+        //ADD CODE TO CHANGE VALUES AND SUCH HERE!
+        //print("recieved: " + ideaStr);
+        //Destroy(gameObject);
+
+        if (prevVal != ideaStrengths[importantIndex])
+            IdeaList.staticList[importantIndex].updateValue(ideaStrengths[importantIndex] - prevVal);
 	}
 
 
