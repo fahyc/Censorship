@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using ExtensionMethods;
 
 public class Node : MonoBehaviour {
 	public Node[] links;//this should be set before the node's start function is called. 
@@ -30,6 +31,16 @@ public class Node : MonoBehaviour {
 		}
 	}
 	
+
+	public void linkTo(Node other)
+	{
+		//Node local = nodes[Random.Range(0, nodes.Length)];
+		other.links = other.links.slowAdded(this);
+
+		links = links.slowAdded(other);
+	}
+
+
 	// Update is called once per frame
 	void Update () { //THIS SHOULD BE IMPROVED ON ONCE MORE COMPLEX NODE AI IS ADDED.
 		if(Random.value < spawnChance)

@@ -48,10 +48,7 @@ public class ClusterSpawner : MonoBehaviour {
 		}
 		for(int i = 0; i < waitingLinks.Count; i++)
 		{
-			Node local = nodes[Random.Range(0, nodes.Length)];
-			waitingLinks[i].links = waitingLinks[i].links.slowAdded(local);
-
-			local.links = local.links.slowAdded(waitingLinks[i]);
+			nodes[Random.Range(0, nodes.Length)].linkTo(waitingLinks[i]);
 		}
 		waitingLinks = null;
 	}
