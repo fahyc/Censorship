@@ -10,6 +10,7 @@ public class Idea : MonoBehaviour {
 	public float speed;
 	public float totalTime;
 	Transform t;
+    public int index;
 
 	public Node dest;
 
@@ -62,7 +63,8 @@ public class Idea : MonoBehaviour {
     void OnMouseOver()
     {
         if (Input.GetMouseButtonDown(0)) {
-            Global.text = ideaStr;
+            Global.text = "";
+            Global.text = ideaStr + ": " + IdeaList.staticList[index].description;
         }
     }
 

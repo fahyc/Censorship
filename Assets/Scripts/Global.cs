@@ -16,4 +16,20 @@ public class Global : MonoBehaviour {
 	void Update () {
         infoTextBox.text = text;
 	}
+
+    void OnMouseOver()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            Global.text = "";
+        }
+    }
+
+    void OnMouseDown()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            Global.text = "";
+        }
+    }
 }
