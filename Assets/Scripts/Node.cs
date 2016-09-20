@@ -14,7 +14,9 @@ public class Node : MonoBehaviour {
     int importantIndex;
     int secondImportantIndex;
     int thirdImportantIndex;
+    
 
+    public float echoChamberCoefficient;
 
     AbstractIdea[] ideasList;
 
@@ -71,33 +73,44 @@ public class Node : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () { //THIS SHOULD BE IMPROVED ON ONCE MORE COMPLEX NODE AI IS ADDED.
-        // find most important idea to this node.
+        float localmax = -1;
+        float secondmax = -1;
+        float thirdmax = -1;
+        // find most important ideas to this node.
+        for (int i = 0; i < ideaStrengths.Length; i++)
+        {
+            if (ideaStrengths[i] > localmax)
+            {
+                localmax = ideaStrengths[i];
+                mostImportantIdea = ideasList[i].name;
+                importantIndex = i;
+            }
+            if (ideaStrengths[i] > secondmax && ideaStrengths[i] < localmax)
+            {
+                secondmax = ideaStrengths[i];
+                secondImportantIndex = i;
+            }
+            if (ideaStrengths[i] > thirdmax && ideaStrengths[i] < secondmax)
+            {
+                thirdmax = ideaStrengths[i];
+                thirdImportantIndex = i;
+            }
+        }
+        //Determine the probability of sending an idea based on the importance to this individual Node.
+        float sumImportances = ideaStrengths[importantIndex]+ideaStrengths[secondImportantIndex]+ideaStrengths[thirdImportantIndex];
+        //We can get the percent probability of sending an idea by normalizing to the sum of the three ideas and then making intervals based on those.
+        float primaryIdeaInterval = ideaStrengths[importantIndex] / sumImportances;
+        float secondaryIdeaInterval = primaryIdeaInterval + (ideaStrengths[secondImportantIndex] / sumImportances);
+        float tertiaryIdeaInterval = secondaryIdeaInterval + (ideaStrengths[thirdImportantIndex] / sumImportances);
+
+        //Pick an idea based on these intervals.
+        float roll = Random.value;
+
 
         //spawn chance is affected by how strongly the node believes in its opinion.
         if (Random.value < spawnChance+ideaStrengths[importantIndex]*spawnMultiplier)
 		{
-            float localmax = -1;
-            float secondmax = -1;
-            float thirdmax = -1;
-            for (int i = 0; i < ideaStrengths.Length; i++)
-            {
-                if (ideaStrengths[i] > localmax)
-                {
-                    localmax = ideaStrengths[i];
-                    mostImportantIdea = ideasList[i].name;
-                    importantIndex = i;
-                }
-                if(ideaStrengths[i] > secondmax && ideaStrengths[i] < localmax)
-                {
-                    secondmax = ideaStrengths[i];
-                    secondImportantIndex = i;
-                }
-                if (ideaStrengths[i] > thirdmax && ideaStrengths[i] < secondmax)
-                {
-                    thirdmax = ideaStrengths[i];
-                    thirdImportantIndex = i;
-                }
-            }
+
             if (links.Length > 0)
 			{
 				sendIdea(mostImportantIdea, links[Random.Range(0, links.Length)], importantIndex);
@@ -127,13 +140,17 @@ public class Node : MonoBehaviour {
         {
             ideaStrengths[importantIndex] += baseInfluence * 2;
             ideaStrengths[importantIndex] = Mathf.Clamp(ideaStrengths[importantIndex], 0.0f, 1.0f);
+            
 
         }
         //This portion happens if the node receives an idea that is conflicting with its most important idea.
         else if(ideasList[ideasList[importantIndex].opposite].name == ideaStr)
         {
             // baseinfluence / (1 + the strength of the node's most important idea) 
-            ideaStrengths[ideasList[importantIndex].opposite] += baseInfluence*(1-ideaStrengths[importantIndex]);
+            //ideaStrengths[ideasList[importantIndex].opposite] += baseInfluence*(1-ideaStrengths[importantIndex]);
+            //Tweak to system: subtract if i hold diametrically opposed viewpoint.
+            ideaStrengths[ideasList[importantIndex].opposite] -= baseInfluence*(ideaStrengths[importantIndex]);
+            ideaStrengths[ideasList[importantIndex].opposite] = Mathf.Clamp(ideaStrengths[ideasList[importantIndex].opposite], 0.0f, 1.0f);
         }
         // If it's just a normal idea being sent towards a node, it'll a
         else
@@ -144,7 +161,8 @@ public class Node : MonoBehaviour {
                 if(ideaStr == ideasList[x].name)
                 {
                     ideaStrengths[x] += baseInfluence;
-                    Debug.Log("Increasing " + ideasList[x].name + " by " + baseInfluence);
+                    ideaStrengths[x] = Mathf.Clamp(ideaStrengths[x], 0.0f, 1.0f);
+
                     break;
                 }
             }
