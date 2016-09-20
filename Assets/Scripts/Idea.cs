@@ -27,7 +27,7 @@ public class Idea : MonoBehaviour {
 		Node otherNode = col.GetComponent<Node>();
 		if (otherNode && time/totalTime > .5)
 		{
-			otherNode.reciveIdea(ideaStr);
+			otherNode.receiveIdea(ideaStr);
 			Destroy(gameObject);
 			return;
 		}
