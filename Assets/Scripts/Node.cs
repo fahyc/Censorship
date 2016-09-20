@@ -51,7 +51,7 @@ public class Node : MonoBehaviour {
 		//ideaStrengths = new int[ideas.Length];
 		for(int i = 0; i < links.Length; i++)
 		{
-			print(links[i]);
+			// print(links[i]);
 			LineRenderer link = links[i].LinkedTo(this);
 			if(link == null)
 			{

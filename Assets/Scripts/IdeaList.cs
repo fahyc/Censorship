@@ -46,8 +46,6 @@ class AbstractIdea : System.Object {
     public void updateValue(float amt) {
 		value = value + (amt / IdeaList.nodeCount);
 
-        Debug.Log("update value for " + name + " : " + value);
-
         if (eventIndex < events.Length && value > events[eventIndex].threshold)
         {
             // trigger event and display description
