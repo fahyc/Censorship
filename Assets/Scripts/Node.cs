@@ -82,6 +82,8 @@ public class Node : MonoBehaviour {
 		temp.origin = transform.position;
 		temp.destination = dest.transform.position;
 		temp.transform.position = transform.position;
+		temp.dest = dest;
+		temp.originObj = this;
 
 	}
 
@@ -107,6 +109,7 @@ public class Node : MonoBehaviour {
         }
 		//ADD CODE TO CHANGE VALUES AND SUCH HERE!
 		//print("recieved: " + ideaStr);
+		//Destroy(gameObject);
 	}
 
 
