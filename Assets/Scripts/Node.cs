@@ -51,6 +51,7 @@ public class Node : MonoBehaviour {
 		//ideaStrengths = new int[ideas.Length];
 		for(int i = 0; i < links.Length; i++)
 		{
+			print(links[i]);
 			LineRenderer link = links[i].LinkedTo(this);
 			if(link == null)
 			{
@@ -68,7 +69,9 @@ public class Node : MonoBehaviour {
 	{
 		//Node local = nodes[Random.Range(0, nodes.Length)];
 		other.links = other.links.slowAdded(this);
-
+		LineRenderer link = GameObject.Instantiate<LineRenderer>(line);
+		link.SetPosition(0, transform.position);
+		link.SetPosition(1, other.transform.position);
 		links = links.slowAdded(other);
 	}
 

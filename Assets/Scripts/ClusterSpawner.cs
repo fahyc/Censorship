@@ -51,7 +51,7 @@ public class ClusterSpawner : MonoBehaviour {
 					ideaStrengths[j] = Random.Range(0f, 1f);
 				}
 				ideaStrengths[IdeaList.staticDict[mainIdea]] = Mathf.Max( mainStrength, ideaStrengths[IdeaList.staticDict[mainIdea]]);
-				ideaStrengths.print();
+				//ideaStrengths.print();
 				spawn.ideaStrengths = ideaStrengths;
 			}
 		}
@@ -60,13 +60,17 @@ public class ClusterSpawner : MonoBehaviour {
 		{
 			outsideConnections[i].makeConnection(nodes[Random.Range(0, nodes.Length)]);
 		}
-		for(int i = 0; i < waitingLinks.Count; i++)
+
+	}
+
+	void Update() {
+		for (int i = 0; i < waitingLinks.Count; i++)
 		{
 			nodes[Random.Range(0, nodes.Length)].linkTo(waitingLinks[i]);
 		}
 		waitingLinks = null;
+		Destroy(gameObject);
 	}
-
 
 	public void makeConnection(Node node)
 	{
@@ -74,9 +78,7 @@ public class ClusterSpawner : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
 	
-	}
 
 	/*
 	This might be needed:
