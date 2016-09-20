@@ -6,6 +6,7 @@ public class Global : MonoBehaviour {
 
     public Text infoTextBox;
     public static string text;
+    public WallScript wall;
 
 	// Use this for initialization
 	void Start () {
@@ -15,6 +16,9 @@ public class Global : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         infoTextBox.text = text;
+        if(Input.GetMouseButtonDown(0)) {
+            WallScript temp = (WallScript)Instantiate(wall, new Vector2(Input.mousePosition.x, Input.mousePosition.y), Quaternion.identity);
+        }
 	}
 
     void OnMouseOver()
