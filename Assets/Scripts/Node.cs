@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using ExtensionMethods;
+using System.Collections.Generic;
 
 public class Node : MonoBehaviour {
 	public Node[] links;//this should be set before the node's start function is called. 
@@ -11,6 +12,8 @@ public class Node : MonoBehaviour {
     string mostImportantIdea;
     //The index of the most important idea in this node's opinion
     int importantIndex;
+    int secondImportantIndex;
+    int thirdImportantIndex;
 
 
     AbstractIdea[] ideasList;
@@ -23,8 +26,8 @@ public class Node : MonoBehaviour {
     //The base amount of influence that any one opinion will have.
     public float baseInfluence = 0.05f;
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start () {
 		//Get a reference to the global game object that keeps track of the ideological climate.
 		ideasList = IdeaList.staticList;// GameObject.Find("EventSystem").GetComponent<IdeaList>().list;
 
@@ -71,6 +74,8 @@ public class Node : MonoBehaviour {
         if (Random.value < spawnChance+ideaStrengths[importantIndex]*spawnMultiplier)
 		{
             float localmax = -1;
+            float secondmax = -1;
+            float thirdmax = -1;
             for (int i = 0; i < ideaStrengths.Length; i++)
             {
                 if (ideaStrengths[i] > localmax)
@@ -79,10 +84,20 @@ public class Node : MonoBehaviour {
                     mostImportantIdea = ideasList[i].name;
                     importantIndex = i;
                 }
+                if(ideaStrengths[i] > secondmax && ideaStrengths[i] < localmax)
+                {
+                    secondmax = ideaStrengths[i];
+                    secondImportantIndex = i;
+                }
+                if (ideaStrengths[i] > thirdmax && ideaStrengths[i] < secondmax)
+                {
+                    thirdmax = ideaStrengths[i];
+                    thirdImportantIndex = i;
+                }
             }
             if (links.Length > 0)
 			{
-				sendIdea(mostImportantIdea, links[Random.Range(0, links.Length)]);
+				sendIdea(mostImportantIdea, links[Random.Range(0, links.Length)], importantIndex);
 			}
 			else
 			{
@@ -91,7 +106,7 @@ public class Node : MonoBehaviour {
 		}
 	}
 
-	void sendIdea(string idea, Node dest)
+	void sendIdea(string idea, Node dest, int idx)
 	{
 		Idea temp = GameObject.Instantiate<Idea>(ideaObj);
 		temp.ideaStr = idea;
@@ -100,7 +115,7 @@ public class Node : MonoBehaviour {
 		temp.transform.position = transform.position;
 		temp.dest = dest;
 		temp.originObj = this;
-
+        temp.index = idx;
 	}
 
 	public void reciveIdea(string ideaStr)
@@ -153,10 +168,10 @@ public class Node : MonoBehaviour {
     {
         if (Input.GetMouseButtonDown(0))
         {
-            for(int i = 0; i < ideasList.Length; i++)
-            {
-                Global.text += ideasList[i] + "\n";
-            }
+            Global.text = "";
+            Global.text += ideasList[importantIndex].name + ": " + ideasList[importantIndex].description + "\n";
+            Global.text += ideasList[secondImportantIndex].name + ": " + ideasList[secondImportantIndex].description + "\n";
+            Global.text += ideasList[thirdImportantIndex].name + ": " + ideasList[thirdImportantIndex].description + "\n";
         }
     }
 }
