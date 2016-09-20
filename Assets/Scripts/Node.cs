@@ -5,8 +5,8 @@ public class Node : MonoBehaviour {
 	public Node[] links;//this should be set before the node's start function is called. 
 	public LineRenderer[] linkObj;
 	public float[] ideaStrengths;
-    //How much agreeing with an idea influences the spawn rate.
-    public float spawnMultiplier = 0.1f;
+    //How much agreeing with an idea influences the spawn rate. Note that this
+    public float spawnMultiplier = 0.005f;
     string mostImportantIdea;
     //The index of the most important idea in this node's opinion
     int importantIndex;
@@ -51,20 +51,21 @@ public class Node : MonoBehaviour {
 	// Update is called once per frame
 	void Update () { //THIS SHOULD BE IMPROVED ON ONCE MORE COMPLEX NODE AI IS ADDED.
         // find most important idea to this node.
-        float localmax = -1;
-        for(int i=0; i<ideaStrengths.Length; i++)
-        {
-            if (ideaStrengths[i] > localmax)
-            {
-                localmax = ideaStrengths[i];
-                mostImportantIdea = ideasList[i].name;
-                importantIndex = i;
-            }
-        }
+
         //spawn chance is affected by how strongly the node believes in its opinion.
-		if(Random.value < spawnChance+localmax*spawnMultiplier)
+        if (Random.value < spawnChance+ideaStrengths[importantIndex]*spawnMultiplier)
 		{
-			if (links.Length > 0)
+            float localmax = -1;
+            for (int i = 0; i < ideaStrengths.Length; i++)
+            {
+                if (ideaStrengths[i] > localmax)
+                {
+                    localmax = ideaStrengths[i];
+                    mostImportantIdea = ideasList[i].name;
+                    importantIndex = i;
+                }
+            }
+            if (links.Length > 0)
 			{
 				sendIdea(mostImportantIdea, links[Random.Range(0, links.Length)]);
 			}
@@ -87,11 +88,10 @@ public class Node : MonoBehaviour {
 
 	}
 
-	public void receiveIdea(string ideaStr)
+	public void reciveIdea(string ideaStr)
 	{
         if (ideasList[importantIndex].name == ideaStr)
         {
-
             ideaStrengths[importantIndex] += baseInfluence * 2;
             ideaStrengths[importantIndex] = Mathf.Clamp(ideaStrengths[importantIndex], 0.0f, 1.0f);
 
@@ -100,7 +100,7 @@ public class Node : MonoBehaviour {
         else if(ideasList[ideasList[importantIndex].opposite].name == ideaStr)
         {
             // baseinfluence / (1 + the strength of the node's most important idea) 
-            ideaStrengths[ideasList[importantIndex].opposite] += baseInfluence/(1+ideaStrengths[importantIndex]);
+            ideaStrengths[ideasList[importantIndex].opposite] += baseInfluence*(1-ideaStrengths[importantIndex]);
         }
         // If it's just a normal idea being sent towards a node, it'll a
         else
