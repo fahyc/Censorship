@@ -13,6 +13,11 @@ public class ClusterSpawner : MonoBehaviour {
 	Node[] nodes;
 	public int maxTries = 5;
 
+	public string mainIdea;//the idea the nodes in this cluster will follow.
+	public float mainStrength = .5f;//the average strength nodes in this cluster will follow the idea at. 
+
+
+
 	List<Node> waitingLinks = new List<Node>();
 
 	// Use this for initialization
@@ -39,6 +44,9 @@ public class ClusterSpawner : MonoBehaviour {
 				spawn.transform.position = point;
 				nodes[i] = spawn;
 				spawn.links = nodes;
+				float[] ideaStrengths = new float[IdeaList.staticList.Length];
+				ideaStrengths[IdeaList.staticDict[mainIdea]] += mainStrength;
+				spawn.ideaStrengths = ideaStrengths;
 			}
 		}
 

@@ -25,11 +25,15 @@ public class Node : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        //Get a reference to the global game object that keeps track of the ideological climate.
-        ideasList = GameObject.Find("EventSystem").GetComponent<IdeaList>().list;
+		//Get a reference to the global game object that keeps track of the ideological climate.
+		ideasList = IdeaList.staticList;// GameObject.Find("EventSystem").GetComponent<IdeaList>().list;
 
-        ideaStrengths = new float[ideasList.Length];
-
+        //ideaStrengths = new float[ideasList.Length];
+		if(ideaStrengths == null)
+		{
+			ideaStrengths = new float[ideasList.Length];
+			print("Error! ideaStrengths is null");
+		}
 
 
         linkObj = new LineRenderer[links.Length];
