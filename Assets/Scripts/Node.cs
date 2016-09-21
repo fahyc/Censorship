@@ -173,7 +173,7 @@ public class Node : MonoBehaviour {
             // baseinfluence / (1 + the strength of the node's most important idea) 
             //ideaStrengths[ideasList[importantIndex].opposite] += baseInfluence*(1-ideaStrengths[importantIndex]);
             //Tweak to system: subtract if i hold diametrically opposed viewpoint.
-            ideaStrengths[ideasList[importantIndex].opposite] -= baseInfluence*(ideaStrengths[importantIndex]);
+            ideaStrengths[ideasList[importantIndex].opposite] =  Mathf.Max (ideaStrengths[ideasList[importantIndex].opposite]-baseInfluence * ideaStrengths[importantIndex],ideaStrengths[importantIndex]/2f);
             ideaStrengths[ideasList[importantIndex].opposite] = Mathf.Clamp(ideaStrengths[ideasList[importantIndex].opposite], 0.0f, 1.0f);
             //Additionally, if this idea conflicts with the most important idea for a Node it will start to care about other issues less
             for (int t = 0; t < ideaStrengths.Length; t++)
@@ -204,8 +204,8 @@ public class Node : MonoBehaviour {
                 {
                     ideaStrengths[x] += baseInfluence* Mathf.Min(echoChamberCoefficient, 1);
                     ideaStrengths[x] = Mathf.Clamp(ideaStrengths[x], 0.0f, 1.0f);
-					ideaStrengths[importantIndex] -= baseInfluence * Mathf.Min(echoChamberCoefficient,1);
-					Mathf.Clamp(ideaStrengths[importantIndex], 0f, 1f);
+					ideaStrengths[importantIndex] -= baseInfluence * Mathf.Max(echoChamberCoefficient,1);
+					ideaStrengths[importantIndex] = Mathf.Clamp(ideaStrengths[importantIndex], 0f, 1f);
                     echoChamberCoefficient -= echoChamberStepDecrease;
                     if(echoChamberCoefficient < 0)
                     {
