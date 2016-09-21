@@ -173,7 +173,7 @@ public class Node : MonoBehaviour {
             // baseinfluence / (1 + the strength of the node's most important idea) 
             //ideaStrengths[ideasList[importantIndex].opposite] += baseInfluence*(1-ideaStrengths[importantIndex]);
             //Tweak to system: subtract if i hold diametrically opposed viewpoint.
-            ideaStrengths[ideasList[importantIndex].opposite] =  Mathf.Max (ideaStrengths[ideasList[importantIndex].opposite]-baseInfluence * ideaStrengths[importantIndex],ideaStrengths[importantIndex]/2f);
+            ideaStrengths[ideasList[importantIndex].opposite] =  Mathf.Max (ideaStrengths[ideasList[importantIndex].opposite]-baseInfluence * ideaStrengths[importantIndex] * echoChamberCoefficient,ideaStrengths[importantIndex]/2f);
             ideaStrengths[ideasList[importantIndex].opposite] = Mathf.Clamp(ideaStrengths[ideasList[importantIndex].opposite], 0.0f, 1.0f);
             //Additionally, if this idea conflicts with the most important idea for a Node it will start to care about other issues less
             for (int t = 0; t < ideaStrengths.Length; t++)
