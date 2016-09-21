@@ -105,12 +105,12 @@ public class Node : MonoBehaviour {
                 thirdImportantIndex = i;
             }
         }
-        //Determine the probability of sending an idea based on the importance to this individual Node.
-        float sumImportances = ideaStrengths[importantIndex]+ideaStrengths[secondImportantIndex]+ideaStrengths[thirdImportantIndex];
+		//Determine the probability of sending an idea based on the importance to this individual Node.
+		float sumImportances = ideaStrengths[importantIndex];// +ideaStrengths[secondImportantIndex]+ideaStrengths[thirdImportantIndex];
         //We can get the percent probability of sending an idea by normalizing to the sum of the three ideas and then making intervals based on those.
         float primaryIdeaInterval = ideaStrengths[importantIndex] / sumImportances;
-        float secondaryIdeaInterval = primaryIdeaInterval + (ideaStrengths[secondImportantIndex] / sumImportances);
-        float tertiaryIdeaInterval = secondaryIdeaInterval + (ideaStrengths[thirdImportantIndex] / sumImportances);
+        //float secondaryIdeaInterval = primaryIdeaInterval + (ideaStrengths[secondImportantIndex] / sumImportances);
+        //float tertiaryIdeaInterval = secondaryIdeaInterval + (ideaStrengths[thirdImportantIndex] / sumImportances);
         //Pick an idea based on these intervals.
         float roll = Random.value;
         //This is the variable that decides which idea we send.
@@ -119,14 +119,14 @@ public class Node : MonoBehaviour {
         {
             chosenIdeaIndex = importantIndex;
         }
-        else if (primaryIdeaInterval <= roll  && roll < secondaryIdeaInterval)
+        /*else if (primaryIdeaInterval <= roll  && roll < secondaryIdeaInterval)
         {
             chosenIdeaIndex = secondImportantIndex;
         } 
         else if (secondaryIdeaInterval <= roll)
         {
             chosenIdeaIndex = thirdImportantIndex;
-        }
+        }*/
         //Debug, use this when you just want it to spout off its most important idea only.
         chosenIdeaIndex = importantIndex;
         //spawn chance is affected by how strongly the node believes in its opinion.
@@ -204,6 +204,7 @@ public class Node : MonoBehaviour {
                 {
                     ideaStrengths[x] += baseInfluence*echoChamberCoefficient;
                     ideaStrengths[x] = Mathf.Clamp(ideaStrengths[x], 0.0f, 1.0f);
+					ideaStrengths[importantIndex] -= baseInfluence * echoChamberCoefficient;
                     echoChamberCoefficient -= echoChamberStepDecrease;
                     if(echoChamberCoefficient < 0)
                     {
