@@ -171,10 +171,10 @@ public class Node : MonoBehaviour {
         //This portion happens if the node receives an idea that is conflicting with its most important idea.
         else if(ideasList[ideasList[importantIndex].opposite].name == ideaStr)
         {
-            // baseinfluence / (1 + the strength of the node's most important idea) 
-            //ideaStrengths[ideasList[importantIndex].opposite] += baseInfluence*(1-ideaStrengths[importantIndex]);
-            //Tweak to system: subtract if i hold diametrically opposed viewpoint.
-            ideaStrengths[ideasList[importantIndex].opposite] =  Mathf.Max (ideaStrengths[ideasList[importantIndex].opposite]-baseInfluence * ideaStrengths[importantIndex],ideaStrengths[importantIndex]/2f);
+			// baseinfluence / (1 + the strength of the node's most important idea) 
+			//ideaStrengths[ideasList[importantIndex].opposite] += baseInfluence*(1-ideaStrengths[importantIndex]);
+			//Tweak to system: subtract if i hold diametrically opposed viewpoint.
+			ideaStrengths[ideasList[importantIndex].opposite] = ideaStrengths[ideasList[importantIndex].opposite] - baseInfluence * ideaStrengths[importantIndex] * echoChamberCoefficient;//,ideaStrengths[importantIndex]/2f);
             ideaStrengths[ideasList[importantIndex].opposite] = Mathf.Clamp(ideaStrengths[ideasList[importantIndex].opposite], 0.0f, 1.0f);
             //Additionally, if this idea conflicts with the most important idea for a Node it will start to care about other issues less
             for (int t = 0; t < ideaStrengths.Length; t++)
@@ -205,7 +205,7 @@ public class Node : MonoBehaviour {
             {
                 if (ideaStr == ideasList[x].name)
                 {
-                    ideaStrengths[x] += baseInfluence * Mathf.Min(echoChamberCoefficient, 1);
+                    ideaStrengths[x] += baseInfluence * Mathf.Max(echoChamberCoefficient, 1);
                     ideaStrengths[x] = Mathf.Clamp(ideaStrengths[x], 0.0f, 1.0f);
                     ideaStrengths[importantIndex] -= baseInfluence * Mathf.Max(echoChamberCoefficient, 1);
                     ideaStrengths[importantIndex] = Mathf.Clamp(ideaStrengths[importantIndex], 0f, 1f);

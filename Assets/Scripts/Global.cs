@@ -31,5 +31,19 @@ public class Global : MonoBehaviour {
                 WallScript temp = (WallScript)Instantiate(wall, Camera.main.ScreenToWorldPoint(mousePos), Quaternion.identity);
             }
         }
+
+        if(Input.GetMouseButtonDown(0))
+        {
+            Vector3 mousePos = Input.mousePosition;
+            mousePos.Set(mousePos.x, mousePos.y, -Camera.main.transform.position.z);
+            Collider2D[] hits = Physics2D.OverlapPointAll(Camera.main.ScreenToWorldPoint(mousePos));
+
+            if(hits.Length == 0)
+            {
+                Global.text = "";
+            }
+            
+            //Global.text = "";
+        }
     }
 }
