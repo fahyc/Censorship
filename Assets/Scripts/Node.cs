@@ -15,9 +15,11 @@ public class Node : MonoBehaviour {
     int secondImportantIndex;
     int thirdImportantIndex;
     
-
-    public float echoChamberCoefficient;
-
+    //Gets 
+    public float echoChamberCoefficient=1.0f;
+    //This gets added every time a Node hears about something that is its most important idea.
+    public float echoChamberStepIncrease=0.5f;
+    public float echoChamberStepDecrease = 0.1f;
     AbstractIdea[] ideasList;
 
 
@@ -109,18 +111,31 @@ public class Node : MonoBehaviour {
         float primaryIdeaInterval = ideaStrengths[importantIndex] / sumImportances;
         float secondaryIdeaInterval = primaryIdeaInterval + (ideaStrengths[secondImportantIndex] / sumImportances);
         float tertiaryIdeaInterval = secondaryIdeaInterval + (ideaStrengths[thirdImportantIndex] / sumImportances);
-
         //Pick an idea based on these intervals.
         float roll = Random.value;
-
-
+        //This is the variable that decides which idea we send.
+        int chosenIdeaIndex = -1;
+        if(roll < primaryIdeaInterval)
+        {
+            chosenIdeaIndex = importantIndex;
+        }
+        else if (primaryIdeaInterval <= roll  && roll < secondaryIdeaInterval)
+        {
+            chosenIdeaIndex = secondImportantIndex;
+        } 
+        else if (secondaryIdeaInterval <= roll)
+        {
+            chosenIdeaIndex = thirdImportantIndex;
+        }
+        //Debug, use this when you just want it to spout off its most important idea only.
+        chosenIdeaIndex = importantIndex;
         //spawn chance is affected by how strongly the node believes in its opinion.
-        if (Random.value < spawnChance+ideaStrengths[importantIndex]*spawnMultiplier)
+        if (Random.value < spawnChance+ideaStrengths[chosenIdeaIndex]*spawnMultiplier)
 		{
 
             if (links.Length > 0)
 			{
-				sendIdea(mostImportantIdea, links[Random.Range(0, links.Length)], importantIndex);
+				sendIdea(ideasList[chosenIdeaIndex].name, links[Random.Range(0, links.Length)], chosenIdeaIndex);
 			}
 			else
 			{
@@ -149,7 +164,7 @@ public class Node : MonoBehaviour {
         {
             ideaStrengths[importantIndex] += baseInfluence * 2;
             ideaStrengths[importantIndex] = Mathf.Clamp(ideaStrengths[importantIndex], 0.0f, 1.0f);
-            
+            echoChamberCoefficient += echoChamberStepIncrease;
 
         }
         //This portion happens if the node receives an idea that is conflicting with its most important idea.
@@ -160,8 +175,26 @@ public class Node : MonoBehaviour {
             //Tweak to system: subtract if i hold diametrically opposed viewpoint.
             ideaStrengths[ideasList[importantIndex].opposite] -= baseInfluence*(ideaStrengths[importantIndex]);
             ideaStrengths[ideasList[importantIndex].opposite] = Mathf.Clamp(ideaStrengths[ideasList[importantIndex].opposite], 0.0f, 1.0f);
+            //Additionally, if this idea conflicts with the most important idea for a Node it will start to care about other issues less
+            for (int t = 0; t < ideaStrengths.Length; t++)
+            {
+                if (t == importantIndex)
+                {
+                    continue;
+                }
+                ideaStrengths[t] -= baseInfluence;
+                Mathf.Clamp(ideaStrengths[t], 0.0f, 1.0f);
+            }
+            //Decrease our echoChamber
+            echoChamberCoefficient -= echoChamberStepDecrease;
+            if(echoChamberCoefficient < 0)
+            {
+                echoChamberCoefficient = 0;
+            }
+            
+
         }
-        // If it's just a normal idea being sent towards a node, it'll a
+        // If it's just a normal idea being sent towards a node, it'll increase by an amount influenced by how much the current node has been hearing about its favorite idea.
         else
         {
             //No real good way to do this atm and I don't wanna mess with how we're sending info between nodes so just do a linear search
@@ -169,9 +202,13 @@ public class Node : MonoBehaviour {
             {
                 if(ideaStr == ideasList[x].name)
                 {
-                    ideaStrengths[x] += baseInfluence;
+                    ideaStrengths[x] += baseInfluence*echoChamberCoefficient;
                     ideaStrengths[x] = Mathf.Clamp(ideaStrengths[x], 0.0f, 1.0f);
-
+                    echoChamberCoefficient -= echoChamberStepDecrease;
+                    if(echoChamberCoefficient < 0)
+                    {
+                        echoChamberCoefficient = 0;
+                    }
                     break;
                 }
             }
