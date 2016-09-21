@@ -10,6 +10,8 @@ public class ClusterSpawner : MonoBehaviour {
 	public float spaceBetween;
 	public ClusterSpawner[] outsideConnections;
 
+	public bool stubborn = false;
+
 	Node[] nodes;
 	public int maxTries = 5;
 
@@ -52,6 +54,7 @@ public class ClusterSpawner : MonoBehaviour {
 				}
 				ideaStrengths[IdeaList.staticDict[mainIdea]] = Mathf.Max( mainStrength, ideaStrengths[IdeaList.staticDict[mainIdea]]);
 				//ideaStrengths.print();
+				spawn.stubborn = stubborn;
 				spawn.ideaStrengths = ideaStrengths;
 			}
 		}
