@@ -11,7 +11,7 @@ public class Node : MonoBehaviour {
     public float spawnMultiplier = 0.005f;
     string mostImportantIdea;
     //The index of the most important idea in this node's opinion
-    int importantIndex;
+    int importantIndex = -1;
     int secondImportantIndex;
     int thirdImportantIndex;
     
@@ -41,14 +41,6 @@ public class Node : MonoBehaviour {
 			ideaStrengths = new float[ideasList.Length];
 			print("Error! ideaStrengths is null");
 		}
-        else
-        {
-            for (int i=0; i<ideaStrengths.Length; i++)
-            {
-                IdeaList.staticList[i].updateValue(ideaStrengths[i]);
-            }
-        }
-
 
         linkObj = new LineRenderer[links.Length];
 		//ideas = global.getIdeas()
@@ -85,6 +77,8 @@ public class Node : MonoBehaviour {
         float localmax = -1;
         float secondmax = -1;
         float thirdmax = -1;
+
+        int oldIndex = importantIndex;
         // find most important ideas to this node.
         for (int i = 0; i < ideaStrengths.Length; i++)
         {
@@ -105,6 +99,14 @@ public class Node : MonoBehaviour {
                 thirdImportantIndex = i;
             }
         }
+
+        if (oldIndex != importantIndex)
+        {
+            IdeaList.staticList[importantIndex].updateValue(1);
+            if (oldIndex >= 0)
+                IdeaList.staticList[oldIndex].updateValue(-1);
+        }
+
 		//Determine the probability of sending an idea based on the importance to this individual Node.
 		float sumImportances = ideaStrengths[importantIndex];// +ideaStrengths[secondImportantIndex]+ideaStrengths[thirdImportantIndex];
         //We can get the percent probability of sending an idea by normalizing to the sum of the three ideas and then making intervals based on those.
@@ -156,10 +158,8 @@ public class Node : MonoBehaviour {
         temp.index = idx;
 	}
 
-	public void reciveIdea(string ideaStr)
-	{
-        float prevVal = ideaStrengths[importantIndex];
-
+    public void reciveIdea(string ideaStr)
+    {
         if (ideasList[importantIndex].name == ideaStr)
         {
             ideaStrengths[importantIndex] += baseInfluence * 2;
@@ -218,9 +218,6 @@ public class Node : MonoBehaviour {
         //ADD CODE TO CHANGE VALUES AND SUCH HERE!
         //print("recieved: " + ideaStr);
         //Destroy(gameObject);
-
-        if (prevVal != ideaStrengths[importantIndex])
-            IdeaList.staticList[importantIndex].updateValue(ideaStrengths[importantIndex] - prevVal);
 	}
 
 

@@ -43,10 +43,12 @@ class AbstractIdea : System.Object {
         public float threshold;
     }
 
-    public void updateValue(float amt) {
-		value = value + (amt / IdeaList.nodeCount);
+    public void updateValue(int amt) {
+        value += amt;
 
-        if (eventIndex < events.Length && value > events[eventIndex].threshold)
+        float ratio = (float) value / (float) IdeaList.nodeCount;
+
+        if (eventIndex < events.Length && ratio > events[eventIndex].threshold)
         {
             // trigger event and display description
             Global.text = "<size=16><b><color=#" + ColorToHex(color) + ">" + events[eventIndex].name + "</color></b></size>" + ": " + events[eventIndex].description + "\n\n";
