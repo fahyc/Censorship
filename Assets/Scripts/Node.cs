@@ -22,7 +22,7 @@ public class Node : MonoBehaviour {
     public float echoChamberStepDecrease = 0.1f;
     AbstractIdea[] ideasList;
 
-
+    public bool stubborn = false;
 	public float spawnChance = .01f;//the chances an idea will spawn every frame.
 
 	public LineRenderer line;
@@ -164,7 +164,8 @@ public class Node : MonoBehaviour {
         {
             ideaStrengths[importantIndex] += baseInfluence * 2;
             ideaStrengths[importantIndex] = Mathf.Clamp(ideaStrengths[importantIndex], 0.0f, 1.0f);
-            echoChamberCoefficient += echoChamberStepIncrease;
+            if(!stubborn)
+                echoChamberCoefficient += echoChamberStepIncrease;
 
         }
         //This portion happens if the node receives an idea that is conflicting with its most important idea.
@@ -173,7 +174,7 @@ public class Node : MonoBehaviour {
             // baseinfluence / (1 + the strength of the node's most important idea) 
             //ideaStrengths[ideasList[importantIndex].opposite] += baseInfluence*(1-ideaStrengths[importantIndex]);
             //Tweak to system: subtract if i hold diametrically opposed viewpoint.
-            ideaStrengths[ideasList[importantIndex].opposite] =  Mathf.Max (ideaStrengths[ideasList[importantIndex].opposite]-baseInfluence * ideaStrengths[importantIndex],ideaStrengths[importantIndex]/2f);
+            ideaStrengths[ideasList[importantIndex].opposite] =  Mathf.Max (ideaStrengths[ideasList[importantIndex].opposite]-baseInfluence * ideaStrengths[importantIndex] * echoChamberCoefficient,ideaStrengths[importantIndex]/2f);
             ideaStrengths[ideasList[importantIndex].opposite] = Mathf.Clamp(ideaStrengths[ideasList[importantIndex].opposite], 0.0f, 1.0f);
             //Additionally, if this idea conflicts with the most important idea for a Node it will start to care about other issues less
             for (int t = 0; t < ideaStrengths.Length; t++)
@@ -186,12 +187,14 @@ public class Node : MonoBehaviour {
                 ideaStrengths[t] = Mathf.Clamp(ideaStrengths[t], 0.0f, 1.0f);
             }
             //Decrease our echoChamber
-            echoChamberCoefficient -= echoChamberStepDecrease;
-            if(echoChamberCoefficient < 0)
+            if (!stubborn)
             {
-                echoChamberCoefficient = 0;
+                echoChamberCoefficient -= echoChamberStepDecrease;
+                if (echoChamberCoefficient < 0)
+                {
+                    echoChamberCoefficient = 0;
+                }
             }
-            
 
         }
         // If it's just a normal idea being sent towards a node, it'll increase by an amount influenced by how much the current node has been hearing about its favorite idea.
@@ -200,16 +203,18 @@ public class Node : MonoBehaviour {
             //No real good way to do this atm and I don't wanna mess with how we're sending info between nodes so just do a linear search
             for(int x=0; x<ideasList.Length; x++)
             {
-                if(ideaStr == ideasList[x].name)
+                if (ideaStr == ideasList[x].name)
                 {
-                    ideaStrengths[x] += baseInfluence* Mathf.Min(echoChamberCoefficient, 1);
+                    ideaStrengths[x] += baseInfluence * Mathf.Min(echoChamberCoefficient, 1);
                     ideaStrengths[x] = Mathf.Clamp(ideaStrengths[x], 0.0f, 1.0f);
-					ideaStrengths[importantIndex] -= baseInfluence * Mathf.Max(echoChamberCoefficient,1);
-					ideaStrengths[importantIndex] = Mathf.Clamp(ideaStrengths[importantIndex], 0f, 1f);
-                    echoChamberCoefficient -= echoChamberStepDecrease;
-                    if(echoChamberCoefficient < 0)
-                    {
-                        echoChamberCoefficient = 0;
+                    ideaStrengths[importantIndex] -= baseInfluence * Mathf.Max(echoChamberCoefficient, 1);
+                    ideaStrengths[importantIndex] = Mathf.Clamp(ideaStrengths[importantIndex], 0f, 1f);
+                    if (!stubborn) { 
+                        echoChamberCoefficient -= echoChamberStepDecrease;
+                        if (echoChamberCoefficient < 0)
+                        {
+                            echoChamberCoefficient = 0;
+                        }
                     }
                     break;
                 }
