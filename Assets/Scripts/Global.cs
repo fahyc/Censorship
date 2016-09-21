@@ -7,6 +7,8 @@ public class Global : MonoBehaviour {
     public Text infoTextBox;
     public static string text;
     public WallScript wall;
+    public Image textImage;
+    public static bool textbg = true;
 
 	// Use this for initialization
 	void Start () {
@@ -16,6 +18,7 @@ public class Global : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         infoTextBox.text = text;
+        textImage.enabled = textbg;
 
         if(Input.GetMouseButtonDown(1)) {
             Vector3 mousePos = Input.mousePosition;
@@ -41,6 +44,7 @@ public class Global : MonoBehaviour {
             if(hits.Length == 0)
             {
                 Global.text = "";
+                textbg = false;
             }
             
             //Global.text = "";
