@@ -18,6 +18,7 @@ public class Global : MonoBehaviour {
         infoTextBox.text = text;
         if(Input.GetMouseButtonDown(0)) {
             WallScript temp = (WallScript)Instantiate(wall, new Vector2(Input.mousePosition.x, Input.mousePosition.y), Quaternion.identity);
+            print(Input.mousePosition);
         }
 	}
 
