@@ -63,6 +63,7 @@ public class Idea : MonoBehaviour {
     void OnMouseOver()
     {
         if (Input.GetMouseButtonDown(0)) {
+            Global.textbg = true;
             Global.text = "";
             Global.text = "<size=16><b><color=#" + ColorToHex(IdeaList.staticList[index].color) + ">" + ideaStr + "</color></b></size>" + ": " + IdeaList.staticList[index].description;
         }

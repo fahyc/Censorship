@@ -251,6 +251,7 @@ public class Node : MonoBehaviour {
     {
         if (Input.GetMouseButtonDown(0))
         {
+            Global.textbg = true;
             Global.text = "";
             Global.text += "<size=16><b><color=#" + ColorToHex(ideasList[importantIndex].color) + ">" + ideasList[importantIndex].name + "</color></b></size>" + ": " + ideasList[importantIndex].description + "\n\n";
             Global.text += "<size=16><b><color=#" + ColorToHex(ideasList[secondImportantIndex].color) + ">" + ideasList[secondImportantIndex].name + "</color></b></size>" + ": " + ideasList[secondImportantIndex].description + "\n\n";
