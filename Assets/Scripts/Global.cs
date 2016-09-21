@@ -17,7 +17,9 @@ public class Global : MonoBehaviour {
 	void Update () {
         infoTextBox.text = text;
         if(Input.GetMouseButtonDown(0)) {
-            WallScript temp = (WallScript)Instantiate(wall, new Vector2(Input.mousePosition.x, Input.mousePosition.y), Quaternion.identity);
+            Vector3 mousePos = Input.mousePosition;
+            mousePos.Set(mousePos.x, mousePos.y, -Camera.main.transform.position.z);
+            WallScript temp = (WallScript)Instantiate(wall, Camera.main.ScreenToWorldPoint(mousePos), Quaternion.identity);
         }
 	}
 
