@@ -49,8 +49,15 @@ class AbstractIdea : System.Object {
         if (eventIndex < events.Length && value > events[eventIndex].threshold)
         {
             // trigger event and display description
-            Global.text = events[eventIndex].description;
+            Global.text = "<size=16><b><color=#" + ColorToHex(color) + ">" + events[eventIndex].name + "</color></b></size>" + ": " + events[eventIndex].description + "\n\n";
             eventIndex++;
         }
+
 	}
+
+    string ColorToHex(Color32 color)
+    {
+        string hex = color.r.ToString("X2") + color.g.ToString("X2") + color.b.ToString("X2");
+        return hex;
+    }
 }
