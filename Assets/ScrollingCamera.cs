@@ -7,9 +7,9 @@ public class ScrollingCamera : MonoBehaviour {
 	public float baseSpeed = .5f;
 	public float speedMultiplier = 5f;
 
-	public Vector2 min;
-	public Vector2 max;
-
+	public Vector3 min;
+	public Vector3 max;
+	public float scrollSpeed = 1;
 
 	Transform t;
 
@@ -53,6 +53,13 @@ public class ScrollingCamera : MonoBehaviour {
 			t.Translate(0, (Mathf.Abs(Input.mousePosition.y - ymax) * speedMultiplier * baseSpeed + baseSpeed) * Time.deltaTime, 0);
 		}
 
+		float scroll = Input.GetAxis("Mouse ScrollWheel") * Time.deltaTime * scrollSpeed;
+
+		if (!((scroll + t.position.z > max.z) ||  ( t.position.z + scroll < min.z)))
+		{
+			t.Translate(0, 0,scroll);
+		}
+		
 	}
     
 }
