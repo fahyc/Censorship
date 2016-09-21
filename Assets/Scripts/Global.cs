@@ -16,26 +16,20 @@ public class Global : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         infoTextBox.text = text;
-        if(Input.GetMouseButtonDown(0)) {
+
+        if(Input.GetMouseButtonDown(1)) {
             Vector3 mousePos = Input.mousePosition;
             mousePos.Set(mousePos.x, mousePos.y, -Camera.main.transform.position.z);
-            WallScript temp = (WallScript)Instantiate(wall, Camera.main.ScreenToWorldPoint(mousePos), Quaternion.identity);
-        }
-	}
 
-    void OnMouseOver()
-    {
-        if (Input.GetMouseButtonDown(0))
-        {
-            Global.text = "";
-        }
-    }
+            Collider2D hitWall = Physics2D.OverlapPoint(Camera.main.ScreenToWorldPoint(mousePos));
 
-    void OnMouseDown()
-    {
-        if (Input.GetMouseButtonDown(0))
-        {
-            Global.text = "";
+            if (hitWall != null && hitWall.gameObject.GetComponent<WallScript>() != null)
+            {
+                Destroy(hitWall.gameObject);
+            } else
+            {
+                WallScript temp = (WallScript)Instantiate(wall, Camera.main.ScreenToWorldPoint(mousePos), Quaternion.identity);
+            }
         }
     }
 }
