@@ -7,7 +7,7 @@ public class SliderBehavior : MonoBehaviour {
     public Image fill;
     AbstractIdea ideaTracker;
     Slider tracker;
-    public float sliderMax=0.5f;
+    public float sliderMax=0.25f;
 	// Use this for initialization
 	void Start () {
         ideaTracker = IdeaList.staticList[associatedScore];

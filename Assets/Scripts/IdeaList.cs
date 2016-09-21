@@ -41,7 +41,7 @@ class IdeaList : MonoBehaviour {
         {
             Debug.Log(idea.name + ": " + ratio);
 
-            if (UnityEngine.Random.value < 0.05)
+            if (UnityEngine.Random.value < 0.08)
             {
                 idea.triggerEvent();
                 break;
@@ -95,6 +95,7 @@ class AbstractIdea : System.Object {
     {
         // trigger event and display description
         Global.text = "<size=16><b><color=#" + ColorToHex(color) + ">" + events[eventIndex].name + "</color></b></size>" + ": " + events[eventIndex].description + "\n\n";
+        Global.textbg = true;
         eventIndex++;
     }
 
