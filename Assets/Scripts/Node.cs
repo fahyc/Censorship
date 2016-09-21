@@ -183,7 +183,7 @@ public class Node : MonoBehaviour {
                     continue;
                 }
                 ideaStrengths[t] -= baseInfluence;
-                Mathf.Clamp(ideaStrengths[t], 0.0f, 1.0f);
+                ideaStrengths[t] = Mathf.Clamp(ideaStrengths[t], 0.0f, 1.0f);
             }
             //Decrease our echoChamber
             echoChamberCoefficient -= echoChamberStepDecrease;
@@ -202,9 +202,10 @@ public class Node : MonoBehaviour {
             {
                 if(ideaStr == ideasList[x].name)
                 {
-                    ideaStrengths[x] += baseInfluence*echoChamberCoefficient;
+                    ideaStrengths[x] += baseInfluence* Mathf.Min(echoChamberCoefficient, 1);
                     ideaStrengths[x] = Mathf.Clamp(ideaStrengths[x], 0.0f, 1.0f);
-					ideaStrengths[importantIndex] -= baseInfluence * echoChamberCoefficient;
+					ideaStrengths[importantIndex] -= baseInfluence * Mathf.Min(echoChamberCoefficient,1);
+					Mathf.Clamp(ideaStrengths[importantIndex], 0f, 1f);
                     echoChamberCoefficient -= echoChamberStepDecrease;
                     if(echoChamberCoefficient < 0)
                     {
