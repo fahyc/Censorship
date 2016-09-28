@@ -2,9 +2,10 @@
 using System.Collections;
 using ExtensionMethods;
 using System.Collections.Generic;
+using UnityEngine.Networking;
 
-public class ClusterSpawner : MonoBehaviour {
-	public Node node;
+public class ClusterSpawner : NetworkBehaviour {
+	public GameObject node;
 	public int quantity;
 	public float radius;
 	public float spaceBetween;
@@ -23,7 +24,7 @@ public class ClusterSpawner : MonoBehaviour {
 	List<Node> waitingLinks = new List<Node>();
 
 	// Use this for initialization
-	void Start () {
+	public override void OnStartServer () {
 		nodes = new Node[quantity];
         IdeaList.nodeCount += quantity;
 		for(int i = 0; i < quantity; i++)
@@ -43,7 +44,8 @@ public class ClusterSpawner : MonoBehaviour {
 			}
 			if (point != Vector2.zero)
 			{
-				Node spawn = Instantiate<Node>(node);
+				GameObject obj = Instantiate(node);
+				Node spawn = obj.GetComponent<Node>();
 				spawn.transform.position = point;
 				nodes[i] = spawn;
 				spawn.links = nodes;
@@ -56,6 +58,8 @@ public class ClusterSpawner : MonoBehaviour {
 				//ideaStrengths.print();
 				spawn.stubborn = stubborn;
 				spawn.ideaStrengths = ideaStrengths;
+
+				NetworkServer.Spawn(obj);
 			}
 		}
 
@@ -65,16 +69,19 @@ public class ClusterSpawner : MonoBehaviour {
 		}
 
 	}
-
+		
 	void Update() {
-		for (int i = 0; i < waitingLinks.Count; i++)
-		{
-			nodes[Random.Range(0, nodes.Length)].linkTo(waitingLinks[i]);
+		if (gameObject.GetComponent<NetworkIdentity>().isServer) {
+			for (int i = 0; i < waitingLinks.Count; i++)
+			{
+				nodes[Random.Range(0, nodes.Length)].linkTo(waitingLinks[i]);
+			}
+			waitingLinks = null;
+			Destroy(gameObject);
 		}
-		waitingLinks = null;
-		Destroy(gameObject);
 	}
 
+	[Server]
 	public void makeConnection(Node node)
 	{
 		waitingLinks.Add(node);
