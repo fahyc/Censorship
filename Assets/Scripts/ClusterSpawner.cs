@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using UnityEngine.Networking;
 
 public class ClusterSpawner : NetworkBehaviour {
-	public GameObject node;
+	public Node node;
 	public int quantity;
 	public float radius;
 	public float spaceBetween;
@@ -44,8 +44,7 @@ public class ClusterSpawner : NetworkBehaviour {
 			}
 			if (point != Vector2.zero)
 			{
-				GameObject obj = Instantiate(node);
-				Node spawn = obj.GetComponent<Node>();
+                Node spawn = Instantiate(node);
 				spawn.transform.position = point;
 				nodes[i] = spawn;
 				spawn.linksSeed = nodes;
@@ -59,25 +58,30 @@ public class ClusterSpawner : NetworkBehaviour {
 				spawn.stubborn = stubborn;
 				spawn.ideaStrengths = ideaStrengths;
 
-				NetworkServer.Spawn(obj);
+				NetworkServer.Spawn(spawn.gameObject);
 			}
 		}
 
 		for(int i = 0; i < outsideConnections.Length; i++)
 		{
-			outsideConnections[i].makeConnection(nodes[Random.Range(0, nodes.Length)]);
+            if (outsideConnections[i] != null)
+                outsideConnections[i].makeConnection(nodes[Random.Range(0, nodes.Length)]);
+            else
+            {
+                Debug.LogWarning("connection " + i + " is null");
+            }
 		}
 
 	}
 		
 	void Update() {
-		if (gameObject.GetComponent<NetworkIdentity>().isServer) {
+		if (GetComponent<NetworkIdentity>().isServer) {
 			for (int i = 0; i < waitingLinks.Count; i++)
 			{
 				nodes[Random.Range(0, nodes.Length)].linkTo(waitingLinks[i]);
 			}
 			waitingLinks = null;
-			Destroy(gameObject);
+			NetworkServer.Destroy(gameObject);
 		}
 	}
 

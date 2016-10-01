@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Networking;
 using System.Collections;
 using ExtensionMethods;
 using System.Collections.Generic;
@@ -58,6 +59,7 @@ public class Node : MonoBehaviour {
 				link = GameObject.Instantiate<LineRenderer>(line);
 				link.SetPosition(0, transform.position);
 				link.SetPosition(1, links[i].transform.position);
+                NetworkServer.Spawn(link.gameObject);
 			}
 			linkObj[i] = link;
 		}
@@ -71,6 +73,7 @@ public class Node : MonoBehaviour {
 		LineRenderer link = GameObject.Instantiate<LineRenderer>(line);
 		link.SetPosition(0, transform.position);
 		link.SetPosition(1, other.transform.position);
+        NetworkServer.Spawn(link.gameObject);
 		links.Add(other);
 	}
 
@@ -159,6 +162,7 @@ public class Node : MonoBehaviour {
 		temp.dest = dest;
 		temp.originObj = this;
         temp.index = idx;
+        NetworkServer.Spawn(temp.gameObject);
 	}
 
     public void reciveIdea(string ideaStr)
@@ -247,7 +251,7 @@ public class Node : MonoBehaviour {
 				}
 			}
 		}
-		print("Error, one way connection detected between " + node + ", and " + this);
+		Debug.LogWarning("Error, one way connection detected between " + node + ", and " + this);
 		return null;
 	}
 

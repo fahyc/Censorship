@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Networking;
 using System.Collections;
 
 public class Idea : MonoBehaviour {
@@ -43,7 +44,7 @@ public class Idea : MonoBehaviour {
 		if (Mathf.Abs(time-totalTime) < minTimeToTarget)
 		{
 			dest.reciveIdea(ideaStr);
-			Destroy(gameObject);
+			NetworkServer.Destroy(gameObject);
 		}
     }
 
