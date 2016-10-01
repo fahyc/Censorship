@@ -46,7 +46,7 @@ public class ClusterSpawner : MonoBehaviour {
 				Node spawn = Instantiate<Node>(node);
 				spawn.transform.position = point;
 				nodes[i] = spawn;
-				spawn.links = nodes;
+				spawn.linksSeed = nodes;
 				float[] ideaStrengths = new float[IdeaList.staticList.Length];
 				for(int j = 0; j < ideaStrengths.Length; j++)
 				{
