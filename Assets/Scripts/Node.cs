@@ -4,7 +4,8 @@ using ExtensionMethods;
 using System.Collections.Generic;
 
 public class Node : MonoBehaviour {
-	public Node[] links;//this should be set before the node's start function is called. 
+	public Node[] linksSeed;//this should be set before the node's start function is called. 
+	public List<Node> links;
 	public LineRenderer[] linkObj;
 	public float[] ideaStrengths;
     //How much agreeing with an idea influences the spawn rate. Note that this
@@ -23,6 +24,9 @@ public class Node : MonoBehaviour {
     AbstractIdea[] ideasList;
 
     public bool stubborn = false;
+
+	public bool shill = false;
+
 	public float spawnChance = .01f;//the chances an idea will spawn every frame.
 
 	public LineRenderer line;
@@ -34,7 +38,7 @@ public class Node : MonoBehaviour {
     void Start () {
 		//Get a reference to the global game object that keeps track of the ideological climate.
 		ideasList = IdeaList.staticList;// GameObject.Find("EventSystem").GetComponent<IdeaList>().list;
-
+		links = new List<Node>(linksSeed);
         //ideaStrengths = new float[ideasList.Length];
 		if(ideaStrengths == null)
 		{
@@ -42,10 +46,10 @@ public class Node : MonoBehaviour {
 			print("Error! ideaStrengths is null");
 		}
 
-        linkObj = new LineRenderer[links.Length];
+        linkObj = new LineRenderer[links.Count];
 		//ideas = global.getIdeas()
 		//ideaStrengths = new int[ideas.Length];
-		for(int i = 0; i < links.Length; i++)
+		for(int i = 0; i < links.Count; i++)
 		{
 			// print(links[i]);
 			LineRenderer link = links[i].LinkedTo(this);
@@ -57,18 +61,17 @@ public class Node : MonoBehaviour {
 			}
 			linkObj[i] = link;
 		}
-
 	}
 	
 
 	public void linkTo(Node other)
 	{
 		//Node local = nodes[Random.Range(0, nodes.Length)];
-		other.links = other.links.slowAdded(this);
+		other.links.Add(this);
 		LineRenderer link = GameObject.Instantiate<LineRenderer>(line);
 		link.SetPosition(0, transform.position);
 		link.SetPosition(1, other.transform.position);
-		links = links.slowAdded(other);
+		links.Add(other);
 	}
 
 
@@ -135,9 +138,9 @@ public class Node : MonoBehaviour {
         if (Random.value < spawnChance+ideaStrengths[chosenIdeaIndex]*spawnMultiplier)
 		{
 
-            if (links.Length > 0)
+            if (links.Count > 0)
 			{
-				sendIdea(ideasList[chosenIdeaIndex].name, links[Random.Range(0, links.Length)], chosenIdeaIndex);
+				sendIdea(ideasList[chosenIdeaIndex].name, links[Random.Range(0, links.Count)], chosenIdeaIndex);
 			}
 			else
 			{
@@ -160,6 +163,10 @@ public class Node : MonoBehaviour {
 
     public void reciveIdea(string ideaStr)
     {
+		if (shill)
+		{
+			return;
+		}
         if (ideasList[importantIndex].name == ideaStr)
         {
             ideaStrengths[importantIndex] += baseInfluence * 2;
@@ -220,16 +227,13 @@ public class Node : MonoBehaviour {
                 }
             }
         }
-        //ADD CODE TO CHANGE VALUES AND SUCH HERE!
-        //print("recieved: " + ideaStr);
-        //Destroy(gameObject);
 	}
 
 
 	public LineRenderer LinkedTo(Node node)
 	{
 		//returns the lineRenderer that links this Node with node if it exists. Used for making one way connections two way.
-		for(int i = 0; i < links.Length; i++)
+		for(int i = 0; i < links.Count; i++)
 		{
 			if(links[i] == node)
 			{
