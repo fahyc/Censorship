@@ -119,10 +119,11 @@ public class Node : NetworkBehaviour {
         }
 
         //Determine the probability of sending an idea based on the importance to this individual Node.
-        if (importantIndex > ideaStrengths.Length - 1)
+        if (importantIndex < 0 || ideaStrengths.Length <= 0)
         {
-            Debug.LogWarning("Ideastrengths is " + ideaStrengths.Length);
+            return;
         }
+
         float sumImportances = ideaStrengths[importantIndex];// +ideaStrengths[secondImportantIndex]+ideaStrengths[thirdImportantIndex];
         //We can get the percent probability of sending an idea by normalizing to the sum of the three ideas and then making intervals based on those.
         float primaryIdeaInterval = ideaStrengths[importantIndex] / sumImportances;
