@@ -9,6 +9,14 @@ namespace ExtensionMethods
 		{
 			return new Vector2(vec.x, vec.y);
 		}
+		public static Vector3 append(this Vector2 vec, float n)
+		{
+			return new Vector3(vec.x, vec.y, n);
+		}
+		public static Vector3 append(this Vector3 vec, float n)
+		{
+			return new Vector3(vec.x, vec.y, n);
+		}
 		public static T[] slowAdded<T>(this T[] array, T obj)
 		{
 			//returns a copy of the array with obj at the end.
