@@ -4,11 +4,11 @@ using System.Collections;
 using ExtensionMethods;
 using System.Collections.Generic;
 
-public class Node : MonoBehaviour {
+public class Node : NetworkBehaviour {
 	public Node[] linksSeed;//this should be set before the node's start function is called. 
 	public List<Node> links;
 	public LineRenderer[] linkObj;
-	public float[] ideaStrengths;
+    public float[] ideaStrengths;
     //How much agreeing with an idea influences the spawn rate. Note that this
     public float spawnMultiplier = 0.005f;
     string mostImportantIdea;
@@ -36,15 +36,16 @@ public class Node : MonoBehaviour {
     public float baseInfluence = 0.05f;
 
     // Use this for initialization
-    void Start () {
+    public override void OnStartServer () {
 		//Get a reference to the global game object that keeps track of the ideological climate.
 		ideasList = IdeaList.staticList;// GameObject.Find("EventSystem").GetComponent<IdeaList>().list;
 		links = new List<Node>(linksSeed);
+
         //ideaStrengths = new float[ideasList.Length];
 		if(ideaStrengths == null)
 		{
 			ideaStrengths = new float[ideasList.Length];
-			print("Error! ideaStrengths is null");
+			Debug.LogWarning("Error! ideaStrengths is null");
 		}
 
         linkObj = new LineRenderer[links.Count];
@@ -52,7 +53,11 @@ public class Node : MonoBehaviour {
 		//ideaStrengths = new int[ideas.Length];
 		for(int i = 0; i < links.Count; i++)
 		{
-			// print(links[i]);
+            if (links[i] == null)
+            {
+                Debug.LogWarning("Link " + i + " is null");
+                continue;
+            }
 			LineRenderer link = links[i].LinkedTo(this);
 			if(link == null)
 			{
@@ -113,8 +118,12 @@ public class Node : MonoBehaviour {
                 IdeaList.staticList[oldIndex].updateValue(-1);
         }
 
-		//Determine the probability of sending an idea based on the importance to this individual Node.
-		float sumImportances = ideaStrengths[importantIndex];// +ideaStrengths[secondImportantIndex]+ideaStrengths[thirdImportantIndex];
+        //Determine the probability of sending an idea based on the importance to this individual Node.
+        if (importantIndex > ideaStrengths.Length - 1)
+        {
+            Debug.LogWarning("Ideastrengths is " + ideaStrengths.Length);
+        }
+        float sumImportances = ideaStrengths[importantIndex];// +ideaStrengths[secondImportantIndex]+ideaStrengths[thirdImportantIndex];
         //We can get the percent probability of sending an idea by normalizing to the sum of the three ideas and then making intervals based on those.
         float primaryIdeaInterval = ideaStrengths[importantIndex] / sumImportances;
         //float secondaryIdeaInterval = primaryIdeaInterval + (ideaStrengths[secondImportantIndex] / sumImportances);

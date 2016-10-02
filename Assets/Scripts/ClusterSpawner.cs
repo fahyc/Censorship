@@ -19,8 +19,6 @@ public class ClusterSpawner : NetworkBehaviour {
 	public string mainIdea;//the idea the nodes in this cluster will follow.
 	public float mainStrength = .5f;//the average strength nodes in this cluster will follow the idea at. 
 
-
-
 	List<Node> waitingLinks = new List<Node>();
 
 	// Use this for initialization
@@ -47,7 +45,12 @@ public class ClusterSpawner : NetworkBehaviour {
                 Node spawn = Instantiate(node);
 				spawn.transform.position = point;
 				nodes[i] = spawn;
-				spawn.linksSeed = nodes;
+                Node[] seed = new Node[i];
+                for (int k=0; k < i; k++)
+                {
+                    seed[k] = nodes[k];
+                }
+				spawn.linksSeed = seed;
 				float[] ideaStrengths = new float[IdeaList.staticList.Length];
 				for(int j = 0; j < ideaStrengths.Length; j++)
 				{
