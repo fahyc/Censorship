@@ -70,7 +70,7 @@ public class Node : NetworkBehaviour {
 		}
 	}
 	
-
+    [Server]
 	public void linkTo(Node other)
 	{
 		//Node local = nodes[Random.Range(0, nodes.Length)];

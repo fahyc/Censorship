@@ -78,15 +78,14 @@ public class ClusterSpawner : NetworkBehaviour {
 
 	}
 		
+    [ServerCallback]
 	void Update() {
-		if (isServer) {
-			for (int i = 0; i < waitingLinks.Count; i++)
-			{
-				nodes[Random.Range(0, nodes.Length)].linkTo(waitingLinks[i]);
-			}
-			waitingLinks = null;
-			NetworkServer.Destroy(gameObject);
-		}
+        for (int i = 0; i < waitingLinks.Count; i++)
+        {
+            nodes[Random.Range(0, nodes.Length)].linkTo(waitingLinks[i]);
+        }
+        waitingLinks = null;
+        NetworkServer.Destroy(gameObject);
 	}
 
 	[Server]
