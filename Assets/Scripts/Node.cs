@@ -247,7 +247,7 @@ public class Node : MonoBehaviour {
 				}
 			}
 		}
-		print("Error, one way connection detected between " + node + ", and " + this);
+		//print("Error, one way connection detected between " + node + ", and " + this);
 		return null;
 	}
 

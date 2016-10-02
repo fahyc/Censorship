@@ -39,7 +39,7 @@ class IdeaList : MonoBehaviour {
 
         while (ratio > staticList[index].getEventThreshold())
         {
-            Debug.Log(idea.name + ": " + ratio);
+            //Debug.Log(idea.name + ": " + ratio);
 
             if (UnityEngine.Random.value < 0.08)
             {

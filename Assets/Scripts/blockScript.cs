@@ -1,12 +1,16 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class blockScript : MonoBehaviour {
+public class blockScript : Spawnable {
 	public string sendsOut;//what idea this sends 
 	public Idea ideaTemplate;
+	
+
 	// Use this for initialization
 	void Start () {
-	
+		if (index != -1) {
+			GetComponent<SpriteRenderer>().color = IdeaList.staticList[index].color;
+		}
 	}
 	
 	// Update is called once per frame
@@ -16,16 +20,16 @@ public class blockScript : MonoBehaviour {
 	void OnTriggerEnter2D(Collider2D col)
 	{
 		Idea idea = col.GetComponent<Idea>();
-		if (idea && idea.ideaStr != sendsOut)
+		if (idea && idea.ideaStr != sendsOut && (index < 0 || idea.index == index)) 
 		{
-			Vector3 dest = idea.origin;
+			//Vector3 dest = idea.origin;
 			Destroy(idea.gameObject);
-			Idea temp = GameObject.Instantiate<Idea>(ideaTemplate);
-			temp.ideaStr = sendsOut;
-			temp.origin = transform.position;
-			temp.destination = dest;
-			temp.transform.position = transform.position;
-			temp.dest = idea.originObj;
+			//Idea temp = GameObject.Instantiate<Idea>(ideaTemplate);
+			//temp.ideaStr = sendsOut;
+			//temp.origin = transform.position;
+			//temp.destination = dest;
+			//temp.transform.position = transform.position;
+			//temp.dest = idea.originObj;
 		}
 
 	}
