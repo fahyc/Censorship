@@ -84,6 +84,7 @@ public class Node : NetworkBehaviour {
 
 
 	// Update is called once per frame
+    [ServerCallback]
 	void Update () { //THIS SHOULD BE IMPROVED ON ONCE MORE COMPLEX NODE AI IS ADDED.
         float localmax = -1;
         float secondmax = -1;
@@ -162,6 +163,7 @@ public class Node : NetworkBehaviour {
 		}
 	}
 
+    [Server]
 	void sendIdea(string idea, Node dest, int idx)
 	{
 		Idea temp = GameObject.Instantiate<Idea>(ideaObj);
@@ -169,12 +171,13 @@ public class Node : NetworkBehaviour {
 		temp.origin = transform.position;
 		temp.destination = dest.transform.position;
 		temp.transform.position = transform.position;
-		temp.dest = dest;
+		temp.dest = dest.gameObject;
 		temp.originObj = this;
         temp.index = idx;
         NetworkServer.Spawn(temp.gameObject);
 	}
 
+    [Server]
     public void reciveIdea(string ideaStr)
     {
 		if (shill)
@@ -243,7 +246,7 @@ public class Node : NetworkBehaviour {
         }
 	}
 
-
+    [Server]
 	public LineRenderer LinkedTo(Node node)
 	{
 		//returns the lineRenderer that links this Node with node if it exists. Used for making one way connections two way.

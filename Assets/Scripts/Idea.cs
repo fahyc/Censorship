@@ -2,7 +2,8 @@
 using UnityEngine.Networking;
 using System.Collections;
 
-public class Idea : MonoBehaviour {
+public class Idea : NetworkBehaviour {
+    [SyncVar]
 	public string ideaStr;
 	public Vector3 origin;
 	public Node originObj;
@@ -10,10 +11,10 @@ public class Idea : MonoBehaviour {
 	float time = 0;
 	public float speed;
 	public float totalTime;
-	Transform t;
     public int index;
 
-	public Node dest;
+    [SyncVar]
+	public GameObject dest;
 
 	public float minTimeToTarget = .1f; //how long should the minimum lifetime of an idea be? Used to fix a memory leak. 
 	/*
@@ -31,19 +32,19 @@ public class Idea : MonoBehaviour {
     };
 	*/
     // Use this for initialization
-    void Start () {
+    public override void OnStartServer () {
 		totalTime = (origin - destination).magnitude/speed;
-		t = transform;
 		GetComponent<SpriteRenderer>().color = IdeaList.staticList[IdeaList.staticDict[ideaStr]].color;
 	}
 
     // Update is called once per frame
+    [ServerCallback]
     void Update() {
         time += Time.deltaTime;
-        t.position = Vector3.Lerp(origin, destination, time / totalTime);
+        transform.position = Vector3.Lerp(origin, destination, time / totalTime);
 		if (Mathf.Abs(time-totalTime) < minTimeToTarget)
 		{
-			dest.reciveIdea(ideaStr);
+            dest.GetComponent<Node>().reciveIdea(ideaStr);
 			NetworkServer.Destroy(gameObject);
 		}
     }

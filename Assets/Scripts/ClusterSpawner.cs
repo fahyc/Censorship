@@ -62,6 +62,7 @@ public class ClusterSpawner : NetworkBehaviour {
 				spawn.ideaStrengths = ideaStrengths;
 
 				NetworkServer.Spawn(spawn.gameObject);
+                Debug.Log("Network spawning a node");
 			}
 		}
 
@@ -78,7 +79,7 @@ public class ClusterSpawner : NetworkBehaviour {
 	}
 		
 	void Update() {
-		if (GetComponent<NetworkIdentity>().isServer) {
+		if (isServer) {
 			for (int i = 0; i < waitingLinks.Count; i++)
 			{
 				nodes[Random.Range(0, nodes.Length)].linkTo(waitingLinks[i]);
