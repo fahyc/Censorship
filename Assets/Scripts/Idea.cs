@@ -5,8 +5,10 @@ using System.Collections;
 public class Idea : NetworkBehaviour {
     [SyncVar]
 	public string ideaStr;
+	[SyncVar]
 	public Vector3 origin;
 	public Node originObj;
+	[SyncVar]
 	public Vector3 destination;
 	float time = 0;
 	public float speed;
@@ -32,16 +34,23 @@ public class Idea : NetworkBehaviour {
     };
 	*/
     // Use this for initialization
-    public override void OnStartServer () {
+    public void Start() {
 		totalTime = (origin - destination).magnitude/speed;
 		GetComponent<SpriteRenderer>().color = IdeaList.staticList[IdeaList.staticDict[ideaStr]].color;
 	}
 
-    // Update is called once per frame
-    [ServerCallback]
-    void Update() {
-        time += Time.deltaTime;
-        transform.position = Vector3.Lerp(origin, destination, time / totalTime);
+	// Update is called once per frame
+	void Update() {
+		time += Time.deltaTime;
+		transform.position = Vector3.Lerp(origin, destination, time / totalTime);
+		if (isServer) {
+			CheckLifetime ();
+		}
+	}
+
+    
+    [Server]
+    void CheckLifetime() {
 		if (Mathf.Abs(time-totalTime) < minTimeToTarget)
 		{
             dest.GetComponent<Node>().reciveIdea(ideaStr);
