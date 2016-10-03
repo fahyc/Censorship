@@ -5,7 +5,7 @@ using System.Collections;
 using ExtensionMethods;
 
 
-public class Global : MonoBehaviour {
+public class Global : NetworkBehaviour {
 
     public Text infoTextBox;
     public static string text;
@@ -16,13 +16,45 @@ public class Global : MonoBehaviour {
 	static int toolIndex;
 	Inspect inspector;
 
+    public Inspect inspectCanvas;
 
 	// Use this for initialization
 	void Start () {
-		inspector = GameObject.FindGameObjectWithTag("Inspector").GetComponent<Inspect>();
+		// inspector = GameObject.FindGameObjectWithTag("Inspector").GetComponent<Inspect>();
 	}
-	
-	// Update is called once per frame
+
+    public override void OnStartServer()
+    {
+        Inspect insp = Instantiate(inspectCanvas);
+        inspector = insp;
+        NetworkServer.SpawnWithClientAuthority(insp.gameObject, connectionToClient);
+    }
+
+    [Command]
+    void CmdSpawnWall(int prefabIndex, Vector3 position, int index)
+    {
+        // now convert back from index to prefab
+        GameObject prefabToSpawn = NetworkManager.singleton.spawnPrefabs[prefabIndex];
+
+        // actually instantiate/initialize the object
+        GameObject temp = Instantiate(prefabToSpawn);
+        temp.GetComponent<Spawnable>().index = index;
+        temp.transform.position = position;
+
+        // and give the client authority over it
+        NetworkServer.SpawnWithClientAuthority(temp.gameObject, connectionToClient);
+    }
+
+    [Client]
+    public void SpawnWall(GameObject prefabObject, Vector3 pos, int index)
+    {
+        // need to find index of prefab to spawn
+        int prefabIndex = NetworkManager.singleton.spawnPrefabs.IndexOf(prefabObject);
+        CmdSpawnWall(prefabIndex, pos, index);
+    }
+
+    // Update is called once per frame
+    [ClientCallback]
 	void Update () {
         infoTextBox.text = text;
         textImage.enabled = textbg;
@@ -48,12 +80,19 @@ public class Global : MonoBehaviour {
         {
 			if (currentTool)
 			{
-				print("Spawning with index: " + toolIndex);
-				Spawnable temp = Instantiate<Spawnable>(currentTool);
-				temp.index = toolIndex;
-				//print(Camera.main.ScreenToWorldPoint(Input.mousePosition.append(Camera.main.transform.position.z * -1)));
-				//print(Input.mousePosition);
-				temp.transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition.append(Camera.main.transform.position.z * -1));
+                //print(Camera.main.ScreenToWorldPoint(Input.mousePosition.append(Camera.main.transform.position.z * -1)));
+                //print(Input.mousePosition);
+
+                if (hasAuthority)
+                {
+                    Vector3 position = Camera.main.ScreenToWorldPoint(Input.mousePosition.append(Camera.main.transform.position.z * -1));
+                    
+                    SpawnWall(currentTool.gameObject, position, toolIndex);
+                }
+                else
+                {
+                    Debug.LogWarning("No authority to spawn wall");
+                }
 			}
 			else {
 

@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
+using UnityEngine.Networking;
 using System.Collections;
 using UnityEngine.UI;
 using ExtensionMethods;
-public class Inspect : MonoBehaviour {
+public class Inspect : NetworkBehaviour {
 	public Vector2 offset;
 
 	GameObject inspecting;
@@ -12,6 +13,7 @@ public class Inspect : MonoBehaviour {
 	BoxCollider2D col;
 
 	// Use this for initialization
+    [ClientCallback]
 	void Start () {
 		img = GetComponentInChildren<Image>();
 		text = GetComponentInChildren<Text>();
@@ -24,6 +26,7 @@ public class Inspect : MonoBehaviour {
 	
 	}
 
+    [Client]
 	public void Enable(GameObject target)
 	{
 		inspecting = target;
@@ -33,6 +36,7 @@ public class Inspect : MonoBehaviour {
 		transform.position = target.transform.position.xy() + offset;
 	}
 
+    [Client]
 	public void Disable()
 	{
 		img.enabled = false;
@@ -40,10 +44,18 @@ public class Inspect : MonoBehaviour {
 		col.enabled = false;
 	}
 
+    [Command]
+    void CmdDestroyTarget(NetworkInstanceId id)
+    {
+        GameObject target = NetworkServer.FindLocalObject(id);
+        NetworkServer.Destroy(target);
+    }
+
+    [Client]
 	public void FireTarget()
 	{
 		print("Destroying: " + inspecting);
-		Destroy(inspecting);
+		CmdDestroyTarget(inspecting.GetComponent<NetworkIdentity>().netId);
 		Disable();
 	}
 }

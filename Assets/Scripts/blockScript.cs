@@ -1,7 +1,9 @@
 ﻿using UnityEngine;
+using UnityEngine.Networking;
 using System.Collections;
 
 public class blockScript : Spawnable {
+    [SyncVar]
 	public string sendsOut;//what idea this sends 
 	public Idea ideaTemplate;
 	
@@ -17,13 +19,15 @@ public class blockScript : Spawnable {
 	void Update () {
 	
 	}
+    
+    [ServerCallback]
 	void OnTriggerEnter2D(Collider2D col)
 	{
 		Idea idea = col.GetComponent<Idea>();
 		if (idea && idea.ideaStr != sendsOut && (index < 0 || idea.index == index)) 
 		{
 			//Vector3 dest = idea.origin;
-			Destroy(idea.gameObject);
+			NetworkServer.Destroy(idea.gameObject);
 			//Idea temp = GameObject.Instantiate<Idea>(ideaTemplate);
 			//temp.ideaStr = sendsOut;
 			//temp.origin = transform.position;
