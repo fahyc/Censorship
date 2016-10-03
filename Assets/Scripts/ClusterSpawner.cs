@@ -62,7 +62,7 @@ public class ClusterSpawner : NetworkBehaviour {
 				spawn.ideaStrengths = ideaStrengths;
 
 				NetworkServer.Spawn(spawn.gameObject);
-                Debug.Log("Network spawning a node");
+                // Debug.Log("Network spawning a node");
 			}
 		}
 

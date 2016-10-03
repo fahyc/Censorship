@@ -62,9 +62,8 @@ public class Node : NetworkBehaviour {
 			if(link == null)
 			{
 				link = GameObject.Instantiate<LineRenderer>(line);
-				link.SetPosition(0, transform.position);
-				link.SetPosition(1, links[i].transform.position);
-                NetworkServer.Spawn(link.gameObject);
+				NetworkServer.Spawn(link.gameObject);
+				link.GetComponent<NetworkLineRenderer> ().setPoints (transform.position, links [i].transform.position);
 			}
 			linkObj[i] = link;
 		}
@@ -76,9 +75,8 @@ public class Node : NetworkBehaviour {
 		//Node local = nodes[Random.Range(0, nodes.Length)];
 		other.links.Add(this);
 		LineRenderer link = GameObject.Instantiate<LineRenderer>(line);
-		link.SetPosition(0, transform.position);
-		link.SetPosition(1, other.transform.position);
-        NetworkServer.Spawn(link.gameObject);
+		NetworkServer.Spawn(link.gameObject);
+		link.GetComponent<NetworkLineRenderer> ().setPoints (transform.position, other.transform.position);
 		links.Add(other);
 	}
 
