@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Networking;
 using System.Collections;
 using ExtensionMethods;
 
@@ -8,7 +9,6 @@ public class Global : MonoBehaviour {
 
     public Text infoTextBox;
     public static string text;
-    public WallScript wall;
     public Image textImage;
     public static bool textbg = true;
 
