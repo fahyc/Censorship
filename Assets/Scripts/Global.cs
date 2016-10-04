@@ -57,13 +57,11 @@ public class Global : NetworkBehaviour {
         // actually instantiate/initialize the object
         GameObject temp = Instantiate(prefabToSpawn);
         temp.GetComponent<Spawnable>().index = index;
+        temp.GetComponent<Spawnable>().owner = connectionToClient;
         temp.transform.position = position;
 
         // and give the client authority over it
         NetworkServer.SpawnWithClientAuthority(temp, connectionToClient);
-
-        // force visibility re-check
-        temp.GetComponent<NetworkIdentity>().RebuildObservers(true);
     }
 
     [Client]
@@ -132,7 +130,8 @@ public class Global : NetworkBehaviour {
 					for(int i = 0; i < hits.Length; i++)
 					{
 						Inspectable temp = hits[i].GetComponent<Inspectable>();
-						if (temp)
+                        // Make sure we have authority on the boject we're looking at
+						if (temp && temp.hasAuthority)
 						{
 							// print("enabling Inspect");
 							inspector.Enable(temp.gameObject);

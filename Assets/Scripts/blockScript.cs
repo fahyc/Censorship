@@ -21,7 +21,6 @@ public class blockScript : Spawnable {
 	
 	}
     
-    /*
     // just disable stuff that is "invisible" to the host
     [Client]
     public override void OnSetLocalVisibility(bool vis)
@@ -43,22 +42,21 @@ public class blockScript : Spawnable {
     [Server]
     public override bool OnCheckObserver(NetworkConnection conn)
     {
-        return (GetComponent<NetworkIdentity>().clientAuthorityOwner == conn);
+        return false;
     }
 
     [Server]
     // when rebuilding observers, only include the owner
     public override bool OnRebuildObservers(HashSet<NetworkConnection> observers, bool initialize)
     {
-        observers.Clear();
-        // add the client authority owner, and update if not already in observer set
-        observers.Add(GetComponent<NetworkIdentity>().clientAuthorityOwner);
-
-        Debug.Log(observers.Count);
-
-        return true;
+        if (initialize)
+        {
+            // add the client authority owner, and update if not already in observer set
+            observers.Add(owner);
+            return true;
+        }
+        return false;
     }
-    */
 
     [ServerCallback]
 	void OnTriggerEnter2D(Collider2D col)
