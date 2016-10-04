@@ -21,7 +21,7 @@ public class blockScript : Spawnable {
 	
 	}
     
-
+    /*
     // just disable stuff that is "invisible" to the host
     [Client]
     public override void OnSetLocalVisibility(bool vis)
@@ -58,6 +58,7 @@ public class blockScript : Spawnable {
 
         return true;
     }
+    */
 
     [ServerCallback]
 	void OnTriggerEnter2D(Collider2D col)

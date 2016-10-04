@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using UnityEngine.Networking;
 using System.Collections;
 using ExtensionMethods;
-
+using System.Collections.Generic;
 
 public class Global : NetworkBehaviour {
 
@@ -22,6 +22,31 @@ public class Global : NetworkBehaviour {
 	public override void OnStartLocalPlayer () {
 		inspector = GameObject.FindGameObjectWithTag("Inspector").GetComponent<Inspect>();
 	}
+
+    // For the host client, disable other players' Canvases
+    [Client]
+    public override void OnSetLocalVisibility(bool vis)
+    {
+        gameObject.SetActive(vis);
+    }
+
+    // make self invisible to new clients
+    [Server]
+    public override bool OnCheckObserver(NetworkConnection conn)
+    {
+        return false;
+    }
+
+    // We only want the owner client to observe their Canvas
+    [Server]
+    public override bool OnRebuildObservers(HashSet<NetworkConnection> observers, bool init) {
+        if (init)
+        {
+            observers.Add(connectionToClient);
+            return true;
+        }
+        return false;
+    }
 
     [Command]
     void CmdSpawnWall(int prefabIndex, Vector3 position, int index)
@@ -109,7 +134,7 @@ public class Global : NetworkBehaviour {
 						Inspectable temp = hits[i].GetComponent<Inspectable>();
 						if (temp)
 						{
-							print("enabling Inspect");
+							// print("enabling Inspect");
 							inspector.Enable(temp.gameObject);
 							hit = true;
 						}
@@ -129,6 +154,7 @@ public class Global : NetworkBehaviour {
         }
     }
 
+    [Client]
 	public static void setTool(Spawnable obj, int index)
 	{
 		toolIndex = index;

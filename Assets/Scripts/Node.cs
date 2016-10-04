@@ -262,7 +262,7 @@ public class Node : NetworkBehaviour {
 				}
 			}
 		}
-		Debug.LogWarning("Error, one way connection detected between " + node + ", and " + this);
+		// Debug.LogWarning("Error, one way connection detected between " + node + ", and " + this);
 		return null;
 	}
 

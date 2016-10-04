@@ -3,7 +3,7 @@ using UnityEngine.Networking;
 using System.Collections;
 using UnityEngine.UI;
 using ExtensionMethods;
-public class Inspect : NetworkBehaviour {
+public class Inspect : MonoBehaviour {
 	public Vector2 offset;
 
 	GameObject inspecting;
@@ -13,7 +13,6 @@ public class Inspect : NetworkBehaviour {
 	BoxCollider2D col;
 
 	// Use this for initialization
-    [ClientCallback]
 	void Start () {
 		img = GetComponentInChildren<Image>();
 		text = GetComponentInChildren<Text>();
@@ -26,7 +25,6 @@ public class Inspect : NetworkBehaviour {
 	
 	}
 
-    [Client]
 	public void Enable(GameObject target)
 	{
 		inspecting = target;
@@ -36,7 +34,6 @@ public class Inspect : NetworkBehaviour {
 		transform.position = target.transform.position.xy() + offset;
 	}
 
-    [Client]
 	public void Disable()
 	{
 		img.enabled = false;
@@ -44,10 +41,9 @@ public class Inspect : NetworkBehaviour {
 		col.enabled = false;
 	}
 
-    [Client]
 	public void FireTarget()
 	{
-		print("Destroying: " + inspecting);
+		// print("Destroying: " + inspecting);
         inspecting.GetComponent<Inspectable>().DestroySelf();
 		Disable();
 	}
