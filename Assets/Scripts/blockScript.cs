@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.Networking;
 using System.Collections;
+using System.Collections.Generic;
 
 public class blockScript : Spawnable {
     [SyncVar]
@@ -20,6 +21,44 @@ public class blockScript : Spawnable {
 	
 	}
     
+
+    // just disable stuff that is "invisible" to the host
+    [Client]
+    public override void OnSetLocalVisibility(bool vis)
+    {
+        // disable rendering first
+        foreach (Renderer r in GetComponents<Renderer>())
+        {
+            r.enabled = vis;
+        }
+
+        // disable collision for clicking, etc
+        foreach (Collider c in GetComponents<Collider>())
+        {
+            c.enabled = vis;
+        }
+    }
+
+    // don't let new players see stuff
+    [Server]
+    public override bool OnCheckObserver(NetworkConnection conn)
+    {
+        return (GetComponent<NetworkIdentity>().clientAuthorityOwner == conn);
+    }
+
+    [Server]
+    // when rebuilding observers, only include the owner
+    public override bool OnRebuildObservers(HashSet<NetworkConnection> observers, bool initialize)
+    {
+        observers.Clear();
+        // add the client authority owner, and update if not already in observer set
+        observers.Add(GetComponent<NetworkIdentity>().clientAuthorityOwner);
+
+        Debug.Log(observers.Count);
+
+        return true;
+    }
+
     [ServerCallback]
 	void OnTriggerEnter2D(Collider2D col)
 	{

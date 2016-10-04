@@ -19,7 +19,7 @@ public class Global : NetworkBehaviour {
     public Inspect inspectCanvas;
 
 	// Use this for initialization
-	void Start () {
+	public override void OnStartLocalPlayer () {
 		inspector = GameObject.FindGameObjectWithTag("Inspector").GetComponent<Inspect>();
 	}
 
@@ -35,7 +35,10 @@ public class Global : NetworkBehaviour {
         temp.transform.position = position;
 
         // and give the client authority over it
-        NetworkServer.SpawnWithClientAuthority(temp.gameObject, connectionToClient);
+        NetworkServer.SpawnWithClientAuthority(temp, connectionToClient);
+
+        // force visibility re-check
+        temp.GetComponent<NetworkIdentity>().RebuildObservers(true);
     }
 
     [Client]
@@ -49,6 +52,11 @@ public class Global : NetworkBehaviour {
     // Update is called once per frame
     [ClientCallback]
 	void Update () {
+
+        // only update for the local player
+        if (!isLocalPlayer)
+            return;
+
         infoTextBox.text = text;
         textImage.enabled = textbg;
 
@@ -76,16 +84,9 @@ public class Global : NetworkBehaviour {
                 //print(Camera.main.ScreenToWorldPoint(Input.mousePosition.append(Camera.main.transform.position.z * -1)));
                 //print(Input.mousePosition);
 
-                if (hasAuthority)
-                {
-                    Vector3 position = Camera.main.ScreenToWorldPoint(Input.mousePosition.append(Camera.main.transform.position.z * -1));
-                    
-                    SpawnWall(currentTool.gameObject, position, toolIndex);
-                }
-                else
-                {
-                    Debug.LogWarning("No authority to spawn wall");
-                }
+                Vector3 position = Camera.main.ScreenToWorldPoint(Input.mousePosition.append(Camera.main.transform.position.z * -1));
+                
+                SpawnWall(currentTool.gameObject, position, toolIndex);
 			}
 			else {
 
