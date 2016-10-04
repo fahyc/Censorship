@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine.UI;
 
-public class Submenu : MonoBehaviour {
+public class Submenu : UIItem {
 	public SpawnScript buttons;
 	public string tooltips; //use [idea] in the string to dynamically show the name of the idea this button will spawn
 	public Spawnable product;
@@ -16,7 +16,13 @@ public class Submenu : MonoBehaviour {
 			temp.transform.parent = transform;
 		}
 	}
-	
+
+
+	public override void Enable()
+	{
+		base.Enable();
+		gameObject.SetActive(true);
+	}
 	// Update is called once per frame
 	void Update () {
 	

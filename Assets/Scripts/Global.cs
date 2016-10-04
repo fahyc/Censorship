@@ -2,7 +2,9 @@
 using UnityEngine.UI;
 using UnityEngine.Networking;
 using System.Collections;
+using System.Collections.Generic;
 using ExtensionMethods;
+using UnityEngine.EventSystems;
 
 
 public class Global : MonoBehaviour {
@@ -14,6 +16,9 @@ public class Global : MonoBehaviour {
 
 	static Spawnable currentTool;
 	static int toolIndex;
+	static List<UIItem> toHide = new List<UIItem>();
+	static List<RectTransform> focusTakers = new List<RectTransform>();
+	//static List<UIItem> 
 	Inspect inspector;
 
 
@@ -27,21 +32,14 @@ public class Global : MonoBehaviour {
         infoTextBox.text = text;
         textImage.enabled = textbg;
 
+
+		if (overlappingFocusable())
+		{
+			return;
+		}
+
         if(Input.GetMouseButtonDown(1)) {
-
 			currentTool = null;
-            //Vector3 mousePos = Input.mousePosition;
-            //mousePos.Set(mousePos.x, mousePos.y, -Camera.main.transform.position.z);
-
-            //Collider2D hitWall = Physics2D.OverlapPoint(Camera.main.ScreenToWorldPoint(mousePos));
-
-            /*if (hitWall != null && hitWall.gameObject.GetComponent<WallScript>() != null)
-            {
-                Destroy(hitWall.gameObject);
-            } else
-            {
-                WallScript temp = (WallScript)Instantiate(wall, Camera.main.ScreenToWorldPoint(mousePos), Quaternion.identity);
-            }*/
         }
 
         if(Input.GetMouseButtonDown(0))
@@ -51,8 +49,6 @@ public class Global : MonoBehaviour {
 				print("Spawning with index: " + toolIndex);
 				Spawnable temp = Instantiate<Spawnable>(currentTool);
 				temp.index = toolIndex;
-				//print(Camera.main.ScreenToWorldPoint(Input.mousePosition.append(Camera.main.transform.position.z * -1)));
-				//print(Input.mousePosition);
 				temp.transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition.append(Camera.main.transform.position.z * -1));
 			}
 			else {
@@ -65,8 +61,12 @@ public class Global : MonoBehaviour {
 				{
 					Global.text = "";
 					textbg = false;
-					inspector.Disable();
-					
+					//inspector.Disable();
+					for(int i = 0; i < toHide.Count; i++)
+					{
+						toHide[i].Disable();
+					}
+					toHide.Clear();
 				}
 				else
 				{
@@ -95,6 +95,31 @@ public class Global : MonoBehaviour {
 
         }
     }
+
+	bool overlappingFocusable()
+	{
+		for(int i = 0; i < focusTakers.Count; i++)
+		{
+			if (RectTransformUtility.RectangleContainsScreenPoint(focusTakers[i], Input.mousePosition)){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public static void addUIItem(UIItem item)
+	{
+		toHide.Add(item);
+	}
+
+	public static void addFocusTaker(RectTransform item)
+	{
+		focusTakers.Add(item);
+	}
+	public static void removeFocusTaker(RectTransform item)
+	{
+		focusTakers.Remove(item);
+	}
 
 	public static void setTool(Spawnable obj, int index)
 	{

@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine.UI;
 using ExtensionMethods;
-public class Inspect : MonoBehaviour {
+public class Inspect : UIItem {
 	public Vector2 offset;
 
 	GameObject inspecting;
@@ -26,6 +26,7 @@ public class Inspect : MonoBehaviour {
 
 	public void Enable(GameObject target)
 	{
+		base.Enable();
 		inspecting = target;
 		img.enabled = true;
 		text.enabled = true;
@@ -33,7 +34,7 @@ public class Inspect : MonoBehaviour {
 		transform.position = target.transform.position.xy() + offset;
 	}
 
-	public void Disable()
+	public override void Disable()
 	{
 		img.enabled = false;
 		text.enabled = false;
