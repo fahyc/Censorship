@@ -4,8 +4,12 @@ using UnityEngine.Networking;
 using System.Collections;
 using System.Collections.Generic;
 using ExtensionMethods;
+<<<<<<< HEAD
 using UnityEngine.EventSystems;
 
+=======
+using System.Collections.Generic;
+>>>>>>> dc24bfaa1e662120245bf730f32a1e33eda8beb5
 
 public class Global : NetworkBehaviour {
 
@@ -28,6 +32,31 @@ public class Global : NetworkBehaviour {
 		inspector = GameObject.FindGameObjectWithTag("Inspector").GetComponent<Inspect>();
 	}
 
+    // For the host client, disable other players' Canvases
+    [Client]
+    public override void OnSetLocalVisibility(bool vis)
+    {
+        gameObject.SetActive(vis);
+    }
+
+    // make self invisible to new clients
+    [Server]
+    public override bool OnCheckObserver(NetworkConnection conn)
+    {
+        return false;
+    }
+
+    // We only want the owner client to observe their Canvas
+    [Server]
+    public override bool OnRebuildObservers(HashSet<NetworkConnection> observers, bool init) {
+        if (init)
+        {
+            observers.Add(connectionToClient);
+            return true;
+        }
+        return false;
+    }
+
     [Command]
     void CmdSpawnWall(int prefabIndex, Vector3 position, int index)
     {
@@ -37,13 +66,11 @@ public class Global : NetworkBehaviour {
         // actually instantiate/initialize the object
         GameObject temp = Instantiate(prefabToSpawn);
         temp.GetComponent<Spawnable>().index = index;
+        temp.GetComponent<Spawnable>().owner = connectionToClient;
         temp.transform.position = position;
 
         // and give the client authority over it
         NetworkServer.SpawnWithClientAuthority(temp, connectionToClient);
-
-        // force visibility re-check
-        temp.GetComponent<NetworkIdentity>().RebuildObservers(true);
     }
 
     [Client]
@@ -116,9 +143,10 @@ public class Global : NetworkBehaviour {
 					for(int i = 0; i < hits.Length; i++)
 					{
 						Inspectable temp = hits[i].GetComponent<Inspectable>();
-						if (temp)
+                        // Make sure we have authority on the boject we're looking at
+						if (temp && temp.hasAuthority)
 						{
-							print("enabling Inspect");
+							// print("enabling Inspect");
 							inspector.Enable(temp.gameObject);
 							hit = true;
 						}
@@ -138,6 +166,7 @@ public class Global : NetworkBehaviour {
         }
     }
 
+<<<<<<< HEAD
 	bool overlappingFocusable()
 	{
 		for(int i = 0; i < focusTakers.Count; i++)
@@ -163,6 +192,9 @@ public class Global : NetworkBehaviour {
 		focusTakers.Remove(item);
 	}
 
+=======
+    [Client]
+>>>>>>> dc24bfaa1e662120245bf730f32a1e33eda8beb5
 	public static void setTool(Spawnable obj, int index)
 	{
 		toolIndex = index;

@@ -4,11 +4,6 @@ using System.Collections;
 
 public class Inspectable : NetworkBehaviour {
 
-    public override void OnStartAuthority()
-    {
-        Debug.Log(GetComponent<NetworkIdentity>().clientAuthorityOwner);
-    }
-
     [Command]
     void CmdDestroySelf()
     {
@@ -18,7 +13,7 @@ public class Inspectable : NetworkBehaviour {
     [Client]
     public void DestroySelf()
     {
-        Debug.Log(GetComponent<NetworkIdentity>().clientAuthorityOwner);
-        CmdDestroySelf();
+        if (hasAuthority)
+            CmdDestroySelf();
     }
 }
