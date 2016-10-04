@@ -4,12 +4,8 @@ using UnityEngine.Networking;
 using System.Collections;
 using System.Collections.Generic;
 using ExtensionMethods;
-<<<<<<< HEAD
 using UnityEngine.EventSystems;
-
-=======
 using System.Collections.Generic;
->>>>>>> dc24bfaa1e662120245bf730f32a1e33eda8beb5
 
 public class Global : NetworkBehaviour {
 
@@ -105,20 +101,20 @@ public class Global : NetworkBehaviour {
         if(Input.GetMouseButtonDown(0))
         {
 			if (currentTool)
-			{
+			{/*
 <<<<<<< HEAD
 				print("Spawning with index: " + toolIndex);
 				Spawnable temp = Instantiate<Spawnable>(currentTool);
 				temp.index = toolIndex;
 				temp.transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition.append(Camera.main.transform.position.z * -1));
-=======
+=======*/
                 //print(Camera.main.ScreenToWorldPoint(Input.mousePosition.append(Camera.main.transform.position.z * -1)));
                 //print(Input.mousePosition);
 
                 Vector3 position = Camera.main.ScreenToWorldPoint(Input.mousePosition.append(Camera.main.transform.position.z * -1));
                 
                 SpawnWall(currentTool.gameObject, position, toolIndex);
->>>>>>> 6ed8a1d38f5753f2a22eddfb294a2bf5a841f7fb
+//>>>>>>> 6ed8a1d38f5753f2a22eddfb294a2bf5a841f7fb
 			}
 			else {
 
@@ -165,8 +161,6 @@ public class Global : NetworkBehaviour {
 
         }
     }
-
-<<<<<<< HEAD
 	bool overlappingFocusable()
 	{
 		for(int i = 0; i < focusTakers.Count; i++)
@@ -191,10 +185,8 @@ public class Global : NetworkBehaviour {
 	{
 		focusTakers.Remove(item);
 	}
-
-=======
+	
     [Client]
->>>>>>> dc24bfaa1e662120245bf730f32a1e33eda8beb5
 	public static void setTool(Spawnable obj, int index)
 	{
 		toolIndex = index;
