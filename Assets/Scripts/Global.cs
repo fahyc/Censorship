@@ -20,15 +20,8 @@ public class Global : NetworkBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		// inspector = GameObject.FindGameObjectWithTag("Inspector").GetComponent<Inspect>();
+		inspector = GameObject.FindGameObjectWithTag("Inspector").GetComponent<Inspect>();
 	}
-
-    public override void OnStartServer()
-    {
-        Inspect insp = Instantiate(inspectCanvas);
-        inspector = insp;
-        NetworkServer.SpawnWithClientAuthority(insp.gameObject, connectionToClient);
-    }
 
     [Command]
     void CmdSpawnWall(int prefabIndex, Vector3 position, int index)

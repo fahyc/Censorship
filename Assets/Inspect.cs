@@ -44,18 +44,11 @@ public class Inspect : NetworkBehaviour {
 		col.enabled = false;
 	}
 
-    [Command]
-    void CmdDestroyTarget(NetworkInstanceId id)
-    {
-        GameObject target = NetworkServer.FindLocalObject(id);
-        NetworkServer.Destroy(target);
-    }
-
     [Client]
 	public void FireTarget()
 	{
 		print("Destroying: " + inspecting);
-		CmdDestroyTarget(inspecting.GetComponent<NetworkIdentity>().netId);
+        inspecting.GetComponent<Inspectable>().DestroySelf();
 		Disable();
 	}
 }
