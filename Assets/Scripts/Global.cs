@@ -7,7 +7,7 @@ using ExtensionMethods;
 using UnityEngine.EventSystems;
 
 
-public class Global : MonoBehaviour {
+public class Global : NetworkBehaviour {
 
     public Text infoTextBox;
     public static string text;
@@ -21,14 +21,47 @@ public class Global : MonoBehaviour {
 	//static List<UIItem> 
 	Inspect inspector;
 
+    public Inspect inspectCanvas;
 
 	// Use this for initialization
-	void Start () {
+	public override void OnStartLocalPlayer () {
 		inspector = GameObject.FindGameObjectWithTag("Inspector").GetComponent<Inspect>();
 	}
-	
-	// Update is called once per frame
+
+    [Command]
+    void CmdSpawnWall(int prefabIndex, Vector3 position, int index)
+    {
+        // now convert back from index to prefab
+        GameObject prefabToSpawn = NetworkManager.singleton.spawnPrefabs[prefabIndex];
+
+        // actually instantiate/initialize the object
+        GameObject temp = Instantiate(prefabToSpawn);
+        temp.GetComponent<Spawnable>().index = index;
+        temp.transform.position = position;
+
+        // and give the client authority over it
+        NetworkServer.SpawnWithClientAuthority(temp, connectionToClient);
+
+        // force visibility re-check
+        temp.GetComponent<NetworkIdentity>().RebuildObservers(true);
+    }
+
+    [Client]
+    public void SpawnWall(GameObject prefabObject, Vector3 pos, int index)
+    {
+        // need to find index of prefab to spawn
+        int prefabIndex = NetworkManager.singleton.spawnPrefabs.IndexOf(prefabObject);
+        CmdSpawnWall(prefabIndex, pos, index);
+    }
+
+    // Update is called once per frame
+    [ClientCallback]
 	void Update () {
+
+        // only update for the local player
+        if (!isLocalPlayer)
+            return;
+
         infoTextBox.text = text;
         textImage.enabled = textbg;
 
@@ -46,10 +79,19 @@ public class Global : MonoBehaviour {
         {
 			if (currentTool)
 			{
+<<<<<<< HEAD
 				print("Spawning with index: " + toolIndex);
 				Spawnable temp = Instantiate<Spawnable>(currentTool);
 				temp.index = toolIndex;
 				temp.transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition.append(Camera.main.transform.position.z * -1));
+=======
+                //print(Camera.main.ScreenToWorldPoint(Input.mousePosition.append(Camera.main.transform.position.z * -1)));
+                //print(Input.mousePosition);
+
+                Vector3 position = Camera.main.ScreenToWorldPoint(Input.mousePosition.append(Camera.main.transform.position.z * -1));
+                
+                SpawnWall(currentTool.gameObject, position, toolIndex);
+>>>>>>> 6ed8a1d38f5753f2a22eddfb294a2bf5a841f7fb
 			}
 			else {
 
