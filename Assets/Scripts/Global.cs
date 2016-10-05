@@ -23,9 +23,14 @@ public class Global : NetworkBehaviour {
 
     public Inspect inspectCanvas;
 
+
+	static DummyNode dummy;
+
 	// Use this for initialization
 	public override void OnStartLocalPlayer () {
 		inspector = GameObject.FindGameObjectWithTag("Inspector").GetComponent<Inspect>();
+		dummy = GameObject.FindGameObjectWithTag("Dummy").GetComponent<DummyNode>();
+		DisableDummy();
 	}
 
     // For the host client, disable other players' Canvases
@@ -185,8 +190,19 @@ public class Global : NetworkBehaviour {
 	{
 		focusTakers.Remove(item);
 	}
-	
-    [Client]
+
+	public static void EnableDummy()
+	{
+		dummy.gameObject.SetActive(true);
+	}
+
+
+	public static void DisableDummy()
+	{
+		dummy.gameObject.SetActive(false);
+	}
+
+	[Client]
 	public static void setTool(Spawnable obj, int index)
 	{
 		toolIndex = index;
