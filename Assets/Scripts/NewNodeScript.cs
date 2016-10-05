@@ -47,6 +47,7 @@ public class NewNodeScript : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
+        /*
         for(int i = 0; i < 10; i++)
         {
             //generate variation based on primary idea
@@ -86,6 +87,7 @@ public class NewNodeScript : MonoBehaviour {
                 tetradic();
                 break;
         }
+        */
 	}
 	
 	// Update is called once per frame
