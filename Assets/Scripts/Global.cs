@@ -5,7 +5,6 @@ using System.Collections;
 using System.Collections.Generic;
 using ExtensionMethods;
 using UnityEngine.EventSystems;
-using System.Collections.Generic;
 
 public class Global : NetworkBehaviour {
 
@@ -13,6 +12,8 @@ public class Global : NetworkBehaviour {
     public static string text;
     public Image textImage;
     public static bool textbg = true;
+
+    public Spawnable lurkerPrefab;
 
 	static Spawnable currentTool;
 	static int toolIndex;
@@ -26,40 +27,21 @@ public class Global : NetworkBehaviour {
 
 	static DummyNode dummy;
 
-	// Use this for initialization
-	public override void OnStartLocalPlayer () {
-		inspector = GameObject.FindGameObjectWithTag("Inspector").GetComponent<Inspect>();
-		dummy = GameObject.FindGameObjectWithTag("Dummy").GetComponent<DummyNode>();
-		DisableDummy();
+    // Use this for initialization
+    public override void OnStartLocalPlayer() {
+        inspector = GameObject.FindGameObjectWithTag("Inspector").GetComponent<Inspect>();
+        dummy = GameObject.FindGameObjectWithTag("Dummy").GetComponent<DummyNode>();
+        DisableDummy();
+    }
+
+    public override void OnStartClient()
+    {
+        // initial visibility object
+        SpawnObj(lurkerPrefab.gameObject, new Vector2(0, 0), 0);
 	}
 
-    // For the host client, disable other players' Canvases
-    [Client]
-    public override void OnSetLocalVisibility(bool vis)
-    {
-        gameObject.SetActive(vis);
-    }
-
-    // make self invisible to new clients
-    [Server]
-    public override bool OnCheckObserver(NetworkConnection conn)
-    {
-        return false;
-    }
-
-    // We only want the owner client to observe their Canvas
-    [Server]
-    public override bool OnRebuildObservers(HashSet<NetworkConnection> observers, bool init) {
-        if (init)
-        {
-            observers.Add(connectionToClient);
-            return true;
-        }
-        return false;
-    }
-
     [Command]
-    void CmdSpawnWall(int prefabIndex, Vector3 position, int index)
+    void CmdSpawnObj(int prefabIndex, Vector2 position, int index)
     {
         // now convert back from index to prefab
         GameObject prefabToSpawn = NetworkManager.singleton.spawnPrefabs[prefabIndex];
@@ -75,11 +57,11 @@ public class Global : NetworkBehaviour {
     }
 
     [Client]
-    public void SpawnWall(GameObject prefabObject, Vector3 pos, int index)
+    public void SpawnObj(GameObject prefabObject, Vector3 pos, int index)
     {
         // need to find index of prefab to spawn
         int prefabIndex = NetworkManager.singleton.spawnPrefabs.IndexOf(prefabObject);
-        CmdSpawnWall(prefabIndex, pos, index);
+        CmdSpawnObj(prefabIndex, pos, index);
     }
 
     // Update is called once per frame
@@ -117,7 +99,7 @@ public class Global : NetworkBehaviour {
 
                 Vector3 position = Camera.main.ScreenToWorldPoint(Input.mousePosition.append(Camera.main.transform.position.z * -1));
                 
-                SpawnWall(currentTool.gameObject, position, toolIndex);
+                SpawnObj(currentTool.gameObject, position, toolIndex);
 			}
 			else {
 

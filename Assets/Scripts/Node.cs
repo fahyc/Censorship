@@ -62,6 +62,8 @@ public class Node : NetworkBehaviour {
 			if(link == null)
 			{
 				link = GameObject.Instantiate<LineRenderer>(line);
+                // make the link visible to everyone that can see this node
+                link.GetComponent<VisibilityCheck>().lurkersWatching.AddRange(GetComponent<VisibilityCheck>().lurkersWatching);
 				NetworkServer.Spawn(link.gameObject);
 				link.GetComponent<NetworkLineRenderer> ().setPoints (transform.position, links [i].transform.position);
 			}
