@@ -30,11 +30,15 @@ public class Global : NetworkBehaviour {
     public int currentMoney = 0;
     public int income = 10;
 
+    [SyncVar]
+    public int day;
+
 
     // Use this for initialization
     public override void OnStartLocalPlayer () {
 		inspector = GameObject.FindGameObjectWithTag("Inspector").GetComponent<Inspect>();
 		dummy = GameObject.FindGameObjectWithTag("Dummy").GetComponent<DummyNode>();
+
         currentMoney = startingMoney;
 		DisableDummy();
 	}
@@ -171,6 +175,8 @@ public class Global : NetworkBehaviour {
             //Global.text = "";
 
         }
+
+
         if (Input.GetKeyDown(KeyCode.K)) {
             currentMoney += 500;
             Debug.Log("Holla holla get dolla");
@@ -219,8 +225,8 @@ public class Global : NetworkBehaviour {
 		currentTool = obj;
 	}
     // Increment a player's income when the day increases.
-    [ClientRpc]
-    public void dailyIncome() {
+    [Client]
+    public void addIncome() {
         currentMoney += income;
     }
 }
