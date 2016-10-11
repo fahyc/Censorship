@@ -69,21 +69,18 @@ public class NewNodeScript : MonoBehaviour {
         switch(connectionRule)
         {
             case 0:
-                complemetary();
-                break;
-            case 1:
                 monochromatic();
                 break;
-            case 2:
+            case 1:
                 analogous();
                 break;
-            case 3:
+            case 2:
                 splitComplements();
                 break;
-            case 4:
+            case 3:
                 triadic();
                 break;
-            case 5:
+            case 4:
                 tetradic();
                 break;
         }
@@ -94,35 +91,4 @@ public class NewNodeScript : MonoBehaviour {
 	void Update () {
         
 	}
-
-    void complemetary()
-    {
-        //since nodes are spawned in circular formation connect with nodes based on location, use circular degrees/angles and distance to determine connections
-        //complementary = 1 connection, 180 degree, max distance
-    }
-
-    void monochromatic()
-    {
-        //monochromatic = 2 connections, 180 degree, 1/3 and 2/3 distance
-    }
-
-    void analogous()
-    {
-        //analogous = 2 connections, first node clockwise and counterclockwise
-    }
-
-    void splitComplements()
-    {
-        //split complements = 2 connections, first node 150 degrees clockwise and counterclockwise
-    }
-
-    void triadic()
-    {
-        //triadic = 2 connections, first node 120 degrees clockwise and counterclockwise
-    }
-
-    void tetradic()
-    {
-        //tetradic = "square connection", 90 degrees clockwise and cunterclockwise between all 4 nodes
-    }
 }

@@ -34,7 +34,7 @@ public class Node : NetworkBehaviour {
 	public Idea ideaObj;
     //The base amount of influence that any one opinion will have.
     public float baseInfluence = 0.05f;
-
+	
 	SpriteRenderer sprite;
 
 
@@ -43,6 +43,8 @@ public class Node : NetworkBehaviour {
 	{
 		sprite = GetComponent<SpriteRenderer>();
 	}
+	
+    public int index;
 	
     // Use this for initialization
     public override void OnStartServer () {
