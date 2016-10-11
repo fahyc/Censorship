@@ -26,10 +26,16 @@ public class Global : NetworkBehaviour {
 
 	static DummyNode dummy;
 
-	// Use this for initialization
-	public override void OnStartLocalPlayer () {
+    public int startingMoney = 500;
+    public int currentMoney = 0;
+    public int income = 10;
+
+
+    // Use this for initialization
+    public override void OnStartLocalPlayer () {
 		inspector = GameObject.FindGameObjectWithTag("Inspector").GetComponent<Inspect>();
 		dummy = GameObject.FindGameObjectWithTag("Dummy").GetComponent<DummyNode>();
+        currentMoney = startingMoney;
 		DisableDummy();
 	}
 
@@ -165,6 +171,10 @@ public class Global : NetworkBehaviour {
             //Global.text = "";
 
         }
+        if (Input.GetKeyDown(KeyCode.K)) {
+            currentMoney += 500;
+            Debug.Log("Holla holla get dolla");
+        }
     }
 	bool overlappingFocusable()
 	{
@@ -208,4 +218,9 @@ public class Global : NetworkBehaviour {
 		toolIndex = index;
 		currentTool = obj;
 	}
+    // Increment a player's income when the day increases.
+    [ClientRpc]
+    public void dailyIncome() {
+        currentMoney += income;
+    }
 }
