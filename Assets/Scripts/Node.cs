@@ -35,6 +35,8 @@ public class Node : NetworkBehaviour {
     //The base amount of influence that any one opinion will have.
     public float baseInfluence = 0.05f;
 
+    public int index;
+
     // Use this for initialization
     public override void OnStartServer () {
 		//Get a reference to the global game object that keeps track of the ideological climate.
