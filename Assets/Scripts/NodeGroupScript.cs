@@ -19,6 +19,7 @@ public class NodeGroupScript : MonoBehaviour {
         //spawn nodes in circular formation
         //calculate radius based on number of nodes
         float radius = (numNodes * (referenceNode.GetComponent<SpriteRenderer>().sprite.rect.width / 600)) / 2;
+        int angle = 360 / numNodes;
 
         for(int i = 0; i < numNodes; i++)
         {
@@ -27,11 +28,10 @@ public class NodeGroupScript : MonoBehaviour {
             Quaternion rot = Quaternion.FromToRotation(Vector3.forward, transform.position - pos);
             Instantiate(referenceNode, pos, Quaternion.identity);
             */
-            int a = i * 30;
+            int a = i * angle;
             int dist = a / 360;
-            float newRadius = radius / dist;
 
-            Vector3 pos = RandomCircle(transform.position, 0.5f, a);
+            Vector3 pos = RandomCircle(transform.position, radius, a);
             Instantiate(referenceNode, pos, Quaternion.identity);
         }
 	}
