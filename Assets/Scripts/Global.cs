@@ -5,7 +5,6 @@ using System.Collections;
 using System.Collections.Generic;
 using ExtensionMethods;
 using UnityEngine.EventSystems;
-using System.Collections.Generic;
 
 public class Global : NetworkBehaviour {
 
@@ -61,7 +60,8 @@ public class Global : NetworkBehaviour {
     [Command]
     void CmdSpawnWall(int prefabIndex, Vector3 position, int index)
     {
-        // now convert back from index to prefab
+		// now convert back from index to prefab
+		//print(prefabIndex);
         GameObject prefabToSpawn = NetworkManager.singleton.spawnPrefabs[prefabIndex];
 
         // actually instantiate/initialize the object
@@ -79,6 +79,10 @@ public class Global : NetworkBehaviour {
     {
         // need to find index of prefab to spawn
         int prefabIndex = NetworkManager.singleton.spawnPrefabs.IndexOf(prefabObject);
+		if(prefabIndex < 0)
+		{
+			print("Error prefabObject is not valid: " + prefabObject);
+		}
         CmdSpawnWall(prefabIndex, pos, index);
     }
 
@@ -101,50 +105,40 @@ public class Global : NetworkBehaviour {
 
         if(Input.GetMouseButtonDown(1)) {
 			currentTool = null;
-        }
+			DisableDummy();
+		}
 
         if(Input.GetMouseButtonDown(0))
-        {
+        {//if left mouse button
 			if (currentTool)
-			{/*
-<<<<<<< HEAD
-				print("Spawning with index: " + toolIndex);
-				Spawnable temp = Instantiate<Spawnable>(currentTool);
-				temp.index = toolIndex;
-				temp.transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition.append(Camera.main.transform.position.z * -1));
-=======*/
-                //print(Camera.main.ScreenToWorldPoint(Input.mousePosition.append(Camera.main.transform.position.z * -1)));
-                //print(Input.mousePosition);
-
-                Vector3 position = Camera.main.ScreenToWorldPoint(Input.mousePosition.append(Camera.main.transform.position.z * -1));
-                
+			{//spawn whatever is selected
+				Vector3 position = Camera.main.ScreenToWorldPoint(Input.mousePosition.append(Camera.main.transform.position.z * -1));
                 SpawnWall(currentTool.gameObject, position, toolIndex);
-//>>>>>>> 6ed8a1d38f5753f2a22eddfb294a2bf5a841f7fb
 			}
 			else {
-
+				//or if there is nothing to spawn, clear any focus and ui elements, or inspect whatever is below the mouse.
 				Vector3 mousePos = Input.mousePosition;
 				mousePos.Set(mousePos.x, mousePos.y, -Camera.main.transform.position.z);
 				Collider2D[] hits = Physics2D.OverlapPointAll(Camera.main.ScreenToWorldPoint(mousePos));
 
 				if (hits.Length == 0)
-				{
+				{//Clear the UI if there is nothing below the mouse.
 					Global.text = "";
 					textbg = false;
-					//inspector.Disable();
 					for(int i = 0; i < toHide.Count; i++)
 					{
 						toHide[i].Disable();
 					}
 					toHide.Clear();
+					DisableDummy();
 				}
 				else
-				{
+				{//otherwise try inspecting somehting. 
 					bool hit = false;
 					for(int i = 0; i < hits.Length; i++)
 					{
 						Inspectable temp = hits[i].GetComponent<Inspectable>();
-                        // Make sure we have authority on the boject we're looking at
+                        // Make sure we have authority on the object we're looking at
 						if (temp && temp.hasAuthority)
 						{
 							// print("enabling Inspect");
@@ -191,13 +185,13 @@ public class Global : NetworkBehaviour {
 		focusTakers.Remove(item);
 	}
 
-	public static void EnableDummy()
+	public void EnableDummy()
 	{
 		dummy.gameObject.SetActive(true);
 	}
 
 
-	public static void DisableDummy()
+	public void DisableDummy()
 	{
 		dummy.gameObject.SetActive(false);
 	}
