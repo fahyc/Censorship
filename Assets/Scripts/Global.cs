@@ -107,19 +107,17 @@ public class Global : NetworkBehaviour {
         {
 			if (currentTool)
 			{/*
-<<<<<<< HEAD
 				print("Spawning with index: " + toolIndex);
 				Spawnable temp = Instantiate<Spawnable>(currentTool);
 				temp.index = toolIndex;
 				temp.transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition.append(Camera.main.transform.position.z * -1));
-=======*/
+            */
                 //print(Camera.main.ScreenToWorldPoint(Input.mousePosition.append(Camera.main.transform.position.z * -1)));
                 //print(Input.mousePosition);
 
                 Vector3 position = Camera.main.ScreenToWorldPoint(Input.mousePosition.append(Camera.main.transform.position.z * -1));
                 
                 SpawnWall(currentTool.gameObject, position, toolIndex);
-//>>>>>>> 6ed8a1d38f5753f2a22eddfb294a2bf5a841f7fb
 			}
 			else {
 
