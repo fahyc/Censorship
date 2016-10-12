@@ -28,10 +28,11 @@ public class Global : NetworkBehaviour {
 
     public int startingMoney = 500;
     public int currentMoney = 0;
-    public int income = 10;
+    private int income = 10;
 
-    [SyncVar]
-    public int day;
+    public int moneyDiff;
+
+    //
 
 
     // Use this for initialization
@@ -40,6 +41,7 @@ public class Global : NetworkBehaviour {
 		dummy = GameObject.FindGameObjectWithTag("Dummy").GetComponent<DummyNode>();
 
         currentMoney = startingMoney;
+        moneyDiff = income;
 		DisableDummy();
 	}
 
@@ -87,8 +89,18 @@ public class Global : NetworkBehaviour {
     [Client]
     public void SpawnWall(GameObject prefabObject, Vector3 pos, int index)
     {
+        Cost costOfUnit = prefabObject.GetComponent<Cost>();
+        //Do we have money to spawn this wall? If not, just quit. Also, we should probably display "No money to build" somewhere in the UI.
+        if (currentMoney < costOfUnit.initialCost)
+        {
+            return;
+        }
+        currentMoney -= costOfUnit.initialCost;
+        moneyDiff -= costOfUnit.upkeep;
         // need to find index of prefab to spawn
         int prefabIndex = NetworkManager.singleton.spawnPrefabs.IndexOf(prefabObject);
+
+
         CmdSpawnWall(prefabIndex, pos, index);
     }
 
@@ -227,6 +239,6 @@ public class Global : NetworkBehaviour {
     // Increment a player's income when the day increases.
     [Client]
     public void addIncome() {
-        currentMoney += income;
+        currentMoney += moneyDiff;
     }
 }

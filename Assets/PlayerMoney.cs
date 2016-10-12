@@ -14,7 +14,7 @@ public class PlayerMoney : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
-        moneyText.text = "Money: " + playerstats.currentMoney + "(+0)";
+        moneyText.text = "Money: " + playerstats.currentMoney + "(" + playerstats.moneyDiff + ")";
 	}
     //Because we're breaking down our players' income by days, we don't want to be updating our money all the time.
     void DayElapsed() {

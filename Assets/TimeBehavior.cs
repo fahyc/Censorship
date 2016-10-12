@@ -12,11 +12,12 @@ public class TimeBehavior : NetworkBehaviour {
 
     public float dayLength=1.0f;
     float hourLength;
-    public int timer;
+    float startTime;
     Global[] players;
     // Use this for initialization
     void Start () {
         hourLength = dayLength / 24.0f;
+        startTime = Time.time;
 	}
 	
 	// Update is called once per frame
@@ -26,7 +27,7 @@ public class TimeBehavior : NetworkBehaviour {
         if (!isServer)
             return;
         Debug.Log(temp.Length);
-        day = Mathf.FloorToInt(Time.time/dayLength);
+        day = Mathf.FloorToInt((Time.time-startTime)/dayLength);
         if(day != lastday) {
             /*players = new Global[temp.Length];
             for (int i = 0; i < temp.Length; i++)
