@@ -32,13 +32,10 @@ public class Global : NetworkBehaviour {
         inspector = GameObject.FindGameObjectWithTag("Inspector").GetComponent<Inspect>();
         dummy = GameObject.FindGameObjectWithTag("Dummy").GetComponent<DummyNode>();
         DisableDummy();
-    }
 
-    public override void OnStartClient()
-    {
-        // initial visibility object
-        SpawnObj(lurkerPrefab.gameObject, new Vector2(0, 0), 0);
-	}
+        // TODO: spawn based on a list of spawn locations
+        SpawnObj(lurkerPrefab, new Vector2(0, 0), 0);
+    }
 
     [Command]
     void CmdSpawnObj(int prefabIndex, Vector2 position, int index)
@@ -57,10 +54,10 @@ public class Global : NetworkBehaviour {
     }
 
     [Client]
-    public void SpawnObj(GameObject prefabObject, Vector3 pos, int index)
+    public void SpawnObj(Spawnable prefabObject, Vector3 pos, int index)
     {
         // need to find index of prefab to spawn
-        int prefabIndex = NetworkManager.singleton.spawnPrefabs.IndexOf(prefabObject);
+        int prefabIndex = NetworkManager.singleton.spawnPrefabs.IndexOf(prefabObject.gameObject);
         CmdSpawnObj(prefabIndex, pos, index);
     }
 
@@ -99,7 +96,7 @@ public class Global : NetworkBehaviour {
 
                 Vector3 position = Camera.main.ScreenToWorldPoint(Input.mousePosition.append(Camera.main.transform.position.z * -1));
                 
-                SpawnObj(currentTool.gameObject, position, toolIndex);
+                SpawnObj(currentTool, position, toolIndex);
 			}
 			else {
 

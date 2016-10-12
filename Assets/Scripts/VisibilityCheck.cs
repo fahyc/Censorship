@@ -5,15 +5,17 @@ using System.Collections.Generic;
 
 public class VisibilityCheck : NetworkBehaviour {
 
-    public List<Spawnable> lurkersWatching;
+    HashSet<VisibilityCheck> connectedEntities = new HashSet<VisibilityCheck>();
+    HashSet<Spawnable> lurkersWatching = new HashSet<Spawnable>();
 
     // For the host client, disable other players' Canvases
     [Client]
     public override void OnSetLocalVisibility(bool vis)
     {
-        foreach(Renderer r in GetComponents<Renderer>())
+        // gameObject.SetActive(vis);
+        foreach (Renderer r in GetComponents<Renderer>())
         {
-            r.enabled = false;
+            r.enabled = vis;
         }
     }
 
@@ -27,27 +29,34 @@ public class VisibilityCheck : NetworkBehaviour {
     // We only want the owner client to observe their Canvas
     [Server]
     public override bool OnRebuildObservers(HashSet<NetworkConnection> observers, bool init) {
-        bool changed = false;
-        if (init)
+        // unless we're initializing, only make viewable to lurkers
+        foreach (Spawnable l in lurkersWatching)
         {
-            Spawnable me = GetComponent<Spawnable>();
-            if (me != null)
-            {
-                observers.Add(me.owner);
-                changed = true;
-            }
-            // observers.Add(connectionToClient);
-        }
-        else {
-            foreach (Spawnable l in lurkersWatching)
-            {
-                changed = true;
-                observers.Add(l.owner);
-            }
+            observers.Add(l.owner);
         }
 
-        return changed;
+        foreach (VisibilityCheck v in connectedEntities)
+        {
+            v.lurkersWatching.UnionWith(lurkersWatching);
+            v.GetComponent<NetworkIdentity>().RebuildObservers(false);
+        }
+        return true;
     }
 
+    [Server]
+    public void AddLurker(GameObject lurker)
+    {
+        Spawnable s = lurker.GetComponent<Spawnable>();
+        if (s != null)
+            lurkersWatching.Add(s);
+    }
+
+    [Server]
+    public void AddConnection(GameObject conn)
+    {
+        VisibilityCheck v = conn.GetComponent<VisibilityCheck>();
+        if (v != null)
+            connectedEntities.Add(v);
+    }
 
 }
