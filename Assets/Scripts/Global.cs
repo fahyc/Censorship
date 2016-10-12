@@ -24,13 +24,13 @@ public class Global : NetworkBehaviour {
 
     public Inspect inspectCanvas;
 
-	static DummyNode dummy;
+	public DummyUnit[] dummies;
+    int dummyIndex = 0;
+    DummyUnit activeDummy;
 
     // Use this for initialization
     public override void OnStartLocalPlayer() {
         inspector = GameObject.FindGameObjectWithTag("Inspector").GetComponent<Inspect>();
-        dummy = GameObject.FindGameObjectWithTag("Dummy").GetComponent<DummyNode>();
-        DisableDummy();
 
         // TODO: spawn based on a list of spawn locations
         SpawnObj(lurkerPrefab, new Vector2(0, 0), 0);
@@ -84,8 +84,18 @@ public class Global : NetworkBehaviour {
 
         if(Input.GetMouseButtonDown(1)) {
 			currentTool = null;
-			DisableDummy();
+            DisableDummy();
 		}
+
+        // select 
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            DisableDummy();
+            dummyIndex++;
+            if (dummyIndex >= dummies.Length)
+                dummyIndex = 0;
+            EnableDummy();
+        }
 
         if(Input.GetMouseButtonDown(0))
         {//if left mouse button
@@ -166,13 +176,13 @@ public class Global : NetworkBehaviour {
 
 	public void EnableDummy()
 	{
-		dummy.gameObject.SetActive(true);
+        activeDummy = Instantiate(dummies[dummyIndex]);
 	}
 
 
 	public void DisableDummy()
 	{
-		dummy.gameObject.SetActive(false);
+        Destroy(activeDummy.gameObject);
 	}
 
 	[Client]

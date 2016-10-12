@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
-using ExtensionMethods;
 using System.Collections.Generic;
 
+[RequireComponent (typeof (DummyUnit))]
 public class DummyNode : MonoBehaviour {
+
 	Transform t;
 	public float range;
 	public static List<Node> nodes = new List<Node>();
@@ -14,20 +15,10 @@ public class DummyNode : MonoBehaviour {
 	void Start () {
 		t = transform;
 	}
-	
-	public void clearLines()
-	{
-		for (int i = 0; i < lines.Count; i++)
-		{
-			Destroy(lines[i].gameObject);
-		}
-		lines.Clear();
-		nodes.Clear();
-	}
-	// Update is called once per frame
-	void Update () {
+
+    void Update()
+    {
 		clearLines();
-		t.position = Camera.main.ScreenToWorldPoint(Input.mousePosition.append(Camera.main.transform.position.z * -1));
 		Collider2D[] col = Physics2D.OverlapCircleAll(t.position, range);
 		for(int i = 0; i < col.Length; i++)
 		{
@@ -41,8 +32,19 @@ public class DummyNode : MonoBehaviour {
 				lines.Add(line);
 			}
 		}
+    }
+	
+	public void clearLines()
+	{
+		for (int i = 0; i < lines.Count; i++)
+		{
+			Destroy(lines[i].gameObject);
+		}
+		lines.Clear();
+		nodes.Clear();
 	}
-	void OnDisable()
+
+	void OnDestroy()
 	{
 		clearLines();
 	}
