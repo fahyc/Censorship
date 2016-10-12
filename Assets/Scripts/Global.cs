@@ -28,12 +28,38 @@ public class Global : NetworkBehaviour {
     int dummyIndex = 0;
     DummyUnit activeDummy;
 
-    // Use this for initialization
-    public override void OnStartLocalPlayer() {
-        inspector = GameObject.FindGameObjectWithTag("Inspector").GetComponent<Inspect>();
+    public int startingMoney = 500;
+    public int currentMoney = 0;
+    private int income = 10;
 
+    public int moneyDiff;
+
+    //
+
+
+    // Use this for initialization
+    public override void OnStartLocalPlayer () {
+		inspector = GameObject.FindGameObjectWithTag("Inspector").GetComponent<Inspect>();
+
+        currentMoney = startingMoney;
+        moneyDiff = income;
+		DisableDummy();
         // TODO: spawn based on a list of spawn locations
         SpawnObj(lurkerPrefab, new Vector2(0, 0), 1);
+	}
+
+    // For the host client, disable other players' Canvases
+    [Client]
+    public override void OnSetLocalVisibility(bool vis)
+    {
+        gameObject.SetActive(vis);
+    }
+
+    // make self invisible to new clients
+    [Server]
+    public override bool OnCheckObserver(NetworkConnection conn)
+    {
+        return false;
     }
 
     [Command]
@@ -56,8 +82,17 @@ public class Global : NetworkBehaviour {
     [Client]
     void SpawnObj(Spawnable prefabObject, Vector3 pos, int index)
     {
+        Cost costOfUnit = prefabObject.GetComponent<Cost>();
+        //Do we have money to spawn this wall? If not, just quit. Also, we should probably display "No money to build" somewhere in the UI.
+        if (currentMoney < costOfUnit.initialCost)
+        {
+            return;
+        }
+        currentMoney -= costOfUnit.initialCost;
+        moneyDiff -= costOfUnit.upkeep;
         // need to find index of prefab to spawn
         int prefabIndex = NetworkManager.singleton.spawnPrefabs.IndexOf(prefabObject.gameObject);
+
 		if(prefabIndex < 0)
 		{
 			print("Error prefabObject is not valid: " + prefabObject);
@@ -155,6 +190,12 @@ public class Global : NetworkBehaviour {
             //Global.text = "";
 
         }
+
+
+        if (Input.GetKeyDown(KeyCode.K)) {
+            currentMoney += 500;
+            Debug.Log("Holla holla get dolla");
+        }
     }
 	bool overlappingFocusable()
 	{
@@ -199,4 +240,9 @@ public class Global : NetworkBehaviour {
 		toolIndex = index;
 		currentTool = obj;
 	}
+    // Increment a player's income when the day increases.
+    [Client]
+    public void addIncome() {
+        currentMoney += moneyDiff;
+    }
 }

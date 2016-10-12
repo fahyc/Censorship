@@ -7,7 +7,7 @@ using System.Collections.Generic;
 public class Node : NetworkBehaviour {
 	public Node[] linksSeed;//this should be set before the node's start function is called. 
 	public List<Node> links;
-	public LineRenderer[] linkObj;
+	public List<LineRenderer> linkObj;
     public float[] ideaStrengths;
     //How much agreeing with an idea influences the spawn rate. Note that this
     public float spawnMultiplier = 0.005f;
@@ -59,9 +59,7 @@ public class Node : NetworkBehaviour {
 			Debug.LogWarning("Error! ideaStrengths is null");
 		}
 
-        linkObj = new LineRenderer[links.Count];
-		//ideas = global.getIdeas()
-		//ideaStrengths = new int[ideas.Length];
+		linkObj = new List<LineRenderer>();
 		for(int i = 0; i < links.Count; i++)
 		{
             if (links[i] == null)
@@ -76,30 +74,45 @@ public class Node : NetworkBehaviour {
                 // make the link visible to everyone that can see this node
                 GetComponent<VisibilityCheck>().AddConnection(link.gameObject);
                 links[i].GetComponent<VisibilityCheck>().AddConnection(link.gameObject);
+				link.GetComponent<NetworkLineRenderer>().setPoints(transform.position, links[i].transform.position);
 				NetworkServer.Spawn(link.gameObject);
-				link.GetComponent<NetworkLineRenderer> ().setPoints (transform.position, links [i].transform.position);
 			}
-			linkObj[i] = link;
+			linkObj.Add(link);
 		}
 	}
-	
-    [Server]
+	[Client]
+	public void clientLinkTo(Node other)
+	{
+		
+		CmdlinkTo(other.GetComponent<NetworkIdentity>().netId);
+	}
+
+    [Command]
+	public void CmdlinkTo(NetworkInstanceId id)
+	{
+		Node other = NetworkServer.FindLocalObject(id).GetComponent<Node>();
+		linkTo(other);
+		
+	}
+
+	[Server]
 	public void linkTo(Node other)
 	{
-		//Node local = nodes[Random.Range(0, nodes.Length)];
 		other.links.Add(this);
 		LineRenderer link = GameObject.Instantiate<LineRenderer>(line);
         GetComponent<VisibilityCheck>().AddConnection(link.gameObject);
         other.GetComponent<VisibilityCheck>().AddConnection(link.gameObject);
+		link.GetComponent<NetworkLineRenderer>().setPoints(transform.position, other.transform.position);
 		NetworkServer.Spawn(link.gameObject);
-		link.GetComponent<NetworkLineRenderer> ().setPoints (transform.position, other.transform.position);
+		linkObj.Add(link);
+		other.linkObj.Add(link);
 		links.Add(other);
 	}
 
 
 	// Update is called once per frame
     [ServerCallback]
-	void Update () { //THIS SHOULD BE IMPROVED ON ONCE MORE COMPLEX NODE AI IS ADDED.
+	void Update () {
         float localmax = -1;
         float secondmax = -1;
         float thirdmax = -1;
@@ -164,7 +177,7 @@ public class Node : NetworkBehaviour {
         chosenIdeaIndex = importantIndex;
 		//spawn chance is affected by how strongly the node believes in its opinion.
 		//print("about to change color");
-		RpcChangeColor(importantIndex);
+		//RpcChangeColor(importantIndex);
         if (Random.value < spawnChance+ideaStrengths[chosenIdeaIndex]*spawnMultiplier)
 		{
 
@@ -289,7 +302,7 @@ public class Node : NetworkBehaviour {
 		{
 			if(links[i] == node)
 			{
-				if(linkObj.Length > i)
+				if(linkObj.Count > i)
 				{
 					return linkObj[i];
 				}
@@ -316,6 +329,19 @@ public class Node : NetworkBehaviour {
                 Global.text += "<size=16><b><color=#" + ColorToHex(ideasList[thirdImportantIndex].color) + ">" + ideasList[thirdImportantIndex].name + "</color></b></size>" + ": " + ideasList[thirdImportantIndex].description + "\n\n";
         }
     }
+
+	[Server]
+	void OnDestroy()
+	{
+		for(int i = 0; i < links.Count; i++)
+		{
+			if (i < linkObj.Count && linkObj[i])
+			{
+				Destroy(linkObj[i].gameObject);
+			}
+			links[i].links.Remove(this);
+		}
+	}
 
     string ColorToHex(Color32 color)
     {
