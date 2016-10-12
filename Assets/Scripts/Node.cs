@@ -34,7 +34,18 @@ public class Node : NetworkBehaviour {
 	public Idea ideaObj;
     //The base amount of influence that any one opinion will have.
     public float baseInfluence = 0.05f;
+	
+	SpriteRenderer sprite;
 
+
+	[Client]
+	void Start()
+	{
+		sprite = GetComponent<SpriteRenderer>();
+	}
+	
+    public int index;
+	
     // Use this for initialization
     public override void OnStartServer () {
 		//Get a reference to the global game object that keeps track of the ideological climate.
@@ -146,7 +157,9 @@ public class Node : NetworkBehaviour {
         }*/
         //Debug, use this when you just want it to spout off its most important idea only.
         chosenIdeaIndex = importantIndex;
-        //spawn chance is affected by how strongly the node believes in its opinion.
+		//spawn chance is affected by how strongly the node believes in its opinion.
+		//print("about to change color");
+		RpcChangeColor(importantIndex);
         if (Random.value < spawnChance+ideaStrengths[chosenIdeaIndex]*spawnMultiplier)
 		{
 
@@ -159,6 +172,25 @@ public class Node : NetworkBehaviour {
 				//print("orphaned node");
 			}
 		}
+	}
+	
+
+	public void SetStrengths(float[] strengths)
+	{
+		CmdSetStrengths(strengths);
+	}
+
+	[Command]
+	public void CmdSetStrengths(float[] strengths)
+	{
+		ideaStrengths = strengths;
+	}
+
+	[ClientRpc]
+	public void RpcChangeColor(int index)
+	{
+		///print(index);
+		sprite.color = IdeaList.staticList[index].color;
 	}
 
     [Server]

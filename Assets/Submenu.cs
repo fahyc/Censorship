@@ -22,7 +22,10 @@ public class Submenu : UIItem {
 			temp.Initiate(tooltips.Replace("[idea]", IdeaList.staticList[i].name), IdeaList.staticList[i].color,product, i);
 			temp.transform.parent = transform;
 			//onClick = AdditionalOnClicks[0].;
-			temp.GetComponent<Button>().onClick.AddListener(() => { AdditionalOnClicks[0].Invoke(); });
+			if (AdditionalOnClicks.Length > 0)
+			{
+				temp.GetComponent<Button>().onClick.AddListener(() => { AdditionalOnClicks[0].Invoke(); });
+			}
 		}
 	}
 
