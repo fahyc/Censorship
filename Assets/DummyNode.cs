@@ -15,14 +15,18 @@ public class DummyNode : MonoBehaviour {
 		t = transform;
 	}
 	
-	// Update is called once per frame
-	void Update () {
-		for(int i = 0; i < lines.Count; i++)
+	public void clearLines()
+	{
+		for (int i = 0; i < lines.Count; i++)
 		{
 			Destroy(lines[i].gameObject);
 		}
 		lines.Clear();
 		nodes.Clear();
+	}
+	// Update is called once per frame
+	void Update () {
+		clearLines();
 		t.position = Camera.main.ScreenToWorldPoint(Input.mousePosition.append(Camera.main.transform.position.z * -1));
 		Collider2D[] col = Physics2D.OverlapCircleAll(t.position, range);
 		for(int i = 0; i < col.Length; i++)
@@ -37,5 +41,9 @@ public class DummyNode : MonoBehaviour {
 				lines.Add(line);
 			}
 		}
+	}
+	void OnDisable()
+	{
+		clearLines();
 	}
 }

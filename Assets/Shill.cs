@@ -11,8 +11,11 @@ public class Shill : Spawnable
 		{
 			node.linkTo(DummyNode.nodes[i]);
 		}
+		float[] strengths = new float[IdeaList.staticList.Length];
 
-		node.ideaStrengths[index] = 1;
+		print(node.ideaStrengths);
+		strengths[index] = 1;
+		node.SetStrengths(strengths);
 	}
 	
 	// Update is called once per frame
