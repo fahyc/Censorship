@@ -74,9 +74,9 @@ public class Node : NetworkBehaviour {
 			{
 				link = GameObject.Instantiate<LineRenderer>(line);
                 // make the link visible to everyone that can see this node
-				NetworkServer.Spawn(link.gameObject);
                 GetComponent<VisibilityCheck>().AddConnection(link.gameObject);
                 links[i].GetComponent<VisibilityCheck>().AddConnection(link.gameObject);
+				NetworkServer.Spawn(link.gameObject);
 				link.GetComponent<NetworkLineRenderer> ().setPoints (transform.position, links [i].transform.position);
 			}
 			linkObj[i] = link;
@@ -89,9 +89,9 @@ public class Node : NetworkBehaviour {
 		//Node local = nodes[Random.Range(0, nodes.Length)];
 		other.links.Add(this);
 		LineRenderer link = GameObject.Instantiate<LineRenderer>(line);
-		NetworkServer.Spawn(link.gameObject);
         GetComponent<VisibilityCheck>().AddConnection(link.gameObject);
         other.GetComponent<VisibilityCheck>().AddConnection(link.gameObject);
+		NetworkServer.Spawn(link.gameObject);
 		link.GetComponent<NetworkLineRenderer> ().setPoints (transform.position, other.transform.position);
 		links.Add(other);
 	}

@@ -1,12 +1,15 @@
 fileFormatVersion: 2
 guid: 5ca23446dd2b5d940ab79890e07b0e4a
-timeCreated: 1474414293
+timeCreated: 1476234042
 licenseType: Pro
 MonoImporter:
   serializedVersion: 2
   defaultReferences:
   - infoTextBox: {instanceID: 0}
-  - wall: {fileID: 114000012939585632, guid: 5da8ce28e154b234786232f8f380726e, type: 2}
+  - textImage: {instanceID: 0}
+  - lurkerPrefab: {fileID: 114000013985587406, guid: 702b60be319b58a4ab008547f4984f57,
+      type: 2}
+  - inspectCanvas: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

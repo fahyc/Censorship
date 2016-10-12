@@ -5,6 +5,8 @@ using System.Collections.Generic;
 
 public class VisibilityCheck : NetworkBehaviour {
 
+    public bool startVisibleToSelf = false;
+
     HashSet<VisibilityCheck> connectedEntities = new HashSet<VisibilityCheck>();
     HashSet<Spawnable> lurkersWatching = new HashSet<Spawnable>();
 
@@ -29,6 +31,12 @@ public class VisibilityCheck : NetworkBehaviour {
     // We only want the owner client to observe their Canvas
     [Server]
     public override bool OnRebuildObservers(HashSet<NetworkConnection> observers, bool init) {
+
+        if (startVisibleToSelf)
+        {
+            observers.Add(connectionToClient);
+        }
+
         // unless we're initializing, only make viewable to lurkers
         foreach (Spawnable l in lurkersWatching)
         {
@@ -49,6 +57,14 @@ public class VisibilityCheck : NetworkBehaviour {
         Spawnable s = lurker.GetComponent<Spawnable>();
         if (s != null)
             lurkersWatching.Add(s);
+    }
+
+    [Server]
+    public void RemoveLurker(GameObject lurker)
+    {
+        Spawnable s = lurker.GetComponent<Spawnable>();
+        if (s != null)
+            lurkersWatching.Remove(s);
     }
 
     [Server]

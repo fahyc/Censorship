@@ -24,7 +24,6 @@ public class Global : NetworkBehaviour {
 
     public Inspect inspectCanvas;
 
-
 	static DummyNode dummy;
 
     // Use this for initialization
@@ -55,7 +54,7 @@ public class Global : NetworkBehaviour {
     }
 
     [Client]
-    public void SpawnObj(Spawnable prefabObject, Vector3 pos, int index)
+    void SpawnObj(Spawnable prefabObject, Vector3 pos, int index)
     {
         // need to find index of prefab to spawn
         int prefabIndex = NetworkManager.singleton.spawnPrefabs.IndexOf(prefabObject.gameObject);

@@ -51,7 +51,7 @@ public class Lurker : NetworkBehaviour {
 
         foreach (Collider2D other in visibleNodes)
         {
-            ViewObject(other);
+            ViewObject(other, true);
         }
     }
 
@@ -59,16 +59,25 @@ public class Lurker : NetworkBehaviour {
     [ServerCallback]
     void OnTriggerEnter2D(Collider2D other)
     {
-        ViewObject(other);
+        ViewObject(other, true);
+    }
+
+    [ServerCallback]
+    void OnTriggerExit2D(Collider2D other)
+    {
+        ViewObject(other, false);
     }
 
     // add this lurker to list of objects that can see object
-    void ViewObject(Collider2D other)
+    void ViewObject(Collider2D other, bool add)
     {
         VisibilityCheck vis = other.GetComponent<VisibilityCheck>();
         if (vis != null)
         {
-            vis.AddLurker(gameObject);
+            if (add)
+                vis.AddLurker(gameObject);
+            else
+                vis.RemoveLurker(gameObject);
             vis.GetComponent<NetworkIdentity>().RebuildObservers(false);
         }
     }
