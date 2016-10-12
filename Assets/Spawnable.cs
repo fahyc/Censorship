@@ -7,4 +7,7 @@ public class Spawnable : NetworkBehaviour {
 	public int index;// = -1;
 
     public NetworkConnection owner;
+
+    public int initialCost;
+    public int upkeep;
 }

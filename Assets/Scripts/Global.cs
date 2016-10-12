@@ -89,7 +89,7 @@ public class Global : NetworkBehaviour {
     [Client]
     public void SpawnWall(GameObject prefabObject, Vector3 pos, int index)
     {
-        Cost costOfUnit = prefabObject.GetComponent<Cost>();
+        Spawnable costOfUnit = prefabObject.GetComponent<Spawnable>();
         //Do we have money to spawn this wall? If not, just quit. Also, we should probably display "No money to build" somewhere in the UI.
         if (currentMoney < costOfUnit.initialCost)
         {
