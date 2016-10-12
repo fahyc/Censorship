@@ -25,10 +25,22 @@ public class Global : NetworkBehaviour {
 
 	static DummyNode dummy;
 
-	// Use this for initialization
-	public override void OnStartLocalPlayer () {
+    public int startingMoney = 500;
+    public int currentMoney = 0;
+    private int income = 10;
+
+    public int moneyDiff;
+
+    //
+
+
+    // Use this for initialization
+    public override void OnStartLocalPlayer () {
 		inspector = GameObject.FindGameObjectWithTag("Inspector").GetComponent<Inspect>();
 		dummy = GameObject.FindGameObjectWithTag("Dummy").GetComponent<DummyNode>();
+
+        currentMoney = startingMoney;
+        moneyDiff = income;
 		DisableDummy();
 	}
 
@@ -77,8 +89,17 @@ public class Global : NetworkBehaviour {
     [Client]
     public void SpawnWall(GameObject prefabObject, Vector3 pos, int index)
     {
+        Cost costOfUnit = prefabObject.GetComponent<Cost>();
+        //Do we have money to spawn this wall? If not, just quit. Also, we should probably display "No money to build" somewhere in the UI.
+        if (currentMoney < costOfUnit.initialCost)
+        {
+            return;
+        }
+        currentMoney -= costOfUnit.initialCost;
+        moneyDiff -= costOfUnit.upkeep;
         // need to find index of prefab to spawn
         int prefabIndex = NetworkManager.singleton.spawnPrefabs.IndexOf(prefabObject);
+
 		if(prefabIndex < 0)
 		{
 			print("Error prefabObject is not valid: " + prefabObject);
@@ -159,6 +180,12 @@ public class Global : NetworkBehaviour {
             //Global.text = "";
 
         }
+
+
+        if (Input.GetKeyDown(KeyCode.K)) {
+            currentMoney += 500;
+            Debug.Log("Holla holla get dolla");
+        }
     }
 	bool overlappingFocusable()
 	{
@@ -202,4 +229,9 @@ public class Global : NetworkBehaviour {
 		toolIndex = index;
 		currentTool = obj;
 	}
+    // Increment a player's income when the day increases.
+    [Client]
+    public void addIncome() {
+        currentMoney += moneyDiff;
+    }
 }
