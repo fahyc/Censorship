@@ -52,7 +52,10 @@ public class Inspect : MonoBehaviour {
 
 	public void FireTarget()
 	{
-		// print("Destroying: " + inspecting);
+        // print("Destroying: " + inspecting);
+        //Refund our player's income. Should we return some of the principle investment or not?
+        GameObject.FindGameObjectWithTag("Player").GetComponent<Global>().moneyDiff += inspecting.GetComponent<Cost>().upkeep;
+        print(GameObject.FindGameObjectWithTag("Player").GetComponent<Global>().moneyDiff);
         inspecting.GetComponent<Inspectable>().DestroySelf();
 		Disable();
 	}
