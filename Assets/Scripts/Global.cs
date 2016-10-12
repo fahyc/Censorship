@@ -99,15 +99,11 @@ public class Global : NetworkBehaviour {
         moneyDiff -= costOfUnit.upkeep;
         // need to find index of prefab to spawn
         int prefabIndex = NetworkManager.singleton.spawnPrefabs.IndexOf(prefabObject);
-<<<<<<< .merge_file_a09148
 
-
-=======
 		if(prefabIndex < 0)
 		{
 			print("Error prefabObject is not valid: " + prefabObject);
 		}
->>>>>>> .merge_file_a11608
         CmdSpawnWall(prefabIndex, pos, index);
     }
 

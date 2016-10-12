@@ -26,16 +26,7 @@ public class TimeBehavior : NetworkBehaviour {
 
         if (!isServer)
             return;
-        Debug.Log(temp.Length);
         day = Mathf.FloorToInt((Time.time-startTime)/dayLength);
-        if(day != lastday) {
-            /*players = new Global[temp.Length];
-            for (int i = 0; i < temp.Length; i++)
-            {
-                players[i] = temp[i].GetComponent<Global>();
-                players[i].RpcIncome();
-            }*/
-        }
-        lastday = day;
+
 	}
 }
