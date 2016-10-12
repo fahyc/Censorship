@@ -33,7 +33,7 @@ public class Global : NetworkBehaviour {
         inspector = GameObject.FindGameObjectWithTag("Inspector").GetComponent<Inspect>();
 
         // TODO: spawn based on a list of spawn locations
-        SpawnObj(lurkerPrefab, new Vector2(0, 0), 0);
+        SpawnObj(lurkerPrefab, new Vector2(0, 0), 1);
     }
 
     [Command]
@@ -104,6 +104,13 @@ public class Global : NetworkBehaviour {
 				Vector3 position = Camera.main.ScreenToWorldPoint(Input.mousePosition.append(Camera.main.transform.position.z * -1));
                 SpawnObj(currentTool, position, toolIndex);
 			}
+            // TODO: de-hardcode this
+            // spawn lurkers if currently selected
+            else if (dummyIndex == 1)
+            {
+				Vector3 position = Camera.main.ScreenToWorldPoint(Input.mousePosition.append(Camera.main.transform.position.z * -1));
+                SpawnObj(lurkerPrefab, position, 1);
+            }
 			else {
 				//or if there is nothing to spawn, clear any focus and ui elements, or inspect whatever is below the mouse.
 				Vector3 mousePos = Input.mousePosition;
@@ -182,7 +189,8 @@ public class Global : NetworkBehaviour {
 
 	public void DisableDummy()
 	{
-        Destroy(activeDummy.gameObject);
+        if (activeDummy != null)
+            Destroy(activeDummy.gameObject);
 	}
 
 	[Client]

@@ -38,7 +38,8 @@ public class DummyNode : MonoBehaviour {
 	{
 		for (int i = 0; i < lines.Count; i++)
 		{
-			Destroy(lines[i].gameObject);
+            if (lines[i] != null)
+                Destroy(lines[i].gameObject);
 		}
 		lines.Clear();
 		nodes.Clear();

@@ -15,7 +15,7 @@ public class VisibilityCheck : NetworkBehaviour {
     public override void OnSetLocalVisibility(bool vis)
     {
         // gameObject.SetActive(vis);
-        foreach (Renderer r in GetComponents<Renderer>())
+        foreach (Renderer r in GetComponentsInChildren<Renderer>())
         {
             r.enabled = vis;
         }

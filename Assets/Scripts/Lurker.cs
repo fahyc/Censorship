@@ -10,15 +10,15 @@ public class Lurker : NetworkBehaviour {
     public override void OnSetLocalVisibility(bool vis)
     {
         // disable rendering
-        foreach (Renderer r in GetComponents<Renderer>())
+        foreach (Renderer r in GetComponentsInChildren<Renderer>())
         {
             r.enabled = vis;
         }
 
         // and colliders
-        foreach (Renderer r in GetComponents<Renderer>())
+        foreach (Collider c in GetComponents<Collider>())
         {
-            r.enabled = vis;
+            c.enabled = vis;
         }
     }
 
@@ -37,7 +37,7 @@ public class Lurker : NetworkBehaviour {
         {
             // add the owner as able to view the lurker
             observers.Add(GetComponent<Spawnable>().owner);
-        return true;
+            return true;
         }
         return false;
     }
