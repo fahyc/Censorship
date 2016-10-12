@@ -11,11 +11,11 @@ public class VisibilityCheck : NetworkBehaviour {
     HashSet<VisibilityCheck> connectedEntities = new HashSet<VisibilityCheck>();
     HashSet<Spawnable> lurkersWatching = new HashSet<Spawnable>();
 
-    // For the host client, disable other players' Canvases
+    // For the host client, disable "invisible" objects
     [Client]
     public override void OnSetLocalVisibility(bool vis)
     {
-        // gameObject.SetActive(vis);
+        // disable renderers
         foreach (Renderer r in GetComponentsInChildren<Renderer>())
         {
             r.enabled = vis;

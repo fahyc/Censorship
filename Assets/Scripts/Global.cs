@@ -24,8 +24,6 @@ public class Global : NetworkBehaviour {
 
     public Inspect inspectCanvas;
 
-	public DummyUnit[] dummies;
-    int dummyIndex = 0;
     DummyUnit activeDummy;
 
     public int startingMoney = 500;
@@ -111,7 +109,6 @@ public class Global : NetworkBehaviour {
         infoTextBox.text = text;
         textImage.enabled = textbg;
 
-
 		if (overlappingFocusable())
 		{
 			return;
@@ -122,16 +119,6 @@ public class Global : NetworkBehaviour {
             DisableDummy();
 		}
 
-        // select 
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            DisableDummy();
-            dummyIndex++;
-            if (dummyIndex >= dummies.Length)
-                dummyIndex = 0;
-            EnableDummy();
-        }
-
         if(Input.GetMouseButtonDown(0))
         {//if left mouse button
 			if (currentTool)
@@ -139,13 +126,6 @@ public class Global : NetworkBehaviour {
 				Vector3 position = Camera.main.ScreenToWorldPoint(Input.mousePosition.append(Camera.main.transform.position.z * -1));
                 SpawnObj(currentTool, position, toolIndex);
 			}
-            // TODO: de-hardcode this
-            // spawn lurkers if currently selected
-            else if (dummyIndex == 1)
-            {
-				Vector3 position = Camera.main.ScreenToWorldPoint(Input.mousePosition.append(Camera.main.transform.position.z * -1));
-                SpawnObj(lurkerPrefab, position, 1);
-            }
 			else {
 				//or if there is nothing to spawn, clear any focus and ui elements, or inspect whatever is below the mouse.
 				Vector3 mousePos = Input.mousePosition;
@@ -222,11 +202,10 @@ public class Global : NetworkBehaviour {
 		focusTakers.Remove(item);
 	}
 
-	public void EnableDummy()
+	public void EnableDummy(DummyUnit dummyPrefab)
 	{
-        activeDummy = Instantiate(dummies[dummyIndex]);
+        activeDummy = Instantiate(dummyPrefab);
 	}
-
 
 	public void DisableDummy()
 	{
