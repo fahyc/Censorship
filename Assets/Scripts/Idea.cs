@@ -53,7 +53,10 @@ public class Idea : NetworkBehaviour {
     void CheckLifetime() {
 		if (Mathf.Abs(time-totalTime) < minTimeToTarget)
 		{
-            dest.GetComponent<Node>().reciveIdea(ideaStr);
+			if (dest)
+			{
+				dest.GetComponent<Node>().reciveIdea(ideaStr);
+			}
 			NetworkServer.Destroy(gameObject);
 		}
     }

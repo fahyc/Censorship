@@ -9,7 +9,7 @@ public class Shill : Spawnable
 		node = GetComponent<Node>();
 		for(int i = 0; i < DummyNode.nodes.Count; i++)
 		{
-			node.linkTo(DummyNode.nodes[i]);
+			node.clientLinkTo(DummyNode.nodes[i]);
 		}
 		float[] strengths = new float[IdeaList.staticList.Length];
 
