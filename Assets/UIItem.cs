@@ -23,7 +23,7 @@ public class UIItem : MonoBehaviour {
 		}
 		if (blocksClicks)
 		{
-			print(this);
+			// print(this);
 			Global.addFocusTaker(GetComponent<RectTransform>());
 		}
 

@@ -20,7 +20,7 @@ public class Submenu : UIItem {
 		{
 			SpawnScript temp = Instantiate<SpawnScript>(buttons);
 			temp.Initiate(tooltips.Replace("[idea]", IdeaList.staticList[i].name), IdeaList.staticList[i].color,product, i);
-			temp.transform.parent = transform;
+            temp.transform.SetParent(transform, false);
 			//onClick = AdditionalOnClicks[0].;
 			if (AdditionalOnClicks.Length > 0)
 			{
