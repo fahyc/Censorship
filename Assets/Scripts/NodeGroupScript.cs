@@ -8,6 +8,7 @@ public class NodeGroupScript : NetworkBehaviour {
     int maxNodes = 15;
     int minNodes = 5;
     int numNodes;
+    int maxNodeConnections = 2;
     public Node referenceNode;
     List<Node> nodes = new List<Node>();
     //make group connections pre-determined (the same everytime level is loaded)
@@ -20,18 +21,13 @@ public class NodeGroupScript : NetworkBehaviour {
         numNodes = Random.Range(minNodes, maxNodes);
         //spawn nodes in circular formation
         //calculate radius based on number of nodes
-        float radius = (numNodes * (referenceNode.GetComponent<SpriteRenderer>().sprite.rect.width / 300)) / 2;
+        float radius = (numNodes * (referenceNode.GetComponent<SpriteRenderer>().sprite.rect.width / 200)) / 2;
         int angle = 360 / numNodes;
         //create surrounding nodes
         for(int i = 0; i < numNodes; i++)
         {
-            /*
-            Vector3 pos = RandomCircle(transform.position, 5.0f);
-            Quaternion rot = Quaternion.FromToRotation(Vector3.forward, transform.position - pos);
-            Instantiate(referenceNode, pos, Quaternion.identity);
-            */
             int a = i * angle;
-
+            //maybe vary the radius
             Vector3 pos = RandomCircle(transform.position, radius, a);
             nodes.Add((Node)Instantiate(referenceNode, pos, Quaternion.identity));
             NetworkServer.Spawn(nodes[i].gameObject);
@@ -46,31 +42,164 @@ public class NodeGroupScript : NetworkBehaviour {
             //get connections
             List<Node> connections = nodes[i].links;
             //check connections
-            
-            int connectionType = Random.Range(0, 5);
-            switch(connectionType)
+            //max 3 connections and do separate connection logic for center node
+            if (connections.Count < maxNodeConnections && i != nodes.Count - 1)
             {
-                case 0:
-
-                    break;
-                case 1:
-
-                    break;
-                case 2:
-
-                    break;
-                case 3:
-
-                    break;
-                case 4:
-
-                    break;
+                int connectionType = Random.Range(0, 5);
+                switch (connectionType)
+                {
+                    case 0:
+                        //central = connection to center
+                        if (!connections.Contains(nodes[nodes.Count - 1]))
+                        {
+                            nodes[i].linkTo(nodes[nodes.Count - 1]);
+                        }
+                        break;
+                    case 1:
+                        //analogous = 2 connections, first node clockwise and counterclockwise
+                        int clockwise = i + 1;
+                        int counterclockwise = i - 1;
+                        if (clockwise == nodes.Count - 1)
+                        {
+                            clockwise = 0;
+                        }
+                        if (counterclockwise < 0)
+                        {
+                            counterclockwise = nodes.Count - 2;
+                        }
+                        if (!connections.Contains(nodes[clockwise]))
+                        {
+                            nodes[i].linkTo(nodes[clockwise]);
+                        }
+                        if (!connections.Contains(nodes[counterclockwise]))
+                        {
+                            nodes[i].linkTo(nodes[counterclockwise]);
+                        }
+                        break;
+                    case 2:
+                        //split complements = 2 connections, first node 150 degrees clockwise and counterclockwise
+                        int nodeOne = nodes[i].index * angle + 150;
+                        int nodeTwo = nodes[i].index * angle - 150;
+                        if (nodeOne > 360)
+                        {
+                            nodeOne -= 360;
+                        }
+                        if (nodeTwo < 0)
+                        {
+                            nodeTwo = 360 + nodeTwo;
+                        }
+                        int indexOne = nodeOne / angle;
+                        int indexTwo = nodeTwo / angle;
+                        if (!connections.Contains(nodes[indexOne]))
+                        {
+                            nodes[i].linkTo(nodes[indexOne]);
+                        }
+                        if (!connections.Contains(nodes[indexTwo]))
+                        {
+                            nodes[i].linkTo(nodes[indexTwo]);
+                        }
+                        break;
+                    case 3:
+                        //triadic = 2 connections, first node 120 degrees clockwise and counterclockwise
+                        nodeOne = nodes[i].index * angle + 120;
+                        nodeTwo = nodes[i].index * angle - 120;
+                        if (nodeOne > 360)
+                        {
+                            nodeOne -= 360;
+                        }
+                        if (nodeTwo < 0)
+                        {
+                            nodeTwo = 360 + nodeTwo;
+                        }
+                        indexOne = nodeOne / angle;
+                        indexTwo = nodeTwo / angle;
+                        if (!connections.Contains(nodes[indexOne]))
+                        {
+                            nodes[i].linkTo(nodes[indexOne]);
+                        }
+                        if (!connections.Contains(nodes[indexTwo]))
+                        {
+                            nodes[i].linkTo(nodes[indexTwo]);
+                        }
+                        break;
+                    case 4:
+                        //tetradic = "square connection", 90 degrees clockwise and cunterclockwise between all 4 nodes
+                        nodeOne = nodes[i].index * angle + 90;
+                        nodeTwo = nodes[i].index * angle - 90;
+                        if (nodeOne > 360)
+                        {
+                            nodeOne -= 360;
+                        }
+                        if (nodeTwo < 0)
+                        {
+                            nodeTwo = 360 + nodeTwo;
+                        }
+                        indexOne = nodeOne / angle;
+                        indexTwo = nodeTwo / angle;
+                        if (!connections.Contains(nodes[indexOne]))
+                        {
+                            nodes[i].linkTo(nodes[indexOne]);
+                        }
+                        if (!connections.Contains(nodes[indexTwo]))
+                        {
+                            nodes[i].linkTo(nodes[indexTwo]);
+                        }
+                        int nodeThree = nodeOne + 90;
+                        if (nodeThree > 360)
+                        {
+                            nodeThree -= 360;
+                        }
+                        int indexThree = nodeThree / angle;
+                        List<Node> nodeTwoConnections = nodes[indexTwo].links;
+                        if (!nodeTwoConnections.Contains(nodes[indexThree]))
+                        {
+                            nodes[indexTwo].linkTo(nodes[indexThree]);
+                        }
+                        break;
+                }
             }
-            if(i != nodes.Count-1)
+            //separate connection logic for central node
+            if (i == nodes.Count - 1 && connections.Count < maxNodeConnections)
             {
-                nodes[i].linkTo(nodes[nodes.Count - 1]);
+                //randomize?
             }
         }
+        //create connections between groups
+        float groupConnectionRadius = radius * 20;
+        Collider2D[] nearbyGroups = Physics2D.OverlapCircleAll(new Vector2(transform.position.x, transform.position.y), groupConnectionRadius);
+        //choose connection types
+        //maybe calculate paths to each group and connect if path to group does not exist for now connect with every group
+        //calculate angle to nearby groups and choose corresponding node to connect with
+        
+        for (int i = 0; i < nearbyGroups.Length; i++)
+        {
+            if(nearbyGroups[i].tag == "Group")
+            {
+                print("a group");
+                NodeGroupScript otherGroup = nearbyGroups[i].gameObject.GetComponent<NodeGroupScript>();
+                List<Node> otherNodes = otherGroup.nodes;
+                print(otherGroup.numNodes);
+                int otherAngle = 360 / otherGroup.numNodes;
+                //calculate angle
+                Vector3 p1 = otherGroup.transform.position;
+                Vector3 p2 = transform.position;
+                float groupAngle = Mathf.Atan2(p2.y - p1.y, p2.x - p1.x) * Mathf.Rad2Deg;
+                int otherGroupAngle = (int)groupAngle + 180;
+                if (otherGroupAngle > 360)
+                {
+                    otherGroupAngle -= 360;
+                }
+                /*
+                //choose nodes to connect with
+                int connectIndex = (int)groupAngle / angle;
+                int otherConnectIndex = otherGroupAngle / otherAngle;
+                nodes[connectIndex].linkTo(otherNodes[otherConnectIndex]);
+                */
+            }
+            
+            
+        }
+        
     }
 	
 	// Update is called once per frame
@@ -80,44 +209,11 @@ public class NodeGroupScript : NetworkBehaviour {
 
     Vector3 RandomCircle(Vector3 center, float radius, int a)
     {
-        /*
-        float ang = Random.value * 360;
-        Vector3 pos;
-        pos.x = center.x + radius * Mathf.Sin(ang * Mathf.Deg2Rad);
-        pos.y = center.y + radius * Mathf.Cos(ang * Mathf.Deg2Rad);
-        pos.z = center.z;
-        return pos;
-        */
         float ang = a;
         Vector3 pos;
         pos.x = center.x + radius * Mathf.Sin(ang * Mathf.Deg2Rad);
         pos.y = center.y + radius * Mathf.Cos(ang * Mathf.Deg2Rad);
         pos.z = center.z;
         return pos;
-    }
-
-    void central()
-    {
-        //central = connection to center
-    }
-
-    void analogous()
-    {
-        //analogous = 2 connections, first node clockwise and counterclockwise
-    }
-
-    void splitComplements()
-    {
-        //split complements = 2 connections, first node 150 degrees clockwise and counterclockwise
-    }
-
-    void triadic()
-    {
-        //triadic = 2 connections, first node 120 degrees clockwise and counterclockwise
-    }
-
-    void tetradic()
-    {
-        //tetradic = "square connection", 90 degrees clockwise and cunterclockwise between all 4 nodes
     }
 }
