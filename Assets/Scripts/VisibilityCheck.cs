@@ -6,6 +6,7 @@ using System.Collections.Generic;
 public class VisibilityCheck : NetworkBehaviour {
 
     public bool startVisibleToSelf = false;
+    public bool visibleToLurkers = true;
 
     HashSet<VisibilityCheck> connectedEntities = new HashSet<VisibilityCheck>();
     HashSet<Spawnable> lurkersWatching = new HashSet<Spawnable>();
@@ -32,21 +33,24 @@ public class VisibilityCheck : NetworkBehaviour {
     [Server]
     public override bool OnRebuildObservers(HashSet<NetworkConnection> observers, bool init) {
 
-        if (startVisibleToSelf)
+        if (startVisibleToSelf && init)
         {
-            observers.Add(connectionToClient);
+            observers.Add(GetComponent<Spawnable>().owner);
         }
 
-        // unless we're initializing, only make viewable to lurkers
-        foreach (Spawnable l in lurkersWatching)
+        if (visibleToLurkers)
         {
-            observers.Add(l.owner);
-        }
+            // unless we're initializing, only make viewable to lurkers
+            foreach (Spawnable l in lurkersWatching)
+            {
+                observers.Add(l.owner);
+            }
 
-        foreach (VisibilityCheck v in connectedEntities)
-        {
-            v.lurkersWatching.UnionWith(lurkersWatching);
-            v.GetComponent<NetworkIdentity>().RebuildObservers(false);
+            foreach (VisibilityCheck v in connectedEntities)
+            {
+                v.lurkersWatching.UnionWith(lurkersWatching);
+                v.GetComponent<NetworkIdentity>().RebuildObservers(false);
+            }
         }
         return true;
     }
