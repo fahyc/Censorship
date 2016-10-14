@@ -177,24 +177,28 @@ public class NodeGroupScript : NetworkBehaviour {
             {
                 print("a group");
                 NodeGroupScript otherGroup = nearbyGroups[i].gameObject.GetComponent<NodeGroupScript>();
-                List<Node> otherNodes = otherGroup.nodes;
-                print(otherGroup.numNodes);
-                int otherAngle = 360 / otherGroup.numNodes;
-                //calculate angle
-                Vector3 p1 = otherGroup.transform.position;
-                Vector3 p2 = transform.position;
-                float groupAngle = Mathf.Atan2(p2.y - p1.y, p2.x - p1.x) * Mathf.Rad2Deg;
-                int otherGroupAngle = (int)groupAngle + 180;
-                if (otherGroupAngle > 360)
+                if(otherGroup.numNodes != 0)
                 {
-                    otherGroupAngle -= 360;
+                    List<Node> otherNodes = otherGroup.nodes;
+                    int otherAngle = 360 / otherGroup.numNodes;
+                    //calculate angle
+                    Vector3 p1 = otherGroup.transform.position;
+                    Vector3 p2 = transform.position;
+                    float groupAngle = Mathf.Atan2(p2.y - p1.y, p2.x - p1.x) * Mathf.Rad2Deg;
+                    int otherGroupAngle = (int)groupAngle + 180;
+                    if (otherGroupAngle > 360)
+                    {
+                        otherGroupAngle -= 360;
+                    }
+                    
+                    //choose nodes to connect with
+                    int connectIndex = (int)groupAngle / angle;
+                    int otherConnectIndex = otherGroupAngle / otherAngle;
+                    print(nodes.Count + ":" + connectIndex + " " + otherNodes.Count + ":" + otherConnectIndex);
+                    nodes[connectIndex].linkTo(otherNodes[otherConnectIndex]);
+                    
                 }
-                /*
-                //choose nodes to connect with
-                int connectIndex = (int)groupAngle / angle;
-                int otherConnectIndex = otherGroupAngle / otherAngle;
-                nodes[connectIndex].linkTo(otherNodes[otherConnectIndex]);
-                */
+
             }
             
             
