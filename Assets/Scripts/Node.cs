@@ -9,14 +9,15 @@ public class Node : NetworkBehaviour {
 	public List<Node> links;
 	public List<LineRenderer> linkObj;
     public float[] ideaStrengths;
-    //How much agreeing with an idea influences the spawn rate. Note that this
     public float spawnMultiplier = 0.005f;
     string mostImportantIdea;
     //The index of the most important idea in this node's opinion
     int importantIndex = -1;
     int secondImportantIndex;
     int thirdImportantIndex;
-    
+
+
+	public SpecialIdea specialIdeaPrefab;
     //Gets 
     public float echoChamberCoefficient=1.0f;
     //This gets added every time a Node hears about something that is its most important idea.
@@ -36,7 +37,6 @@ public class Node : NetworkBehaviour {
     public float baseInfluence = 0.05f;
 	
 	SpriteRenderer sprite;
-
 
 	[Client]
 	void Start()
@@ -83,13 +83,15 @@ public class Node : NetworkBehaviour {
 	[Client]
 	public void clientLinkTo(Node other)
 	{
-		
+		print("visibility: " + GetComponent<VisibilityCheck>() + " other's " + other.GetComponent<VisibilityCheck>());
+		print("using clientlinkto with node: " + other);
 		CmdlinkTo(other.GetComponent<NetworkIdentity>().netId);
 	}
 
     [Command]
 	public void CmdlinkTo(NetworkInstanceId id)
 	{
+		print("visibility: " + GetComponent<VisibilityCheck>());
 		Node other = NetworkServer.FindLocalObject(id).GetComponent<Node>();
 		linkTo(other);
 		
@@ -98,8 +100,10 @@ public class Node : NetworkBehaviour {
 	[Server]
 	public void linkTo(Node other)
 	{
+		//print("Linking with node: " + other);
 		other.links.Add(this);
 		LineRenderer link = GameObject.Instantiate<LineRenderer>(line);
+		print("Link: " + link.gameObject + " visibilitycheck " + GetComponent<VisibilityCheck>());
         GetComponent<VisibilityCheck>().AddConnection(link.gameObject);
         other.GetComponent<VisibilityCheck>().AddConnection(link.gameObject);
 		link.GetComponent<NetworkLineRenderer>().setPoints(transform.position, other.transform.position);
@@ -112,7 +116,7 @@ public class Node : NetworkBehaviour {
 
 	// Update is called once per frame
     [ServerCallback]
-	void Update () {
+	public virtual void Update () {
         float localmax = -1;
         float secondmax = -1;
         float thirdmax = -1;
@@ -212,9 +216,17 @@ public class Node : NetworkBehaviour {
 	}
 
     [Server]
-	void sendIdea(string idea, Node dest, int idx)
+	void sendIdea(string idea, Node dest, int idx,Idea obj = null)
 	{
-		Idea temp = GameObject.Instantiate<Idea>(ideaObj);
+		Idea temp;
+		if (obj!= null)
+		{
+			temp = obj;
+		}
+		else
+		{
+			temp = Instantiate<Idea>(ideaObj);
+		}
 		temp.ideaStr = idea;
 		temp.origin = transform.position;
 		temp.destination = dest.transform.position;
@@ -225,8 +237,25 @@ public class Node : NetworkBehaviour {
         NetworkServer.Spawn(temp.gameObject);
 	}
 
+
+	public void receiveSpecial(SpecialIdea special)
+	{
+		receiveIdea(special.ideaStr);
+		if(special.strength <= 1)
+		{
+			return;
+		}
+		for(int i = 0; i < links.Count; i++)
+		{
+			SpecialIdea obj = Instantiate(special);
+			obj.visited = special.visited;
+			obj.strength -= 1;
+			sendIdea(special.ideaStr, links[i], IdeaList.staticDict[special.ideaStr], obj);
+		}
+	}
+
     [Server]
-    public void reciveIdea(string ideaStr)
+    public void receiveIdea(string ideaStr)
     {
 		if (shill)
 		{

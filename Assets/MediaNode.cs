@@ -2,14 +2,14 @@
 using System.Collections;
 
 public class MediaNode : Node {
-
-	// Use this for initialization
-	void Start () {
+	public int valuePerDay;
+	public float influence;
 	
-	}
+	
 	
 	// Update is called once per frame
-	void Update () {
-	
-	}
+	/*public override void Update () {
+		base.Update();
+
+	}*/
 }

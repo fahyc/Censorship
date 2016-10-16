@@ -13,7 +13,7 @@ public class Shill : Spawnable
 		}
 		float[] strengths = new float[IdeaList.staticList.Length];
 
-		print(node.ideaStrengths);
+		//print(node.ideaStrengths);
 		strengths[index] = 1;
 		node.SetStrengths(strengths);
 	}

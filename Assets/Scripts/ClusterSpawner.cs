@@ -6,6 +6,8 @@ using UnityEngine.Networking;
 
 public class ClusterSpawner : NetworkBehaviour {
 	public Node node;
+	public Node mediaNode;
+	public float mediaChance = .1f;
 	public int quantity;
 	public float radius;
 	public float spaceBetween;
@@ -42,7 +44,14 @@ public class ClusterSpawner : NetworkBehaviour {
 			}
 			if (point != Vector2.zero)
 			{
-                Node spawn = Instantiate(node);
+				Node spawn;
+				if (Random.value < mediaChance)
+				{
+					spawn = Instantiate(mediaNode);
+				}
+				else {
+					spawn = Instantiate(node);
+				}
 				spawn.transform.position = point;
 				nodes[i] = spawn;
                 Node[] seed = new Node[i];

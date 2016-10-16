@@ -11,6 +11,13 @@ public class VisibilityCheck : NetworkBehaviour {
     HashSet<VisibilityCheck> connectedEntities = new HashSet<VisibilityCheck>();
     HashSet<Spawnable> lurkersWatching = new HashSet<Spawnable>();
 
+	/*
+	[Server]
+	void Awake()
+	{
+		print("awake");
+	}*/
+
     // For the host client, disable "invisible" objects
     [Client]
     public override void OnSetLocalVisibility(bool vis)

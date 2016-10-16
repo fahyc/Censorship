@@ -10,7 +10,7 @@ public class Idea : NetworkBehaviour {
 	public Node originObj;
 	[SyncVar]
 	public Vector3 destination;
-	float time = 0;
+	protected float time = 0;
 	public float speed;
 	public float totalTime;
     public int index;
@@ -34,7 +34,7 @@ public class Idea : NetworkBehaviour {
     };
 	*/
     // Use this for initialization
-    public void Start() {
+    public virtual void Start() {
 		totalTime = (origin - destination).magnitude/speed;
 		GetComponent<SpriteRenderer>().color = IdeaList.staticList[IdeaList.staticDict[ideaStr]].color;
 	}
@@ -50,12 +50,12 @@ public class Idea : NetworkBehaviour {
 
     
     [Server]
-    void CheckLifetime() {
+    public virtual void CheckLifetime() {
 		if (Mathf.Abs(time-totalTime) < minTimeToTarget)
 		{
 			if (dest)
 			{
-				dest.GetComponent<Node>().reciveIdea(ideaStr);
+				dest.GetComponent<Node>().receiveIdea(ideaStr);
 			}
 			NetworkServer.Destroy(gameObject);
 		}
