@@ -83,15 +83,15 @@ public class Node : NetworkBehaviour {
 	[Client]
 	public void clientLinkTo(Node other)
 	{
-		print("visibility: " + GetComponent<VisibilityCheck>() + " other's " + other.GetComponent<VisibilityCheck>());
-		print("using clientlinkto with node: " + other);
+		//print("visibility: " + GetComponent<VisibilityCheck>() + " other's " + other.GetComponent<VisibilityCheck>());
+		//print("using clientlinkto with node: " + other);
 		CmdlinkTo(other.GetComponent<NetworkIdentity>().netId);
 	}
 
     [Command]
 	public void CmdlinkTo(NetworkInstanceId id)
 	{
-		print("visibility: " + GetComponent<VisibilityCheck>());
+		//print("visibility: " + GetComponent<VisibilityCheck>());
 		Node other = NetworkServer.FindLocalObject(id).GetComponent<Node>();
 		linkTo(other);
 		
@@ -103,7 +103,7 @@ public class Node : NetworkBehaviour {
 		//print("Linking with node: " + other);
 		other.links.Add(this);
 		LineRenderer link = GameObject.Instantiate<LineRenderer>(line);
-		print("Link: " + link.gameObject + " visibilitycheck " + GetComponent<VisibilityCheck>());
+		//print("Link: " + link.gameObject + " visibilitycheck " + GetComponent<VisibilityCheck>());
         GetComponent<VisibilityCheck>().AddConnection(link.gameObject);
         other.GetComponent<VisibilityCheck>().AddConnection(link.gameObject);
 		link.GetComponent<NetworkLineRenderer>().setPoints(transform.position, other.transform.position);
