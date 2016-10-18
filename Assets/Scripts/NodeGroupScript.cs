@@ -9,8 +9,11 @@ public class NodeGroupScript : NetworkBehaviour {
     int minNodes = 5;
     int numNodes;
     int maxNodeConnections = 2;
+    float ideaSpawnRateMin = 0.01f;
+    float ideaSpawnRateMax = 0.1f;
     public Node referenceNode;
     List<Node> nodes = new List<Node>();
+    List<NodeGroupScript> connectedGroups = new List<NodeGroupScript>();
     //make group connections pre-determined (the same everytime level is loaded)
     //connections within a group will be procedural but connections between groups will not
     //for group connections make a variable number of connections and get list of groups within certain range and distribute variable number of connections amongst them
@@ -28,13 +31,18 @@ public class NodeGroupScript : NetworkBehaviour {
         {
             int a = i * angle;
             //maybe vary the radius
-            Vector3 pos = RandomCircle(transform.position, radius, a);
-            nodes.Add((Node)Instantiate(referenceNode, pos, Quaternion.identity));
+            float rad = Random.Range(radius * 0.5f, radius * 1.25f);
+            Vector3 pos = RandomCircle(transform.position, rad, a);
+            Node n = (Node)Instantiate(referenceNode, pos, Quaternion.identity);
+            n.spawnChance = Random.Range(ideaSpawnRateMin, ideaSpawnRateMax);
+            nodes.Add(n);
             NetworkServer.Spawn(nodes[i].gameObject);
             nodes[i].index = i;
         }
         //create central node
-        nodes.Add((Node)Instantiate(referenceNode, transform.position, Quaternion.identity));
+        Node central = (Node)Instantiate(referenceNode, transform.position, Quaternion.identity);
+        central.spawnChance = Random.Range(ideaSpawnRateMin, ideaSpawnRateMax);
+        nodes.Add(central);
         NetworkServer.Spawn(nodes[nodes.Count - 1].gameObject);
         nodes[nodes.Count-1].index = nodes.Count-1;
         for(int i = 0; i < nodes.Count; i++)
@@ -42,7 +50,7 @@ public class NodeGroupScript : NetworkBehaviour {
             //get connections
             List<Node> connections = nodes[i].links;
             //check connections
-            //max 3 connections and do separate connection logic for center node
+            //TODO: fix max connections check to check connections of node its connecting to
             if (connections.Count < maxNodeConnections && i != nodes.Count - 1)
             {
                 int connectionType = Random.Range(0, 5);
@@ -162,46 +170,56 @@ public class NodeGroupScript : NetworkBehaviour {
             if (i == nodes.Count - 1 && connections.Count < maxNodeConnections)
             {
                 //randomize?
+                nodes[i].linkTo(nodes[Random.Range(0, nodes.Count - 1)]);
             }
         }
         //create connections between groups
-        float groupConnectionRadius = radius * 20;
-        Collider2D[] nearbyGroups = Physics2D.OverlapCircleAll(new Vector2(transform.position.x, transform.position.y), groupConnectionRadius);
+        float maxConnectionDist = radius * 20;
+        GameObject[] groups = GameObject.FindGameObjectsWithTag("Group");
         //choose connection types
         //maybe calculate paths to each group and connect if path to group does not exist for now connect with every group
         //calculate angle to nearby groups and choose corresponding node to connect with
         
-        for (int i = 0; i < nearbyGroups.Length; i++)
+        for (int i = 0; i < groups.Length; i++)
         {
-            if(nearbyGroups[i].tag == "Group")
+            NodeGroupScript other = groups[i].GetComponent<NodeGroupScript>();
+            if (this != other && !other.connectedGroups.Contains(this) && Vector3.Distance(this.transform.position, other.transform.position) < maxConnectionDist)
             {
-                print("a group");
-                NodeGroupScript otherGroup = nearbyGroups[i].gameObject.GetComponent<NodeGroupScript>();
-                if(otherGroup.numNodes != 0)
+                if(other.numNodes != 0)
                 {
-                    List<Node> otherNodes = otherGroup.nodes;
-                    int otherAngle = 360 / otherGroup.numNodes;
-                    //calculate angle
-                    Vector3 p1 = otherGroup.transform.position;
-                    Vector3 p2 = transform.position;
-                    float groupAngle = Mathf.Atan2(p2.y - p1.y, p2.x - p1.x) * Mathf.Rad2Deg;
-                    int otherGroupAngle = (int)groupAngle + 180;
-                    if (otherGroupAngle > 360)
-                    {
-                        otherGroupAngle -= 360;
-                    }
-                    
-                    //choose nodes to connect with
-                    int connectIndex = (int)groupAngle / angle;
-                    int otherConnectIndex = otherGroupAngle / otherAngle;
-                    print(nodes.Count + ":" + connectIndex + " " + otherNodes.Count + ":" + otherConnectIndex);
-                    nodes[connectIndex].linkTo(otherNodes[otherConnectIndex]);
-                    
-                }
+                    //print("connect");
+                    List<Node> otherNodes = other.nodes;
+                    int connectIndex = nodes.Count - 1;
+                    int otherConnectIndex = otherNodes.Count - 1;
+                    float minDist = maxConnectionDist;
+                    //int otherAngle = 360 / other.numNodes;
 
+                    //find closest node
+                    for (int j = 0; j < nodes.Count - 1; j++)
+                    {
+                        float dist = Vector3.Distance(nodes[j].transform.position, other.transform.position);
+                        if (dist < minDist)
+                        {
+                            minDist = dist;
+                            connectIndex = j;
+                        }
+                    }
+
+                    minDist = maxConnectionDist;
+                    for (int j = 0; j < otherNodes.Count - 1; j++)
+                    {
+                        float dist = Vector3.Distance(otherNodes[j].transform.position, this.transform.position);
+                        if (dist < minDist)
+                        {
+                            minDist = dist;
+                            otherConnectIndex = j;
+                        }
+                    }
+                    nodes[connectIndex].linkTo(otherNodes[otherConnectIndex]);
+                    connectedGroups.Add(other);
+                }
+                
             }
-            
-            
         }
         
     }
