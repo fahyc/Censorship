@@ -15,6 +15,7 @@ public class Shill : Spawnable
 
 		//print(node.ideaStrengths);
 		strengths[index] = 1;
+        node.shill = true;
 		node.SetStrengths(strengths);
 	}
 	

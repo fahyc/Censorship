@@ -31,7 +31,7 @@ public class Global : NetworkBehaviour {
     private int income = 10;
 
     public int moneyDiff;
-
+    public bool broke = false;
     // Use this for initialization
     public override void OnStartLocalPlayer () {
 		inspector = GameObject.FindGameObjectWithTag("Inspector").GetComponent<Inspect>();
@@ -220,12 +220,19 @@ public class Global : NetworkBehaviour {
     [Client]
     public void addIncome() {
         int count = 0;
-        foreach(Spawnable sp in FindObjectsOfType<Spawnable>()) {
-            if(sp.owner == connectionToClient) {
-                count++;
+        if (currentMoney < 0 && moneyDiff < 0 && broke == false) {
+            print("Disabling all Units due to lack of funds");
+            broke = true;
+            foreach (Spawnable sp in FindObjectsOfType<Spawnable>()) {
+                if (sp.owner == connectionToClient) {
+                    count++;
+                    sp.disabled = true;
+
+                }
             }
         }
-        print(connectionToClient.ToString() + " owned units: " + count);
-        currentMoney += moneyDiff;
+        //If we're not broke, then we can gain or lose income. If we are broke, we don't want to change ANYTHING.
+        if(!broke)
+            currentMoney += moneyDiff;
     }
 }
