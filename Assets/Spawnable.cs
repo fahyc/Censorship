@@ -10,4 +10,7 @@ public class Spawnable : NetworkBehaviour {
 
     public int initialCost;
     public int upkeep;
+    public bool disabled = false;
+
+
 }

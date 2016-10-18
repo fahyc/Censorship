@@ -190,8 +190,13 @@ public class Node : NetworkBehaviour {
 
             if (links.Count > 0)
 			{
-				sendIdea(ideasList[chosenIdeaIndex].name, links[Random.Range(0, links.Count)], chosenIdeaIndex);
-			}
+                if(shill == true && GetComponent<Shill>().disabled) {
+                    print("Disabled shill node will not spawn stuff");
+                } else {
+                    sendIdea(ideasList[chosenIdeaIndex].name, links[Random.Range(0, links.Count)], chosenIdeaIndex);
+
+                }
+            }
 			else
 			{
 				//print("orphaned node");
