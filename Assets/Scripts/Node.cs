@@ -79,6 +79,7 @@ public class Node : NetworkBehaviour {
 			}
 			linkObj.Add(link);
 		}
+
 	}
 	[Client]
 	public void clientLinkTo(Node other)
@@ -111,6 +112,8 @@ public class Node : NetworkBehaviour {
 		linkObj.Add(link);
 		other.linkObj.Add(link);
 		links.Add(other);
+
+        GetComponent<NetworkIdentity>().RebuildObservers(true);
 	}
 
 

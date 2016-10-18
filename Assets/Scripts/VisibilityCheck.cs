@@ -11,12 +11,32 @@ public class VisibilityCheck : NetworkBehaviour {
     HashSet<VisibilityCheck> connectedEntities = new HashSet<VisibilityCheck>();
     HashSet<Spawnable> lurkersWatching = new HashSet<Spawnable>();
 
-	/*
+    /*
 	[Server]
 	void Awake()
 	{
 		print("awake");
 	}*/
+
+    public override void OnStartServer()
+    {
+        // We need to initialize visibility for lurkers
+        CircleCollider2D c = GetComponent<CircleCollider2D>();
+
+        if (c != null) {
+            Collider2D[] visibleNodes = Physics2D.OverlapCircleAll(transform.position, c.radius);
+
+            foreach (Collider2D other in visibleNodes)
+            {
+                Lurker l = other.GetComponent<Lurker>();
+                if (l != null)
+                {
+                    l.ViewObject(c, true);
+                    lurkersWatching.Add(l.GetComponent<Spawnable>());
+                }
+            }
+        }
+    }
 
     // For the host client, disable "invisible" objects
     [Client]
@@ -42,7 +62,9 @@ public class VisibilityCheck : NetworkBehaviour {
 
         if (startVisibleToSelf && init)
         {
-            observers.Add(GetComponent<Spawnable>().owner);
+            Spawnable s = GetComponent<Spawnable>();
+            if (s != null)
+                observers.Add(s.owner);
         }
 
         if (visibleToLurkers)
