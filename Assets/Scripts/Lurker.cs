@@ -69,7 +69,7 @@ public class Lurker : NetworkBehaviour {
     }
 
     // add this lurker to list of objects that can see object
-    void ViewObject(Collider2D other, bool add)
+    public void ViewObject(Collider2D other, bool add)
     {
         VisibilityCheck vis = other.GetComponent<VisibilityCheck>();
         if (vis != null)
