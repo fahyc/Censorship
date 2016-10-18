@@ -32,9 +32,6 @@ public class Global : NetworkBehaviour {
 
     public int moneyDiff;
 
-    //
-
-
     // Use this for initialization
     public override void OnStartLocalPlayer () {
 		inspector = GameObject.FindGameObjectWithTag("Inspector").GetComponent<Inspect>();
@@ -222,6 +219,13 @@ public class Global : NetworkBehaviour {
     // Increment a player's income when the day increases.
     [Client]
     public void addIncome() {
+        int count = 0;
+        foreach(Spawnable sp in FindObjectsOfType<Spawnable>()) {
+            if(sp.owner == connectionToClient) {
+                count++;
+            }
+        }
+        print(connectionToClient.ToString() + " owned units: " + count);
         currentMoney += moneyDiff;
     }
 }
