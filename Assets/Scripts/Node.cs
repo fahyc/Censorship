@@ -49,7 +49,6 @@ public class Node : NetworkBehaviour {
 	
     // Use this for initialization
     public override void OnStartServer () {
-        print("node");
 		//Get a reference to the global game object that keeps track of the ideological climate.
 		ideasList = IdeaList.staticList;// GameObject.Find("EventSystem").GetComponent<IdeaList>().list;
 		links = new List<Node>(linksSeed);
