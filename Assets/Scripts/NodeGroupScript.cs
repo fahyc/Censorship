@@ -278,8 +278,9 @@ public class NodeGroupScript : NetworkBehaviour {
         {
             for(int j = 0; j < nodeLinks[i].Count; j++)
             {
-                //may want to adjust this
-                if(nodes[i].links.Count == 0 || (nodes[i].links.Count < maxNodeConnections && nodes[nodeLinks[i][j]].links.Count < maxNodeConnections))
+                //TODO: fix occurance of segments of nodes connected only to each other and nothing else due to stopping connection patterns being ended early via below
+                //can be fixed by implemented network repair mechanism
+                if (nodes[i].links.Count == 0 || (nodes[i].links.Count < maxNodeConnections && nodes[nodeLinks[i][j]].links.Count < maxNodeConnections))
                 {
                     nodes[i].linkTo(nodes[nodeLinks[i][j]]);
                 }
