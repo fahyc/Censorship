@@ -11,6 +11,12 @@ public class Spawnable : NetworkBehaviour {
     public int initialCost;
     public int upkeep;
     public bool disabled = false;
+    public Color disabledColor = Color.gray;
 
-
+    [Client]
+    void Update() {
+        if (disabled) {
+            GetComponent<SpriteRenderer>().color = disabledColor;
+        }
+    }
 }
