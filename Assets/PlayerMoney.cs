@@ -21,7 +21,7 @@ public class PlayerMoney : MonoBehaviour {
 				//print("none found.");
 				return;
 			} else {
-                print("player found");
+                //print("player found");
             }
 			playerstats = temp.GetComponent<Global>();
 		}

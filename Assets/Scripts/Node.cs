@@ -44,7 +44,7 @@ public class Node : NetworkBehaviour {
 	[Client]
 	void Start()
 	{
-        print("client node");
+        //print("client node");
 		sprite = GetComponent<SpriteRenderer>();
 	}
 
