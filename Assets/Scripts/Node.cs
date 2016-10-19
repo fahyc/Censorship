@@ -12,11 +12,14 @@ public class Node : NetworkBehaviour {
     public float spawnMultiplier = 0.005f;
     string mostImportantIdea;
     //The index of the most important idea in this node's opinion
+	[SyncVar(hook="onChangeIndex")]
     int importantIndex = -1;
     int secondImportantIndex;
     int thirdImportantIndex;
 
 
+
+	
 	public SpecialIdea specialIdeaPrefab;
     //Gets 
     public float echoChamberCoefficient=1.0f;
@@ -44,12 +47,16 @@ public class Node : NetworkBehaviour {
         print("client node");
 		sprite = GetComponent<SpriteRenderer>();
 	}
-	
-    public int index;
+
+	public void onChangeIndex(int i)
+	{
+		sprite.color = IdeaList.staticList[i].color;
+	}
+
+	public int index;
 	
     // Use this for initialization
     public override void OnStartServer () {
-        print("node");
 		//Get a reference to the global game object that keeps track of the ideological climate.
 		ideasList = IdeaList.staticList;// GameObject.Find("EventSystem").GetComponent<IdeaList>().list;
 		links = new List<Node>(linksSeed);

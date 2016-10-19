@@ -6,13 +6,16 @@ using System.Collections.Generic;
 public class NodeGroupScript : NetworkBehaviour {
 
     public int maxNodes = 15;
-    public int minNodes = 5;
+    public int minNodes = 7;
     int numNodes;
     public int maxNodeConnections = 2;
-    public float ideaSpawnRateMin = 0.01f;
-    public float ideaSpawnRateMax = 0.1f;
+    public float ideaSpawnRateMin = 0.002f;
+    public float ideaSpawnRateMax = 0.01f;
     public Node referenceNode;
+    public string mainIdea;
+    public float mainStrength = .5f;
     List<Node> nodes = new List<Node>();
+    List<List<Node>> nodesToLinkTo = new List<List<Node>>();
     List<NodeGroupScript> connectedGroups = new List<NodeGroupScript>();
     //make group connections pre-determined (the same everytime level is loaded)
     //connections within a group will be procedural but connections between groups will not
@@ -39,7 +42,6 @@ public class NodeGroupScript : NetworkBehaviour {
             n.spawnChance = Random.Range(ideaSpawnRateMin, ideaSpawnRateMax);
             nodes.Add(n);
             //NetworkServer.Spawn(nodes[i].gameObject);
-			print("spawning");
             nodes[i].index = i;
         }
         //create central node
@@ -50,6 +52,7 @@ public class NodeGroupScript : NetworkBehaviour {
         nodes[nodes.Count-1].index = nodes.Count-1;
         for(int i = 0; i < nodes.Count; i++)
         {
+            nodesToLinkTo.Add(new List<Node>());
             //get connections
             List<Node> connections = nodes[i].links;
             //check connections
@@ -63,7 +66,8 @@ public class NodeGroupScript : NetworkBehaviour {
                         //central = connection to center
                         if (!connections.Contains(nodes[nodes.Count - 1]))
                         {
-                            nodes[i].linkTo(nodes[nodes.Count - 1]);
+                            nodesToLinkTo[i].Add(nodes[nodes.Count - 1]);
+                            //nodes[i].linkTo(nodes[nodes.Count - 1]);
                         }
                         break;
                     case 1:
@@ -80,11 +84,13 @@ public class NodeGroupScript : NetworkBehaviour {
                         }
                         if (!connections.Contains(nodes[clockwise]))
                         {
-                            nodes[i].linkTo(nodes[clockwise]);
+                            nodesToLinkTo[i].Add(nodes[clockwise]);
+                            //nodes[i].linkTo(nodes[clockwise]);
                         }
                         if (!connections.Contains(nodes[counterclockwise]))
                         {
-                            nodes[i].linkTo(nodes[counterclockwise]);
+                            nodesToLinkTo[i].Add(nodes[counterclockwise]);
+                            //nodes[i].linkTo(nodes[counterclockwise]);
                         }
                         break;
                     case 2:
@@ -103,11 +109,13 @@ public class NodeGroupScript : NetworkBehaviour {
                         int indexTwo = nodeTwo / angle;
                         if (!connections.Contains(nodes[indexOne]))
                         {
-                            nodes[i].linkTo(nodes[indexOne]);
+                            nodesToLinkTo[i].Add(nodes[indexOne]);
+                            //nodes[i].linkTo(nodes[indexOne]);
                         }
                         if (!connections.Contains(nodes[indexTwo]))
                         {
-                            nodes[i].linkTo(nodes[indexTwo]);
+                            nodesToLinkTo[i].Add(nodes[indexTwo]);
+                            //nodes[i].linkTo(nodes[indexTwo]);
                         }
                         break;
                     case 3:
@@ -126,11 +134,13 @@ public class NodeGroupScript : NetworkBehaviour {
                         indexTwo = nodeTwo / angle;
                         if (!connections.Contains(nodes[indexOne]))
                         {
-                            nodes[i].linkTo(nodes[indexOne]);
+                            nodesToLinkTo[i].Add(nodes[indexOne]);
+                            //nodes[i].linkTo(nodes[indexOne]);
                         }
                         if (!connections.Contains(nodes[indexTwo]))
                         {
-                            nodes[i].linkTo(nodes[indexTwo]);
+                            nodesToLinkTo[i].Add(nodes[indexTwo]);
+                            //nodes[i].linkTo(nodes[indexTwo]);
                         }
                         break;
                     case 4:
@@ -149,11 +159,13 @@ public class NodeGroupScript : NetworkBehaviour {
                         indexTwo = nodeTwo / angle;
                         if (!connections.Contains(nodes[indexOne]))
                         {
-                            nodes[i].linkTo(nodes[indexOne]);
+                            nodesToLinkTo[i].Add(nodes[indexOne]);
+                            //nodes[i].linkTo(nodes[indexOne]);
                         }
                         if (!connections.Contains(nodes[indexTwo]))
                         {
-                            nodes[i].linkTo(nodes[indexTwo]);
+                            nodesToLinkTo[i].Add(nodes[indexTwo]);
+                            //nodes[i].linkTo(nodes[indexTwo]);
                         }
                         int nodeThree = nodeOne + 90;
                         if (nodeThree > 360)
@@ -164,7 +176,8 @@ public class NodeGroupScript : NetworkBehaviour {
                         List<Node> nodeTwoConnections = nodes[indexTwo].links;
                         if (!nodeTwoConnections.Contains(nodes[indexThree]))
                         {
-                            nodes[indexTwo].linkTo(nodes[indexThree]);
+                            nodesToLinkTo[i].Add(nodes[indexThree]);
+                            //nodes[indexTwo].linkTo(nodes[indexThree]);
                         }
                         break;
                 }
@@ -173,11 +186,13 @@ public class NodeGroupScript : NetworkBehaviour {
             if (i == nodes.Count - 1 && connections.Count < maxNodeConnections)
             {
                 //randomize?
-                nodes[i].linkTo(nodes[Random.Range(0, nodes.Count - 1)]);
+                nodesToLinkTo[i].Add(nodes[Random.Range(0, nodes.Count - 1)]);
+                //nodes[i].linkTo(nodes[Random.Range(0, nodes.Count - 1)]);
             }
+            
         }
         //create connections between groups
-        float maxConnectionDist = radius * 20;
+        float maxConnectionDist = radius * 7;
         GameObject[] groups = GameObject.FindGameObjectsWithTag("Group");
         //choose connection types
         //maybe calculate paths to each group and connect if path to group does not exist for now connect with every group
@@ -218,23 +233,41 @@ public class NodeGroupScript : NetworkBehaviour {
                             otherConnectIndex = j;
                         }
                     }
-                    nodes[connectIndex].linkTo(otherNodes[otherConnectIndex]);
+                    nodesToLinkTo[connectIndex].Add(otherNodes[otherConnectIndex]);
+                    //nodes[connectIndex].linkTo(otherNodes[otherConnectIndex]);
                     connectedGroups.Add(other);
                 }
                 
             }
         }
         
-        for(int i = 0; i < nodes.Count; i++)
+        for (int i = 0; i < nodes.Count; i++)
         {
+            
+            float[] ideaStrengths = new float[IdeaList.staticList.Length];
+            for (int j = 0; j < ideaStrengths.Length; j++)
+            {
+                ideaStrengths[j] = Random.Range(0f, 1f);
+            }
+            ideaStrengths[IdeaList.staticDict[mainIdea]] = Mathf.Max(mainStrength, ideaStrengths[IdeaList.staticDict[mainIdea]]);
+            nodes[i].ideaStrengths = ideaStrengths;
+            //print("links for node " + i + ": " + nodes[i].links.Count);
             NetworkServer.Spawn(nodes[i].gameObject);
         }
     }
 	
 	// Update is called once per frame
 	void Update () {
-	    
-	}
+        for (int i = 0; i < nodes.Count; i++)
+        {
+            for(int j = 0; j < nodesToLinkTo[i].Count; j++)
+            {
+                nodes[i].linkTo(nodesToLinkTo[i][j]);
+            }
+            //nodes[Random.Range(0, nodes.Length)].linkTo(waitingLinks[i]);
+        }
+        NetworkServer.Destroy(gameObject);
+    }
 
     Vector3 RandomCircle(Vector3 center, float radius, int a)
     {
