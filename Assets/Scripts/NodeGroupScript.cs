@@ -12,10 +12,12 @@ public class NodeGroupScript : NetworkBehaviour {
     public float ideaSpawnRateMin = 0.002f;
     public float ideaSpawnRateMax = 0.01f;
     public Node referenceNode;
+    public GameObject referenceMediaNode;
     public string mainIdea;
     public float mainStrength = .5f;
     List<Node> nodes = new List<Node>();
-    List<List<Node>> nodesToLinkTo = new List<List<Node>>();
+    List<List<Node>> groupLinks = new List<List<Node>>();
+    List<List<int>> nodeLinks = new List<List<int>>();
     List<NodeGroupScript> connectedGroups = new List<NodeGroupScript>();
     //make group connections pre-determined (the same everytime level is loaded)
     //connections within a group will be procedural but connections between groups will not
@@ -34,7 +36,7 @@ public class NodeGroupScript : NetworkBehaviour {
         for(int i = 0; i < numNodes; i++)
         {
             int a = i * angle;
-            //maybe vary the radius
+            //TODO: adjust range randomization to eliminated nodes overlapping links
             float rad = Random.Range(radius * 0.5f, radius * 1.25f);
             Vector3 pos = RandomCircle(pos2D, rad, a);
             Node n = (Node)Instantiate(referenceNode, pos, Quaternion.identity);
@@ -51,11 +53,11 @@ public class NodeGroupScript : NetworkBehaviour {
         nodes[nodes.Count-1].index = nodes.Count-1;
         for(int i = 0; i < nodes.Count; i++)
         {
-            nodesToLinkTo.Add(new List<Node>());
+            groupLinks.Add(new List<Node>());
+            nodeLinks.Add(new List<int>());
             //get connections
             List<Node> connections = nodes[i].links;
             //check connections
-            //TODO: fix max connections check to check connections of node its connecting to
             if (connections.Count < maxNodeConnections && i != nodes.Count - 1)
             {
                 int connectionType = Random.Range(0, 5);
@@ -65,7 +67,7 @@ public class NodeGroupScript : NetworkBehaviour {
                         //central = connection to center
                         if (!connections.Contains(nodes[nodes.Count - 1]))
                         {
-                            nodesToLinkTo[i].Add(nodes[nodes.Count - 1]);
+                            nodeLinks[i].Add(nodes.Count - 1);
                             //nodes[i].linkTo(nodes[nodes.Count - 1]);
                         }
                         break;
@@ -83,12 +85,12 @@ public class NodeGroupScript : NetworkBehaviour {
                         }
                         if (!connections.Contains(nodes[clockwise]))
                         {
-                            nodesToLinkTo[i].Add(nodes[clockwise]);
+                            nodeLinks[i].Add(clockwise);
                             //nodes[i].linkTo(nodes[clockwise]);
                         }
                         if (!connections.Contains(nodes[counterclockwise]))
                         {
-                            nodesToLinkTo[i].Add(nodes[counterclockwise]);
+                            nodeLinks[i].Add(counterclockwise);
                             //nodes[i].linkTo(nodes[counterclockwise]);
                         }
                         break;
@@ -108,12 +110,12 @@ public class NodeGroupScript : NetworkBehaviour {
                         int indexTwo = nodeTwo / angle;
                         if (!connections.Contains(nodes[indexOne]))
                         {
-                            nodesToLinkTo[i].Add(nodes[indexOne]);
+                            nodeLinks[i].Add(indexOne);
                             //nodes[i].linkTo(nodes[indexOne]);
                         }
                         if (!connections.Contains(nodes[indexTwo]))
                         {
-                            nodesToLinkTo[i].Add(nodes[indexTwo]);
+                            nodeLinks[i].Add(indexTwo);
                             //nodes[i].linkTo(nodes[indexTwo]);
                         }
                         break;
@@ -133,12 +135,12 @@ public class NodeGroupScript : NetworkBehaviour {
                         indexTwo = nodeTwo / angle;
                         if (!connections.Contains(nodes[indexOne]))
                         {
-                            nodesToLinkTo[i].Add(nodes[indexOne]);
+                            nodeLinks[i].Add(indexOne);
                             //nodes[i].linkTo(nodes[indexOne]);
                         }
                         if (!connections.Contains(nodes[indexTwo]))
                         {
-                            nodesToLinkTo[i].Add(nodes[indexTwo]);
+                            nodeLinks[i].Add(indexTwo);
                             //nodes[i].linkTo(nodes[indexTwo]);
                         }
                         break;
@@ -158,12 +160,12 @@ public class NodeGroupScript : NetworkBehaviour {
                         indexTwo = nodeTwo / angle;
                         if (!connections.Contains(nodes[indexOne]))
                         {
-                            nodesToLinkTo[i].Add(nodes[indexOne]);
+                            nodeLinks[i].Add(indexOne);
                             //nodes[i].linkTo(nodes[indexOne]);
                         }
                         if (!connections.Contains(nodes[indexTwo]))
                         {
-                            nodesToLinkTo[i].Add(nodes[indexTwo]);
+                            nodeLinks[i].Add(indexTwo);
                             //nodes[i].linkTo(nodes[indexTwo]);
                         }
                         int nodeThree = nodeOne + 90;
@@ -175,7 +177,7 @@ public class NodeGroupScript : NetworkBehaviour {
                         List<Node> nodeTwoConnections = nodes[indexTwo].links;
                         if (!nodeTwoConnections.Contains(nodes[indexThree]))
                         {
-                            nodesToLinkTo[i].Add(nodes[indexThree]);
+                            nodeLinks[i].Add(indexThree);
                             //nodes[indexTwo].linkTo(nodes[indexThree]);
                         }
                         break;
@@ -185,11 +187,26 @@ public class NodeGroupScript : NetworkBehaviour {
             if (i == nodes.Count - 1 && connections.Count < maxNodeConnections)
             {
                 //randomize?
-                nodesToLinkTo[i].Add(nodes[Random.Range(0, nodes.Count - 1)]);
+                nodeLinks[i].Add(Random.Range(0, nodes.Count - 1));
                 //nodes[i].linkTo(nodes[Random.Range(0, nodes.Count - 1)]);
             }
             
         }
+
+        int mostLinks = 0;
+        int mediaNodeIndex = nodes.Count - 1;
+        //change node with most links to media node
+        for (int i = 0; i < nodeLinks.Count; i++)
+        {
+            if (nodeLinks[i].Count > mostLinks)
+            {
+                mostLinks = nodeLinks[i].Count;
+                mediaNodeIndex = i;
+            }
+        }
+        Node m = ((GameObject)Instantiate(referenceMediaNode, nodes[mediaNodeIndex].transform.position, Quaternion.identity)).GetComponent<Node>();
+        nodes[mediaNodeIndex] = m;
+
         //create connections between groups
         float maxConnectionDist = radius * 7;
         GameObject[] groups = GameObject.FindGameObjectsWithTag("Group");
@@ -232,14 +249,14 @@ public class NodeGroupScript : NetworkBehaviour {
                             otherConnectIndex = j;
                         }
                     }
-                    nodesToLinkTo[connectIndex].Add(otherNodes[otherConnectIndex]);
+                    groupLinks[connectIndex].Add(otherNodes[otherConnectIndex]);
                     //nodes[connectIndex].linkTo(otherNodes[otherConnectIndex]);
                     connectedGroups.Add(other);
                 }
                 
             }
         }
-        
+
         for (int i = 0; i < nodes.Count; i++)
         {
             
@@ -259,11 +276,18 @@ public class NodeGroupScript : NetworkBehaviour {
 	void Update () {
         for (int i = 0; i < nodes.Count; i++)
         {
-            for(int j = 0; j < nodesToLinkTo[i].Count; j++)
+            for(int j = 0; j < nodeLinks[i].Count; j++)
             {
-                nodes[i].linkTo(nodesToLinkTo[i][j]);
+                //may want to adjust this
+                if(nodes[i].links.Count == 0 || (nodes[i].links.Count < maxNodeConnections && nodes[nodeLinks[i][j]].links.Count < maxNodeConnections))
+                {
+                    nodes[i].linkTo(nodes[nodeLinks[i][j]]);
+                }
             }
-            //nodes[Random.Range(0, nodes.Length)].linkTo(waitingLinks[i]);
+            for (int j = 0; j < groupLinks[i].Count; j++)
+            {
+                nodes[i].linkTo(groupLinks[i][j]);
+            }
         }
         NetworkServer.Destroy(gameObject);
     }
