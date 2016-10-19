@@ -35,7 +35,7 @@ public class Global : NetworkBehaviour {
     // Use this for initialization
     public override void OnStartLocalPlayer () {
 		inspector = GameObject.FindGameObjectWithTag("Inspector").GetComponent<Inspect>();
-
+		//infoTextBox = GameObject.FindGameObjectWithTag("")
         currentMoney = startingMoney;
         moneyDiff = income;
 		DisableDummy();
@@ -43,7 +43,9 @@ public class Global : NetworkBehaviour {
         SpawnObj(lurkerPrefab, new Vector2(0, 0), 1);
 	}
 
-    // For the host client, disable other players' Canvases
+	
+
+   /* // For the host client, disable other players' Canvases
     [Client]
     public override void OnSetLocalVisibility(bool vis)
     {
@@ -56,7 +58,7 @@ public class Global : NetworkBehaviour {
     {
         return false;
     }
-
+	*/
     [Command]
     void CmdSpawnObj(int prefabIndex, Vector2 position, int index)
     {
@@ -96,15 +98,13 @@ public class Global : NetworkBehaviour {
     }
 
     // Update is called once per frame
-    [ClientCallback]
+    [Client]
 	void Update () {
-
         // only update for the local player
         if (!isLocalPlayer)
-            return;
-
-        infoTextBox.text = text;
-        textImage.enabled = textbg;
+			return;
+        //infoTextBox.text = text;
+        //textImage.enabled = textbg;
 
 		if (overlappingFocusable())
 		{
@@ -118,6 +118,7 @@ public class Global : NetworkBehaviour {
 
         if(Input.GetMouseButtonDown(0))
         {//if left mouse button
+			//print(currentTool);
 			if (currentTool)
 			{//spawn whatever is selected
 				Vector3 position = Camera.main.ScreenToWorldPoint(Input.mousePosition.append(Camera.main.transform.position.z * -1));

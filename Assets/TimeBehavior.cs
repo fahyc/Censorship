@@ -13,7 +13,7 @@ public class TimeBehavior : NetworkBehaviour {
     public float dayLength=1.0f;
     float hourLength;
     float startTime;
-    Global[] players;
+    //Global[] players;
     // Use this for initialization
     void Start () {
         hourLength = dayLength / 24.0f;
@@ -22,7 +22,7 @@ public class TimeBehavior : NetworkBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        GameObject[] temp = GameObject.FindGameObjectsWithTag("Player");
+    //    GameObject[] temp = GameObject.FindGameObjectsWithTag("Player");
 
         if (!isServer)
             return;
