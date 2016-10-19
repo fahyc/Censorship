@@ -36,7 +36,7 @@ public class NodeGroupScript : NetworkBehaviour {
             Node n = (Node)Instantiate(referenceNode, pos, Quaternion.identity);
             n.spawnChance = Random.Range(ideaSpawnRateMin, ideaSpawnRateMax);
             nodes.Add(n);
-            NetworkServer.Spawn(nodes[i].gameObject);
+            //NetworkServer.Spawn(nodes[i].gameObject);
 			print("spawning");
             nodes[i].index = i;
         }
@@ -44,7 +44,7 @@ public class NodeGroupScript : NetworkBehaviour {
         Node central = (Node)Instantiate(referenceNode, transform.position, Quaternion.identity);
         central.spawnChance = Random.Range(ideaSpawnRateMin, ideaSpawnRateMax);
         nodes.Add(central);
-        NetworkServer.Spawn(nodes[nodes.Count - 1].gameObject);
+        //NetworkServer.Spawn(nodes[nodes.Count - 1].gameObject);
         nodes[nodes.Count-1].index = nodes.Count-1;
         for(int i = 0; i < nodes.Count; i++)
         {
@@ -223,6 +223,10 @@ public class NodeGroupScript : NetworkBehaviour {
             }
         }
         
+        for(int i = 0; i < nodes.Count; i++)
+        {
+            NetworkServer.Spawn(nodes[i].gameObject);
+        }
     }
 	
 	// Update is called once per frame
