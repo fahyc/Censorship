@@ -5,12 +5,12 @@ using System.Collections.Generic;
 
 public class NodeGroupScript : NetworkBehaviour {
 
-    int maxNodes = 15;
-    int minNodes = 5;
+    public int maxNodes = 15;
+    public int minNodes = 5;
     int numNodes;
-    int maxNodeConnections = 2;
-    float ideaSpawnRateMin = 0.01f;
-    float ideaSpawnRateMax = 0.1f;
+    public int maxNodeConnections = 2;
+    public float ideaSpawnRateMin = 0.01f;
+    public float ideaSpawnRateMax = 0.1f;
     public Node referenceNode;
     List<Node> nodes = new List<Node>();
     List<NodeGroupScript> connectedGroups = new List<NodeGroupScript>();
@@ -37,6 +37,7 @@ public class NodeGroupScript : NetworkBehaviour {
             n.spawnChance = Random.Range(ideaSpawnRateMin, ideaSpawnRateMax);
             nodes.Add(n);
             NetworkServer.Spawn(nodes[i].gameObject);
+			print("spawning");
             nodes[i].index = i;
         }
         //create central node
