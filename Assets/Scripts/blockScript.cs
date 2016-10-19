@@ -16,10 +16,7 @@ public class blockScript : Spawnable {
 		}
 	}
 	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+
 
     [ServerCallback]
 	void OnTriggerEnter2D(Collider2D col)

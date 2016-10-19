@@ -221,7 +221,7 @@ public class Global : NetworkBehaviour {
     [Client]
     public void addIncome() {
         int count = 0;
-        if (currentMoney < 0 && moneyDiff < 0 && broke == false) {
+        if (currentMoney < Mathf.Abs(moneyDiff) && moneyDiff < 0 && broke == false) {
             print("Disabling all Units due to lack of funds");
             broke = true;
             foreach (Spawnable sp in FindObjectsOfType<Spawnable>()) {
@@ -235,5 +235,10 @@ public class Global : NetworkBehaviour {
         //If we're not broke, then we can gain or lose income. If we are broke, we don't want to change ANYTHING.
         if(!broke)
             currentMoney += moneyDiff;
+        else {
+            if(currentMoney > 0) {
+                broke = false;
+            }
+        }
     }
 }

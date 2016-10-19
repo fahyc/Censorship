@@ -37,7 +37,7 @@ public class NodeGroupScript : NetworkBehaviour {
             n.spawnChance = Random.Range(ideaSpawnRateMin, ideaSpawnRateMax);
             nodes.Add(n);
             NetworkServer.Spawn(nodes[i].gameObject);
-			print("spawning");
+			//print("spawning");
             nodes[i].index = i;
         }
         //create central node
