@@ -18,16 +18,14 @@ public class PlayerMoney : MonoBehaviour {
 			GameObject temp = GameObject.FindGameObjectWithTag("Player");
 			if (!temp)
 			{
-				print("none found.");
+				//print("none found.");
 				return;
-			}
+			} else {
+                print("player found");
+            }
 			playerstats = temp.GetComponent<Global>();
 		}
 		moneyText.text = "Money: " + playerstats.currentMoney + "(" + playerstats.moneyDiff + ")";
 	}
-    //Because we're breaking down our players' income by days, we don't want to be updating our money all the time.
-    void DayElapsed() {
 
-        
-    }
 }
