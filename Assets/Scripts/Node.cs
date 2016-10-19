@@ -88,14 +88,15 @@ public class Node : NetworkBehaviour {
 			}
 			linkObj.Add(link);
 		}
-
 	}
+
 	[Client]
 	public void clientLinkTo(Node other)
 	{
 		//print("visibility: " + GetComponent<VisibilityCheck>() + " other's " + other.GetComponent<VisibilityCheck>());
 		//print("using clientlinkto with node: " + other);
 		CmdlinkTo(other.GetComponent<NetworkIdentity>().netId);
+		//print(other + " goes to netid: " + other.GetComponent<NetworkIdentity>().netId);
 	}
 
     [Command]
@@ -216,7 +217,14 @@ public class Node : NetworkBehaviour {
 
 	public void SetStrengths(float[] strengths)
 	{
-		CmdSetStrengths(strengths);
+		if (isServer)
+		{
+			ideaStrengths = strengths;
+		}
+		else
+		{
+			CmdSetStrengths(strengths);
+		}
 	}
 
 	[Command]

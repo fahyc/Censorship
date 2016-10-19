@@ -8,7 +8,7 @@ public class Shill : Spawnable
 	public Sprite sprite;
 	// Use this for initialization
 	void Start () {
-
+		//print("Starting shill");
 		node = GetComponent<Node>();
 		for(int i = 0; i < DummyNode.nodes.Count; i++)
 		{

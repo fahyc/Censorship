@@ -14,7 +14,7 @@ public class NetworkLineRenderer : NetworkBehaviour {
 		points.Add(v1);
 		points.Add(v2);
 	}
-
+	/*
     [Server]
     public override bool OnRebuildObservers(HashSet<NetworkConnection> observers, bool initialize)
     {
@@ -33,7 +33,7 @@ public class NetworkLineRenderer : NetworkBehaviour {
     public override bool OnCheckObserver(NetworkConnection newObserver)
     {
         return true;
-    }
+    }*/
 
     public override void OnStartClient() {
 		GetComponent<LineRenderer> ().SetPosition (0, points[0]);

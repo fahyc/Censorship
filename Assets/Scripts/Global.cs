@@ -138,7 +138,7 @@ public class Global : NetworkBehaviour {
 			{//spawn whatever is selected
 				Vector3 position = Camera.main.ScreenToWorldPoint(Input.mousePosition.append(Camera.main.transform.position.z * -1));
                 SpawnObj(currentTool, position, toolIndex);
-				print("Current tool");
+				//print("Current tool: " + currentTool);
 			}
 			else {
 				//or if there is nothing to spawn, clear any focus and ui elements, or inspect whatever is below the mouse.
@@ -146,7 +146,7 @@ public class Global : NetworkBehaviour {
 				Vector3 mousePos = Input.mousePosition;
 				mousePos.Set(mousePos.x, mousePos.y, -Camera.main.transform.position.z);
 				Collider2D[] hits = Physics2D.OverlapPointAll(Camera.main.ScreenToWorldPoint(mousePos));
-				print("trying clear ui.");
+				//print("trying clear ui.");
 				bool hit = false;
 				for (int i = 0; i < hits.Length; i++)
 				{//try inspecting something
@@ -165,7 +165,7 @@ public class Global : NetworkBehaviour {
 				}
 				if (!hit)
 				{//Clear the UI if there is nothing below the mouse.
-					print("clearing UI.");
+					//print("clearing UI.");
 					Global.text = "";
 					textbg = false;
 					for(int i = 0; i < toHide.Count; i++)
