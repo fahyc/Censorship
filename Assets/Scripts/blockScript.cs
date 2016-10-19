@@ -25,17 +25,17 @@ public class blockScript : Spawnable {
 	void OnTriggerEnter2D(Collider2D col)
 	{
 		Idea idea = col.GetComponent<Idea>();
-		if (idea && idea.ideaStr != sendsOut && (index < 0 || idea.index == index)) 
-		{
-			//Vector3 dest = idea.origin;
-			NetworkServer.Destroy(idea.gameObject);
-			//Idea temp = GameObject.Instantiate<Idea>(ideaTemplate);
-			//temp.ideaStr = sendsOut;
-			//temp.origin = transform.position;
-			//temp.destination = dest;
-			//temp.transform.position = transform.position;
-			//temp.dest = idea.originObj;
-		}
-
+        if (!disabled) {
+            if (idea && idea.ideaStr != sendsOut && (index < 0 || idea.index == index)) {
+                //Vector3 dest = idea.origin;
+                NetworkServer.Destroy(idea.gameObject);
+                //Idea temp = GameObject.Instantiate<Idea>(ideaTemplate);
+                //temp.ideaStr = sendsOut;
+                //temp.origin = transform.position;
+                //temp.destination = dest;
+                //temp.transform.position = transform.position;
+                //temp.dest = idea.originObj;
+            }
+        }
 	}
 }

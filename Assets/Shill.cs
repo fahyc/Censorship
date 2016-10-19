@@ -19,8 +19,5 @@ public class Shill : Spawnable
 		node.SetStrengths(strengths);
 	}
 	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+
 }
