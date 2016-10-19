@@ -20,14 +20,13 @@ public class NodeGroupScript : NetworkBehaviour {
     //make group connections pre-determined (the same everytime level is loaded)
     //connections within a group will be procedural but connections between groups will not
     //for group connections make a variable number of connections and get list of groups within certain range and distribute variable number of connections amongst them
-
 	// Use this for initialization
     [Server]
     public override void OnStartServer() {
         numNodes = Random.Range(minNodes, maxNodes);
         //spawn nodes in circular formation
         //calculate radius based on number of nodes
-        float radius = (numNodes * (referenceNode.GetComponent<SpriteRenderer>().sprite.rect.width / 200)) / 2;
+        float radius = 0.08f * numNodes + 0.75f;
         int angle = 360 / numNodes;
         Vector3 pos2D = transform.position;
         pos2D.z = 0;
