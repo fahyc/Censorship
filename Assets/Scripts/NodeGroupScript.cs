@@ -26,25 +26,27 @@ public class NodeGroupScript : NetworkBehaviour {
         //calculate radius based on number of nodes
         float radius = (numNodes * (referenceNode.GetComponent<SpriteRenderer>().sprite.rect.width / 200)) / 2;
         int angle = 360 / numNodes;
+        Vector3 pos2D = transform.position;
+        pos2D.z = 0;
         //create surrounding nodes
         for(int i = 0; i < numNodes; i++)
         {
             int a = i * angle;
             //maybe vary the radius
             float rad = Random.Range(radius * 0.5f, radius * 1.25f);
-            Vector3 pos = RandomCircle(transform.position, rad, a);
+            Vector3 pos = RandomCircle(pos2D, rad, a);
             Node n = (Node)Instantiate(referenceNode, pos, Quaternion.identity);
             n.spawnChance = Random.Range(ideaSpawnRateMin, ideaSpawnRateMax);
             nodes.Add(n);
-            NetworkServer.Spawn(nodes[i].gameObject);
-			//print("spawning");
+            //NetworkServer.Spawn(nodes[i].gameObject);
+			print("spawning");
             nodes[i].index = i;
         }
         //create central node
-        Node central = (Node)Instantiate(referenceNode, transform.position, Quaternion.identity);
+        Node central = (Node)Instantiate(referenceNode, pos2D, Quaternion.identity);
         central.spawnChance = Random.Range(ideaSpawnRateMin, ideaSpawnRateMax);
         nodes.Add(central);
-        NetworkServer.Spawn(nodes[nodes.Count - 1].gameObject);
+        //NetworkServer.Spawn(nodes[nodes.Count - 1].gameObject);
         nodes[nodes.Count-1].index = nodes.Count-1;
         for(int i = 0; i < nodes.Count; i++)
         {
@@ -223,6 +225,10 @@ public class NodeGroupScript : NetworkBehaviour {
             }
         }
         
+        for(int i = 0; i < nodes.Count; i++)
+        {
+            NetworkServer.Spawn(nodes[i].gameObject);
+        }
     }
 	
 	// Update is called once per frame
