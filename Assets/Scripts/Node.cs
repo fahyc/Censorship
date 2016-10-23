@@ -41,15 +41,24 @@ public class Node : NetworkBehaviour {
 	
 	SpriteRenderer sprite;
 
-	[Client]
+	[ClientCallback]
 	void Start()
 	{
         //print("client node");
 		sprite = GetComponent<SpriteRenderer>();
+		if (importantIndex != -1)
+		{
+			onChangeIndex(importantIndex);
+		}
 	}
 
 	public void onChangeIndex(int i)
 	{
+		if (!sprite)
+		{
+			Debug.LogWarning("Getting sprite. This shouldn't happen.");
+			sprite = GetComponent<SpriteRenderer>();
+		}
 		sprite.color = IdeaList.staticList[i].color;
 	}
 

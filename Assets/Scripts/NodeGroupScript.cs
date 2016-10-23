@@ -205,6 +205,7 @@ public class NodeGroupScript : NetworkBehaviour {
             }
         }
         Node m = ((GameObject)Instantiate(referenceMediaNode, nodes[mediaNodeIndex].transform.position, Quaternion.identity)).GetComponent<Node>();
+		Destroy(nodes[mediaNodeIndex].gameObject);
         nodes[mediaNodeIndex] = m;
 
         //create connections between groups
@@ -267,9 +268,11 @@ public class NodeGroupScript : NetworkBehaviour {
             }
             ideaStrengths[IdeaList.staticDict[mainIdea]] = Mathf.Max(mainStrength, ideaStrengths[IdeaList.staticDict[mainIdea]]);
             nodes[i].ideaStrengths = ideaStrengths;
-            //print("links for node " + i + ": " + nodes[i].links.Count);
+			//print("links for node " + i + ": " + nodes[i].links.Count);
+			
             NetworkServer.Spawn(nodes[i].gameObject);
-        }
+			print(nodes[i].gameObject + " goes to " + nodes[i].GetComponent<NetworkIdentity>().netId);
+		}
     }
 	
 	// Update is called once per frame

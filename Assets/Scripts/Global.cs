@@ -113,7 +113,7 @@ public class Global : NetworkBehaviour {
     }
 
     // Update is called once per frame
-    [Client]
+    [ClientCallback]
 	void Update () {
         // only update for the local player
         if (!isLocalPlayer)
@@ -233,7 +233,7 @@ public class Global : NetworkBehaviour {
 		currentTool = obj;
 	}
     // Increment a player's income when the day increases.
-    [Client]
+    [ClientCallback]
     public void addIncome() {
         int count = 0;
         if (currentMoney < Mathf.Abs(moneyDiff) && moneyDiff < 0 && broke == false) {

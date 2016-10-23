@@ -39,7 +39,7 @@ public class NetworkLineRenderer : NetworkBehaviour {
 		GetComponent<LineRenderer> ().SetPosition (0, points[0]);
 		GetComponent<LineRenderer> ().SetPosition (1, points[1]);
 
-        VisibilityCheck v = GetComponent<VisibilityCheck>();
+        //VisibilityCheck v = GetComponent<VisibilityCheck>();
 
         Vector2 p0 = points[0];
         Vector2 p1 = points[1];
