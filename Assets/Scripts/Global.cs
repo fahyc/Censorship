@@ -50,7 +50,13 @@ public class Global : NetworkBehaviour {
         moneyDiff = income;
 		DisableDummy();
         // TODO: spawn based on a list of spawn locations
-        SpawnObj(lurkerPrefab, new Vector2(0, 0), 1);
+        int prefabIndex = NetworkManager.singleton.spawnPrefabs.IndexOf(lurkerPrefab.gameObject);
+
+		if(prefabIndex < 0)
+		{
+            print("Error prefabObject is not valid: " + lurkerPrefab.gameObject);
+		}
+        CmdSpawnObj(prefabIndex, transform.position, 1);
 	}
 
 	
@@ -94,6 +100,21 @@ public class Global : NetworkBehaviour {
 			//Destroy(gameObject);
 			return;
 		}
+
+        // check that we're spawning inside visible FoW zone
+        Collider2D[] hits = Physics2D.OverlapPointAll(pos);
+        bool hitLurker = false;
+        foreach(Collider2D h in hits)
+        {
+            if (h.GetComponent<Lurker>() != null)
+                hitLurker = true;
+        }
+
+        if (!hitLurker) // we tried to spawn in a disallowed area
+        {
+            return;
+        }
+
         Spawnable costOfUnit = prefabObject.GetComponent<Spawnable>();
         //Do we have money to spawn this wall? If not, just quit. Also, we should probably display "No money to build" somewhere in the UI.
         if (currentMoney < costOfUnit.initialCost)
