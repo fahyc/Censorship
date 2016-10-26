@@ -209,7 +209,7 @@ public class NodeGroupScript : NetworkBehaviour {
         nodes[mediaNodeIndex] = m;
 
         //create connections between groups
-        float maxConnectionDist = radius * 7;
+        float maxConnectionDist = radius * 4.75f;
         GameObject[] groups = GameObject.FindGameObjectsWithTag("Group");
         //choose connection types
         //maybe calculate paths to each group and connect if path to group does not exist for now connect with every group
