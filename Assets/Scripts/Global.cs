@@ -22,6 +22,8 @@ public class Global : NetworkBehaviour {
 	//static List<UIItem> 
 	Inspect inspector;
 
+	public List<Inspectable> selected = new List<Inspectable>();
+
     public Inspect inspectCanvas;
 
     public DummyUnit activeDummy;
@@ -150,6 +152,10 @@ public class Global : NetworkBehaviour {
         if(Input.GetMouseButtonDown(1)) {
 			currentTool = null;
             DisableDummy();
+			for(int i = 0; i < selected.Count; i++)
+			{
+				selected[i].goTo(Camera.main.ScreenToWorldPoint(Input.mousePosition.append(Camera.main.transform.position.z * -1)));
+			}
 		}
 
         if(Input.GetMouseButtonDown(0))
@@ -177,6 +183,7 @@ public class Global : NetworkBehaviour {
 					{
 						// print("enabling Inspect");
 						inspector.Enable(temp.gameObject);
+						select(temp);
 						hit = true;
 					}
 					else if (hits[i].GetComponent<Inspect>())
@@ -195,6 +202,7 @@ public class Global : NetworkBehaviour {
 					}
 					toHide.Clear();
 					DisableDummy();
+					clearSelected();
 				}
 			}
             //Global.text = "";
@@ -207,6 +215,20 @@ public class Global : NetworkBehaviour {
             Debug.Log("Holla holla get dolla");
         }
     }
+
+	void select(Inspectable obj)
+	{
+		selected.Add(obj);
+		obj.select();
+	}
+	void clearSelected()
+	{
+		for(int i = 0; i < selected.Count; i++)
+		{
+			selected[i].deselect();
+		}
+		selected.Clear();
+	}
 	bool overlappingFocusable()
 	{
 		for(int i = 0; i < focusTakers.Count; i++)
