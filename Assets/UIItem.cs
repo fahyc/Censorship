@@ -12,6 +12,7 @@ public class UIItem : MonoBehaviour {
 
 	public virtual void Disable()
 	{
+		print("disabling");
 		gameObject.SetActive(false);
 	}
 
