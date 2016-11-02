@@ -75,8 +75,10 @@ public class Global : NetworkBehaviour {
             print("Error prefabObject is not valid: " + lurkerPrefab.gameObject);
 		}
         CmdSpawnObj(prefabIndex, transform.position, 1);
-
-	}
+        //Center camera on start positions.    
+        GameObject.FindGameObjectWithTag("MainCamera").transform.position = new Vector3(transform.position.x, transform.position.y, -10);
+    }
+	
 	
     [Command]
     void CmdSpawnObj(int prefabIndex, Vector2 position, int index)
