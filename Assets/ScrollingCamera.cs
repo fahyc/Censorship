@@ -22,7 +22,7 @@ public class ScrollingCamera : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		t = transform;
-
+        
 		xmin = edgeProportions * Screen.width;
 
 		ymin = edgeProportions * Screen.height;
