@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 public class VisibilityCheck : NetworkBehaviour {
 
-    public bool startVisibleToSelf = false;
+    public bool visibleToSelf = false;
     public bool visibleToLurkers = true;
 
     HashSet<VisibilityCheck> connectedEntities = new HashSet<VisibilityCheck>();
@@ -20,8 +20,9 @@ public class VisibilityCheck : NetworkBehaviour {
 
     public override void OnStartServer()
     {
+        /*
         // We need to initialize visibility for lurkers
-        CircleCollider2D c = GetComponent<CircleCollider2D>();
+        Collider2D c = GetComponent<Collider2D>();
 
         if (c != null) {
             Collider2D[] visibleNodes = Physics2D.OverlapCircleAll(transform.position, c.radius);
@@ -36,6 +37,7 @@ public class VisibilityCheck : NetworkBehaviour {
                 }
             }
         }
+        */
     }
 
     // For the host client, disable "invisible" objects
@@ -60,26 +62,26 @@ public class VisibilityCheck : NetworkBehaviour {
     [Server]
     public override bool OnRebuildObservers(HashSet<NetworkConnection> observers, bool init) {
 
-        if (startVisibleToSelf && init)
+        if (visibleToSelf)
         {
             Spawnable s = GetComponent<Spawnable>();
             if (s != null)
                 observers.Add(s.owner);
         }
 
-        if (visibleToLurkers)
-        {
             // unless we're initializing, only make viewable to lurkers
-            foreach (Spawnable l in lurkersWatching)
+        foreach (Spawnable l in lurkersWatching)
+        {
+            if (visibleToLurkers || l.GetComponent<Lurker>().seesAll)
             {
                 observers.Add(l.owner);
             }
+        }
 
-            foreach (VisibilityCheck v in connectedEntities)
-            {
-                v.lurkersWatching.UnionWith(lurkersWatching);
-                v.GetComponent<NetworkIdentity>().RebuildObservers(false);
-            }
+        foreach (VisibilityCheck v in connectedEntities)
+        {
+            v.lurkersWatching.UnionWith(lurkersWatching);
+            v.GetComponent<NetworkIdentity>().RebuildObservers(false);
         }
         return true;
     }

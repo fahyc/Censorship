@@ -5,6 +5,8 @@ using System.Collections.Generic;
 
 public class Lurker : NetworkBehaviour {
 
+    public bool seesAll = false;
+
     // For the host client, disable other players' Canvases
     [Client]
     public override void OnSetLocalVisibility(bool vis)
