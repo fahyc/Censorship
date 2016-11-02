@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using ExtensionMethods;
+using UnityEngine.Networking;
 
 public class DummyUnit : MonoBehaviour {
 
@@ -18,7 +19,7 @@ public class DummyUnit : MonoBehaviour {
         bool hitLurker = false;
         foreach(Collider2D h in hits)
         {
-            if (h.GetComponent<Lurker>() != null)
+            if (h.GetComponent<Lurker>() != null && h.GetComponent<NetworkIdentity>().hasAuthority)
                 hitLurker = true;
         }
         SpriteRenderer[] renders = GetComponentsInChildren<SpriteRenderer>();
