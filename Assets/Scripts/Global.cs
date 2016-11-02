@@ -35,18 +35,34 @@ public class Global : NetworkBehaviour {
     public int moneyDiff;
     public bool broke = false;
 
+	public SpriteRenderer selectionbox;
+
+	//public RectTransform selector;
+	public Vector3 selectStart;
+	public float minSelectionDistance = .5f;
+	//bool selecting;
+	public LineRenderer lineTemplate;
+	//public Texture selectTexture;
+
 	void Start()
 	{
 		if (!isLocalPlayer && !isServer)
 		{
 			print("Is not local. becoming inactive");
 			gameObject.SetActive(false);
+			return;
 		}
+		//selector = Instantiate(selector);
+		//selector.gameObject.SetActive(false);
 	}
     // Use this for initialization
     public override void OnStartLocalPlayer () {
 		
 		inspector = GameObject.FindGameObjectWithTag("Inspector").GetComponent<Inspect>();
+		//lineTemplate = Instantiate(lineTemplate);
+		//lineTemplate.gameObject.SetActive(false);
+		selectionbox = Instantiate(selectionbox);
+		selectionbox.gameObject.SetActive(false);
 		//infoTextBox = GameObject.FindGameObjectWithTag("")
         currentMoney = startingMoney;
         moneyDiff = income;
@@ -59,24 +75,9 @@ public class Global : NetworkBehaviour {
             print("Error prefabObject is not valid: " + lurkerPrefab.gameObject);
 		}
         CmdSpawnObj(prefabIndex, transform.position, 1);
+
 	}
-
 	
-
-   /* // For the host client, disable other players' Canvases
-    [Client]
-    public override void OnSetLocalVisibility(bool vis)
-    {
-        gameObject.SetActive(vis);
-    }
-
-    // make self invisible to new clients
-    [Server]
-    public override bool OnCheckObserver(NetworkConnection conn)
-    {
-        return false;
-    }
-	*/
     [Command]
     void CmdSpawnObj(int prefabIndex, Vector2 position, int index)
     {
@@ -138,29 +139,75 @@ public class Global : NetworkBehaviour {
     // Update is called once per frame
     [ClientCallback]
 	void Update () {
-        // only update for the local player
+		// only update for the local player
+
+//		print(mouseToWorld());
         if (!isLocalPlayer)
 			return;
         //infoTextBox.text = text;
         //textImage.enabled = textbg;
-
+		/*
 		if (overlappingFocusable())
 		{
 			return;
+		}
+		*/
+		if(selectStart != Vector3.zero && (mouseToWorld() - selectStart).magnitude > minSelectionDistance)
+		{
+			DrawSelectBox(mouseToWorld(), selectStart);
+
+		}
+		else
+		{
+			selectionbox.gameObject.SetActive(false);
 		}
 
         if(Input.GetMouseButtonDown(1)) {
 			currentTool = null;
             DisableDummy();
-			for(int i = 0; i < selected.Count; i++)
+
+			Vector3 pt = mouseToWorld();
+			Vector3 averageStart = Vector3.zero;
+			for(int i = 0; i< selected.Count; i++)
 			{
-				selected[i].goTo(Camera.main.ScreenToWorldPoint(Input.mousePosition.append(Camera.main.transform.position.z * -1)));
+				averageStart += selected[i].transform.position;
+			}
+			if (selected.Count > 0){averageStart /= selected.Count;}
+			for (int i = 0; i < selected.Count; i++)
+			{
+				Vector3 dif =  selected[i].transform.position - averageStart;
+				selected[i].goTo(dif + pt);
 			}
 		}
 
-        if(Input.GetMouseButtonDown(0))
-        {//if left mouse button
+		if (Input.GetMouseButtonDown(0))
+		{
+			selectStart = mouseToWorld(); //Camera.main.ScreenToWorldPoint(Input.mousePosition.append(Camera.main.transform.position.z * -1));
+		}
+		if (Input.GetMouseButtonUp(0)) {
+			//if left mouse button
 			//print(currentTool);
+			//always clear the selection.
+			
+			clearSelected();
+			if ((mouseToWorld() - selectStart).magnitude > minSelectionDistance)
+			{
+				//unity's overlap box uses a center and width system so..............................
+				Vector3 center = (mouseToWorld() + selectStart) / 2;
+				Vector3 width = mouseToWorld() - selectStart;
+				width = new Vector3(Mathf.Abs(width.x), Mathf.Abs(width.y), 0);
+				Collider2D[] selectCol = Physics2D.OverlapBoxAll(center, width, 0);
+				print("start: " + center  + "width: " + width + " hit " + selectCol.Length + " objects" );
+				for (int i = 0; i < selectCol.Length; i++)
+				{
+					Inspectable temp = selectCol[i].GetComponent<Inspectable>();
+					if (temp)
+					{
+						select(temp);
+					}
+				}
+			}
+			selectStart = Vector3.zero;
 			if (currentTool)
 			{//spawn whatever is selected
 				Vector3 position = Camera.main.ScreenToWorldPoint(Input.mousePosition.append(Camera.main.transform.position.z * -1));
@@ -191,7 +238,7 @@ public class Global : NetworkBehaviour {
 						hit = true;
 					}
 				}
-				if (!hit)
+				if (!hit && !overlappingFocusable())
 				{//Clear the UI if there is nothing below the mouse.
 					//print("clearing UI.");
 					Global.text = "";
@@ -202,7 +249,6 @@ public class Global : NetworkBehaviour {
 					}
 					toHide.Clear();
 					DisableDummy();
-					clearSelected();
 				}
 			}
             //Global.text = "";
@@ -240,6 +286,12 @@ public class Global : NetworkBehaviour {
 		return false;
 	}
 
+	public Vector3 mouseToWorld()
+	{
+		return Camera.main.ScreenToWorldPoint(Input.mousePosition.append(Camera.main.transform.position.z * -1));
+	}
+
+
 	public static void addUIItem(UIItem item)
 	{
 		toHide.Add(item);
@@ -268,6 +320,16 @@ public class Global : NetworkBehaviour {
 		{
 			Destroy(activeDummy.gameObject);
 		}
+	}
+
+	
+	
+	void DrawSelectBox(Vector3 p1, Vector3 p2)
+	{
+		selectionbox.gameObject.SetActive(true);
+		selectionbox.transform.position = p2;
+		Vector3 dif = p2 - p1;
+		selectionbox.transform.localScale =  new Vector3(-dif.x,dif.y,0);
 	}
 
 	[Client]

@@ -32,6 +32,7 @@ public class Submenu : UIItem {
 
 	public override void Enable()
 	{
+		print("enabling");
 		base.Enable();
 		gameObject.SetActive(true);
 	}
