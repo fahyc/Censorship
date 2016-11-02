@@ -13,6 +13,20 @@ public class Spawnable : NetworkBehaviour {
     public bool disabled = false;
     public Color disabledColor = Color.gray;
 
+
+
+
+    //public override void OnStartLocalPlayer() {
+    //    owningPlayer = LayerMask.NameToLayer("PlayerOwned");
+    //    print("Starting on a local player");
+    //    //base.OnStartLocalPlayer();
+    //}
+
+    //public override void OnStartServer() {
+    //    owningPlayer = LayerMask.NameToLayer("EnemyOwned");
+    //    base.OnStartServer();
+    //}
+
     [ClientCallback]
     void Update() {
         if (disabled) {
