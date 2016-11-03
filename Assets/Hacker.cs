@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.Networking;
 
 public class Hacker : Spawnable {
     public float attackRadius;
@@ -16,6 +17,7 @@ public class Hacker : Spawnable {
         enemiesNear = new GameObject[50];
     }
     // Update is called once per frame
+    [ServerCallback]
     void Update()
     {
         if (!isLocalPlayer) {
@@ -27,7 +29,7 @@ public class Hacker : Spawnable {
                     Spawnable m = col.gameObject.GetComponent<Spawnable>();
                     if (m != null) {
                         //print(m.owner == this.owner);
-                        if(m.owner != this.owner) {
+                        if(m.owner != this.owner && m.GetComponent<NetworkIdentity>().observers.Contains(this.owner)) {
                             enemiesNear[num_inRange] = col.gameObject;
                             num_inRange++;
                         }
@@ -53,6 +55,7 @@ public class Hacker : Spawnable {
 
     }
 
+    [Server]
     void fireShot() {
         print("imma firin mah laser");
         //Pick a random enemy and shoot at it.
