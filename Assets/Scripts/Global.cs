@@ -28,6 +28,8 @@ public class Global : NetworkBehaviour {
 
     public DummyUnit activeDummy;
 
+	public int playerIdeaIndex = 0;//the player's idea.
+
     public int startingMoney = 500;
     public int currentMoney = 0;
     private int income = 10;
