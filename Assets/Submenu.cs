@@ -38,6 +38,6 @@ public class Submenu : UIItem {
 	}
 	// Update is called once per frame
 	void Update () {
-	
+	    
 	}
 }

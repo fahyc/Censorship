@@ -4,7 +4,7 @@ using UnityEngine.Networking;
 
 public class NodeInfluencer : NetworkBehaviour {
 
-    float influence = 10.0f;
+    public float influence = 10.0f;
 
     [Server]
     public override void OnStartServer()
@@ -14,7 +14,7 @@ public class NodeInfluencer : NetworkBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        transform.position += Vector3.down * 1.0f * Time.deltaTime;
+        //transform.position += Vector3.down * 1.0f * Time.deltaTime;
 	}
 
     [ServerCallback]
@@ -23,7 +23,7 @@ public class NodeInfluencer : NetworkBehaviour {
         Node n = other.GetComponent<Node>();
         if(n != null)
         {
-            n.echoChamberCoefficient += influence;
+            n.echoChamberStepIncrease += influence;
         }
     }
 
@@ -33,7 +33,12 @@ public class NodeInfluencer : NetworkBehaviour {
         Node n = other.GetComponent<Node>();
         if (n != null)
         {
-            n.echoChamberCoefficient -= influence;
+            n.echoChamberStepIncrease -= influence;
         }
+    }
+
+    public void SetInfluence(float num)
+    {
+        influence = num;
     }
 }
