@@ -97,6 +97,7 @@ public class Node : NetworkBehaviour {
 			}
 			linkObj.Add(link);
 		}
+        IdeaList.nodeCount++;
 	}
 
 	[Client]
