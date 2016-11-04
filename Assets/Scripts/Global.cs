@@ -28,11 +28,14 @@ public class Global : NetworkBehaviour {
 
     public DummyUnit activeDummy;
 
+	public int playerIdeaIndex = 0;//the player's idea.
+
     public int startingMoney = 500;
     public int currentMoney = 0;
     private int income = 10;
 
     public int moneyDiff;
+    private int upkeep = 0;
     public bool broke = false;
 
 	public SpriteRenderer selectionbox;
@@ -65,7 +68,7 @@ public class Global : NetworkBehaviour {
 		selectionbox.gameObject.SetActive(false);
 		//infoTextBox = GameObject.FindGameObjectWithTag("")
         currentMoney = startingMoney;
-        moneyDiff = income;
+        moneyDiff = income - upkeep;
 		DisableDummy();
         // TODO: spawn based on a list of spawn locations
         int prefabIndex = NetworkManager.singleton.spawnPrefabs.IndexOf(lurkerPrefab.gameObject);
@@ -127,7 +130,8 @@ public class Global : NetworkBehaviour {
             return;
         }
         currentMoney -= costOfUnit.initialCost;
-        moneyDiff -= costOfUnit.upkeep;
+        //moneyDiff -= costOfUnit.upkeep;
+        upkeep -= costOfUnit.upkeep;
         // need to find index of prefab to spawn
         int prefabIndex = NetworkManager.singleton.spawnPrefabs.IndexOf(prefabObject.gameObject);
 
@@ -262,6 +266,9 @@ public class Global : NetworkBehaviour {
             currentMoney += 500;
             Debug.Log("Holla holla get dolla");
         }
+
+        income = (int)IdeaList.staticList[playerIdeaIndex].value;
+        moneyDiff = income - upkeep;
     }
 
 	void select(Inspectable obj)
@@ -310,6 +317,7 @@ public class Global : NetworkBehaviour {
 
 	public void EnableDummy(DummyUnit dummyPrefab)
 	{
+		DisableDummy();
         Vector3 pos= Camera.main.ScreenToWorldPoint(Input.mousePosition.append(Camera.main.transform.position.z * -1));
         activeDummy = (DummyUnit) Instantiate(dummyPrefab, pos, Quaternion.identity);
 	}
