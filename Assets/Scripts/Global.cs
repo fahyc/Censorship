@@ -111,7 +111,7 @@ public class Global : NetworkBehaviour {
         bool hitLurker = false;
         foreach(Collider2D h in hits)
         {
-            if (h.GetComponent<Lurker>() != null && h.GetComponent<NetworkIdentity>().hasAuthority)
+            if (h.GetComponent<BasicVision>() != null && h.GetComponent<NetworkIdentity>().hasAuthority)
                 hitLurker = true;
         }
 

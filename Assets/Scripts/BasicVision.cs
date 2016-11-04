@@ -3,9 +3,10 @@ using UnityEngine.Networking;
 using System.Collections;
 using System.Collections.Generic;
 
-public class Lurker : NetworkBehaviour {
+public class BasicVision : NetworkBehaviour {
 
     public bool seesAll = false;
+    float visRadius;
 
     // For the host client, disable other players' Canvases
     [Client]
@@ -48,11 +49,29 @@ public class Lurker : NetworkBehaviour {
     public override void OnStartServer()
     {
         // Just do a simple circle overlap check for colliders when spawned
-        float r = GetComponent<CircleCollider2D>().radius;
-        Collider2D[] visibleNodes = Physics2D.OverlapCircleAll(transform.position, r);
+
+        CircleCollider2D c = null;
+        foreach (CircleCollider2D col in GetComponentsInChildren<CircleCollider2D>())
+        {
+            if (col.gameObject.transform.parent != null)
+            {
+                // find a circle collider in the child, not parent
+                c = col;
+                break;
+            }
+        }
+
+        if (c == null)
+            return; // no child circle collider found
+        
+        visRadius = c.radius;
+        Collider2D[] visibleNodes = Physics2D.OverlapCircleAll(transform.position, visRadius);
 
         foreach (Collider2D other in visibleNodes)
         {
+            // no need to check self
+            if (other.CompareTag(gameObject.tag))
+                continue;
             ViewObject(other, true);
         }
     }
@@ -61,13 +80,18 @@ public class Lurker : NetworkBehaviour {
     [ServerCallback]
     void OnTriggerEnter2D(Collider2D other)
     {
+        // don't collide with self
+        if (other.CompareTag(gameObject.tag))
+            return;
         ViewObject(other, true);
     }
 
     [ServerCallback]
     void OnTriggerExit2D(Collider2D other)
     {
-        ViewObject(other, false);
+        // make sure it's actually out of our radius
+        if ((other.transform.position - transform.position).magnitude > visRadius)
+            ViewObject(other, false);
     }
 
     // add this lurker to list of objects that can see object
