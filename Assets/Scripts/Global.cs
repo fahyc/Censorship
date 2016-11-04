@@ -28,6 +28,7 @@ public class Global : NetworkBehaviour {
 
     public DummyUnit activeDummy;
 
+    [SyncVar]
 	public int playerIdeaIndex = 0;//the player's idea.
 
     public int startingMoney = 500;
