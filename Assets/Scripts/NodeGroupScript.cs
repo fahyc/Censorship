@@ -19,6 +19,11 @@ public class NodeGroupScript : NetworkBehaviour {
     List<List<Node>> groupLinks = new List<List<Node>>();
     List<List<int>> nodeLinks = new List<List<int>>();
     List<NodeGroupScript> connectedGroups = new List<NodeGroupScript>();
+
+
+	public OfficeSlot officeTemplate;
+
+
     //make group connections pre-determined (the same everytime level is loaded)
     //connections within a group will be procedural but connections between groups will not
     //for group connections make a variable number of connections and get list of groups within certain range and distribute variable number of connections amongst them
@@ -273,7 +278,11 @@ public class NodeGroupScript : NetworkBehaviour {
             NetworkServer.Spawn(nodes[i].gameObject);
 			print(nodes[i].gameObject + " goes to " + nodes[i].GetComponent<NetworkIdentity>().netId);
 		}
-    }
+		OfficeSlot office = Instantiate(officeTemplate);
+		office.transform.position = transform.position;
+		office.domain = nodes;
+		NetworkServer.Spawn(office.gameObject);
+	}
 	
 	// Update is called once per frame
 	void Update () {

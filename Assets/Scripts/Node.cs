@@ -13,7 +13,7 @@ public class Node : NetworkBehaviour {
     string mostImportantIdea;
     //The index of the most important idea in this node's opinion
 	[SyncVar(hook="onChangeIndex")]
-    int importantIndex = -1;
+    public int importantIndex = -1;
     int secondImportantIndex;
     int thirdImportantIndex;
 
