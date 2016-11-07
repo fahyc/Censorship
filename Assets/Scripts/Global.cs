@@ -204,7 +204,7 @@ public class Global : NetworkBehaviour {
 				Vector3 width = mouseToWorld() - selectStart;
 				width = new Vector3(Mathf.Abs(width.x), Mathf.Abs(width.y), 0);
 				Collider2D[] selectCol = Physics2D.OverlapBoxAll(center, width, 0);
-				print("start: " + center  + "width: " + width + " hit " + selectCol.Length + " objects" );
+				//print("start: " + center  + "width: " + width + " hit " + selectCol.Length + " objects" );
 				for (int i = 0; i < selectCol.Length; i++)
 				{
 					Inspectable temp = selectCol[i].GetComponent<Inspectable>();

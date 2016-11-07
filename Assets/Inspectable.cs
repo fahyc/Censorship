@@ -54,7 +54,7 @@ public class Inspectable : NetworkBehaviour {
     }
     
     [Client]
-    public void DestroySelf()
+    public virtual void DestroySelf()
     {
         if (hasAuthority)
             CmdDestroySelf();
