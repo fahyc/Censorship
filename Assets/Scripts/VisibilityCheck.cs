@@ -48,6 +48,12 @@ public class VisibilityCheck : NetworkBehaviour {
         foreach (Renderer r in GetComponentsInChildren<Renderer>())
         {
             r.enabled = vis;
+
+            // disable vision for non-authoritative
+            if (r.transform.parent != null && !hasAuthority)
+            {
+                r.enabled = false;
+            }
         }
     }
 
