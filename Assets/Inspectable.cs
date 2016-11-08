@@ -36,6 +36,7 @@ public class Inspectable : NetworkBehaviour {
 			selector.transform.parent = transform;
 			selector.transform.localPosition = Vector3.zero;
 			selected = true;
+            GameObject.FindGameObjectWithTag("CommandCard").GetComponent<GridAccess>().OnSelectUnit(this.gameObject);
 		}
 	}
 

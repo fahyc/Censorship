@@ -27,7 +27,7 @@ public class Global : NetworkBehaviour {
     public Inspect inspectCanvas;
 
     public DummyUnit activeDummy;
-
+    public GameObject commandCard;
     [SyncVar]
 	public int playerIdeaIndex = 0;//the player's idea.
 
@@ -81,6 +81,7 @@ public class Global : NetworkBehaviour {
         CmdSpawnObj(prefabIndex, transform.position, 1);
         //Center camera on start positions.    
         GameObject.FindGameObjectWithTag("MainCamera").transform.position = new Vector3(transform.position.x, transform.position.y, -10);
+        commandCard = GameObject.FindGameObjectWithTag("CommandCard");
     }
 	
 	
@@ -279,6 +280,8 @@ public class Global : NetworkBehaviour {
 	}
 	void clearSelected()
 	{
+        //Zero out the command card.
+        commandCard.GetComponent<GridAccess>().OnSelectUnit(null);
 		for(int i = 0; i < selected.Count; i++)
 		{
 			selected[i].deselect();
