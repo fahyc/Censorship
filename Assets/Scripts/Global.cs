@@ -50,14 +50,20 @@ public class Global : NetworkBehaviour {
 
 	void Start()
 	{
-		if (!isLocalPlayer && !isServer)
+		if (!isLocalPlayer)
 		{
 			print("Is not local. becoming inactive");
-			gameObject.SetActive(false);
+			//gameObject.SetActive(false);
+			StartCoroutine(setInactiveSoon());
 			return;
 		}
 		//selector = Instantiate(selector);
 		//selector.gameObject.SetActive(false);
+	}
+	IEnumerator setInactiveSoon()
+	{
+		yield return new WaitForSeconds(1);
+		gameObject.SetActive(false);
 	}
     // Use this for initialization
     public override void OnStartLocalPlayer () {
