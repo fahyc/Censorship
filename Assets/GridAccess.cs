@@ -15,19 +15,12 @@ public class GridAccess : MonoBehaviour {
 	}
 	void clearButtons(bool noneSelected) {
         foreach(GameObject g in Grid) {
-            Destroy(g);
-        }
-        if (noneSelected) {
-            for (int i = 0; i < Grid.Length; i++) {
-                Grid[i] = Instantiate(emptySlot);
-                Grid[i].transform.parent = GameObject.FindGameObjectWithTag("CommandCard").transform;
-
-            }
+            if(g.GetComponent<Button>() != null)
+                g.GetComponent<Button>().onClick.RemoveAllListeners();
         }
     }
 	// Update is called once per frame
 	void Update () {
-	
 	}
     public void OnSelectUnit(GameObject newUnit) {
         if(newUnit == null) {
@@ -38,18 +31,21 @@ public class GridAccess : MonoBehaviour {
         if (cc != null) {
             print(cc.commands.Length);
             clearButtons(false);
-            Grid = cc.commands;
-            for(int i=0; i < cc.commands.Length; i++) {
-                if (cc.commands[i] != null) {
-                    print(cc.commands[i]);
-                    Grid[i] = Instantiate(cc.commands[i]);
-                    Grid[i].transform.parent = GameObject.FindGameObjectWithTag("CommandCard").transform;
-                } else {
-                    Grid[i] = Instantiate(emptySlot);
-                    Grid[i].transform.parent = GameObject.FindGameObjectWithTag("CommandCard").transform;
+            for (int i = 0; i < Grid.Length; i++)
+            {
+                //print(Grid[i].GetComponent<Button>().onClick);
+                print(cc.commands[i]);
+                if (cc.commands[i] != null)
+                {
+                    Grid[i].GetComponent<Button>().onClick = cc.commands[i].GetComponent<Button>().onClick;
+                    Grid[i].GetComponent<Button>().GetComponentInChildren<Text>().text = cc.commands[i].GetComponentInChildren<Text>().text;
+
+                } else
+                {
+                    Grid[i].GetComponent<Button>().onClick = emptySlot.GetComponent<Button>().onClick;
+                    Grid[i].GetComponent<Button>().GetComponentInChildren<Text>().text = "Empty";
                 }
             }
-            cc.ResetReferences();
         } 
     }
 }

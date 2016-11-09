@@ -6,8 +6,13 @@ public class CommandCard : MonoBehaviour {
     public GameObject[] initialCommands;
 	// Use this for initialization
 	void Start () {
-        
-        print(initialCommands[0]);
+        for(int i=0; i < commands.Length; i++)
+        {
+            if(commands[i] == null)
+            {
+                //commands[i] = Resources.Load("Prefabs/button_Empty");
+            }
+        }    
 	}
 	
 	// Update is called once per frame
