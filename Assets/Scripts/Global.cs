@@ -215,7 +215,7 @@ public class Global : NetworkBehaviour {
 				for (int i = 0; i < selectCol.Length; i++)
 				{
 					Inspectable temp = selectCol[i].GetComponent<Inspectable>();
-					if (temp)
+					if (temp && temp.enabled)
 					{
 						select(temp);
 					}
@@ -240,7 +240,7 @@ public class Global : NetworkBehaviour {
 				{//try inspecting something
 					Inspectable temp = hits[i].GetComponent<Inspectable>();
 					// Make sure we have authority on the object we're looking at
-					if (temp && temp.hasAuthority)
+					if (temp && temp.hasAuthority && temp.enabled)
 					{
 						// print("enabling Inspect");
 						inspector.Enable(temp.gameObject);
