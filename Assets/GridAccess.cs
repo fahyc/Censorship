@@ -15,8 +15,11 @@ public class GridAccess : MonoBehaviour {
 	}
 	void clearButtons(bool noneSelected) {
         foreach(GameObject g in Grid) {
-            if(g.GetComponent<Button>() != null)
-                g.GetComponent<Button>().onClick.RemoveAllListeners();
+            if (g.GetComponent<Button>() != null)
+            {
+                g.GetComponent<Button>().onClick = emptySlot.GetComponent<Button>().onClick;
+                g.GetComponent<Button>().GetComponentInChildren<Text>().text = "Empty";
+            }
         }
     }
 	// Update is called once per frame
@@ -29,12 +32,10 @@ public class GridAccess : MonoBehaviour {
         }
         CommandCard cc = newUnit.GetComponent<CommandCard>();
         if (cc != null) {
-            print(cc.commands.Length);
             clearButtons(false);
             for (int i = 0; i < Grid.Length; i++)
             {
                 //print(Grid[i].GetComponent<Button>().onClick);
-                print(cc.commands[i]);
                 if (cc.commands[i] != null)
                 {
                     Grid[i].GetComponent<Button>().onClick = cc.commands[i].GetComponent<Button>().onClick;

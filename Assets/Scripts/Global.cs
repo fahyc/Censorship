@@ -172,6 +172,7 @@ public class Global : NetworkBehaviour {
 
         if(Input.GetMouseButtonDown(1)) {
 			currentTool = null;
+            
             DisableDummy();
 
 			Vector3 pt = mouseToWorld();
@@ -324,13 +325,14 @@ public class Global : NetworkBehaviour {
 		DisableDummy();
         Vector3 pos= Camera.main.ScreenToWorldPoint(Input.mousePosition.append(Camera.main.transform.position.z * -1));
         activeDummy = (DummyUnit) Instantiate(dummyPrefab, pos, Quaternion.identity);
+        print(activeDummy);
 	}
 
 	public void DisableDummy()
 	{
-		//print("disabling dummy" + activeDummy);
-		//print(activeDummy);
-		if (activeDummy != null)
+        print("disabling dummy" + activeDummy);
+        print(activeDummy);
+        if (activeDummy != null)
 		{
 			Destroy(activeDummy.gameObject);
 		}
