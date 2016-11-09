@@ -86,4 +86,18 @@ public class OfficeSlot : NetworkBehaviour {
 			index = 0;
 		}
 	}
+
+    // need specialty case for disabling collider
+    [Client]
+    public override void OnSetLocalVisibility(bool vis)
+    {
+        // use default behavior
+        // GetComponent<VisibilityCheck>().OnSetLocalVisibility(vis);
+
+        // and disable colliders
+        foreach (Inspectable i in GetComponentsInChildren<Inspectable>())
+        {
+            i.enabled = vis;
+        }
+    }
 }
