@@ -14,6 +14,8 @@ public class GridAccess : MonoBehaviour {
 	void Start () {
         clearButtons(true);
         submenu = Instantiate(subMenuPfab);
+        submenu.transform.SetParent(transform);
+        //submenu.GetComponent<Submenu>().Disable();
 	}
 	void clearButtons(bool noneSelected) {
         foreach(GameObject g in Grid) {
@@ -48,7 +50,7 @@ public class GridAccess : MonoBehaviour {
                     {
                         //Put behavior for submenus here.
                         //Grid[i].GetComponentInChildren<Submenu>().Enable();
-
+                        Grid[i].GetComponent<Button>().onClick.AddListener(() => SubmenuCreation());
                     }
                     else if (cc.commands[i].name == "button_Lurker" || cc.commands[i].name == "button_Investigator" || cc.commands[i].name == "button_Hacker")
                     {
@@ -63,5 +65,8 @@ public class GridAccess : MonoBehaviour {
                 }
             }
         } 
+    }
+    void SubmenuCreation() {
+        print("woohoo");
     }
 }
