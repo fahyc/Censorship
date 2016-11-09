@@ -13,6 +13,8 @@ public class Hacker : Spawnable {
     int oldLength;
     bool ableToFire=true;
     float timeSinceLastShot;
+    public LineRenderer line;
+
     void Start() {
         enemiesNear = new GameObject[50];
     }
@@ -61,12 +63,20 @@ public class Hacker : Spawnable {
         //Pick a random enemy and shoot at it.
         int targetIndex = Mathf.FloorToInt(Random.Range(0, num_inRange));
         GameObject target = enemiesNear[targetIndex];
+
+        LineRenderer laser = GameObject.Instantiate<LineRenderer>(line);
+        GetComponent<VisibilityCheck>().AddConnection(laser.gameObject);
+        laser.SetColors(Color.green, Color.green);
+        laser.GetComponent<NetworkLineRenderer>().setPoints(transform.position, target.transform.position);
+        NetworkServer.Spawn(laser.gameObject);
+        /*
         LineRenderer laser = gameObject.AddComponent<LineRenderer>();
         laser.SetWidth(0.025f, 0.025f);
         laser.SetColors(Color.green, Color.green);
         laser.SetVertexCount(2);
         laser.SetPosition(0, transform.position);
         laser.SetPosition(1, target.transform.position);
+        */
         ableToFire = false;
         timeSinceLastShot = Time.time;
         Destroy(target);
