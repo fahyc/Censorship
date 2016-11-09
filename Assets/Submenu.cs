@@ -16,6 +16,7 @@ public class Submenu : UIItem {
 
 	// Use this for initialization
 	void Start () {
+        print("Starting submenu");
 		for(int i = 0; i < IdeaList.staticList.Length; i++)
 		{
 			SpawnScript temp = Instantiate<SpawnScript>(buttons);

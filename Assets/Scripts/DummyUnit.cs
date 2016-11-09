@@ -6,7 +6,7 @@ using UnityEngine.Networking;
 public class DummyUnit : MonoBehaviour {
 
     Transform t;
-
+    
     void Start()
     {
         t = transform;

@@ -326,12 +326,12 @@ public class Global : NetworkBehaviour {
         Vector3 pos= Camera.main.ScreenToWorldPoint(Input.mousePosition.append(Camera.main.transform.position.z * -1));
         activeDummy = (DummyUnit) Instantiate(dummyPrefab, pos, Quaternion.identity);
         print(activeDummy);
-	}
+    }
 
 	public void DisableDummy()
 	{
-        print("disabling dummy" + activeDummy);
-        print(activeDummy);
+        //print("disabling dummy" + activeDummy);
+        //print(activeDummy);
         if (activeDummy != null)
 		{
 			Destroy(activeDummy.gameObject);

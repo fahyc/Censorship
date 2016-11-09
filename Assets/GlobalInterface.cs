@@ -8,6 +8,7 @@ public class GlobalInterface : MonoBehaviour {
 
 	public void EnableDummy(DummyUnit dummy)
 	{
+        print(dummy);
 		global.EnableDummy(dummy);
 	}
 	/*
