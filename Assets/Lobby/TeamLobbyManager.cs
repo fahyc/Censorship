@@ -5,49 +5,53 @@ using System.Collections.Generic;
 
 public class TeamLobbyManager : NetworkLobbyManager {
 
-    public int ideaCount;
+    public List<int> ideas;
 
     Dictionary<NetworkConnection, int> teamAssignments;
-    List<int> assignmentsLeft;
+
+    Dictionary<int, PlayerStartPosition> initialPositions;
 
     void Start()
     {
-        if (ideaCount < maxPlayers)
+        if (ideas.Count < maxPlayers)
             Debug.LogWarning("Possible to have players on same team! maxPlayers > ideaCount");
 
         teamAssignments = new Dictionary<NetworkConnection, int>();
-        assignmentsLeft = new List<int>();
-
-        for (int i=0; i<ideaCount; i++)
-        {
-            assignmentsLeft.Add(i);
-        }
     }
 	
 	public override GameObject OnLobbyServerCreateLobbyPlayer (NetworkConnection conn, short playerControllerId) {
 
-        if (assignmentsLeft.Count <= 0)
+        if (ideas.Count <= 0)
         {
             Debug.LogWarning("Run out of team assignments! Defaulting to 0");
             teamAssignments.Add(conn, 0);
         }
 
-        int i = Random.Range(0, assignmentsLeft.Count);
+        int i = Random.Range(0, ideas.Count);
 
-        teamAssignments.Add(conn, assignmentsLeft[i]);
+        teamAssignments.Add(conn, ideas[i]);
 
-        assignmentsLeft.RemoveAt(i);
+        ideas.RemoveAt(i);
 
         return base.OnLobbyServerCreateLobbyPlayer(conn, playerControllerId);
 	}
 
     public override GameObject OnLobbyServerCreateGamePlayer(NetworkConnection conn, short playerControllerId)
     {
-        GameObject go = (GameObject)GameObject.Instantiate(gamePlayerPrefab, startPositions[conn.connectionId].position, Quaternion.identity);
-        go.GetComponent<Global>().playerIdeaIndex = teamAssignments[conn];
+        foreach (PlayerStartPosition p in FindObjectsOfType<PlayerStartPosition>())
+        {
+            if (p.ideaIndex == teamAssignments[conn])
+            {
+                GameObject go = (GameObject)GameObject.Instantiate(gamePlayerPrefab, p.transform.position, Quaternion.identity);
+                go.GetComponent<Global>().playerIdeaIndex = teamAssignments[conn];
 
-        go.SetActive(true);
+                go.SetActive(true);
 
-        return go;
+                return go;
+            }
+        }
+
+        Debug.LogWarning("Unable to find start position with correct idea index! player spawn is null");
+        return null;
     }
 }
