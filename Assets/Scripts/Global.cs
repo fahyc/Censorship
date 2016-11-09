@@ -23,7 +23,7 @@ public class Global : NetworkBehaviour {
 	Inspect inspector;
 
 	public List<Inspectable> selected = new List<Inspectable>();
-
+	
     public Inspect inspectCanvas;
 
     public DummyUnit activeDummy;
@@ -176,11 +176,17 @@ public class Global : NetworkBehaviour {
 
 			Vector3 pt = mouseToWorld();
 			Vector3 averageStart = Vector3.zero;
+			int mobilecount = selected.Count;
 			for(int i = 0; i< selected.Count; i++)
 			{
+				if (!selected[i].GetComponent<MovementController>())
+				{
+					mobilecount--;
+					continue;
+				}
 				averageStart += selected[i].transform.position;
 			}
-			if (selected.Count > 0){averageStart /= selected.Count;}
+			if (selected.Count > 0){averageStart /= mobilecount;}
 			for (int i = 0; i < selected.Count; i++)
 			{
 				Vector3 dif =  selected[i].transform.position - averageStart;
