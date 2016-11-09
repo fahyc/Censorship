@@ -8,11 +8,12 @@ public class GridAccess : MonoBehaviour {
     public GameObject[] Grid;
     List<Transform> activeButtons;
     public GameObject emptySlot;
-    public GameObject subMenu;
+    public GameObject subMenuPfab;
+    GameObject submenu;
 	// Use this for initialization
 	void Start () {
         clearButtons(true);
-
+        submenu = Instantiate(subMenuPfab);
 	}
 	void clearButtons(bool noneSelected) {
         foreach(GameObject g in Grid) {
@@ -47,8 +48,7 @@ public class GridAccess : MonoBehaviour {
                     {
                         //Put behavior for submenus here.
                         //Grid[i].GetComponentInChildren<Submenu>().Enable();
-                        
-                        
+
                     }
                     else if (cc.commands[i].name == "button_Lurker" || cc.commands[i].name == "button_Investigator" || cc.commands[i].name == "button_Hacker")
                     {
