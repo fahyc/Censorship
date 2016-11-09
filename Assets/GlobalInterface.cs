@@ -21,11 +21,7 @@ public class GlobalInterface : MonoBehaviour {
 	void Update () {
 		if (!global)
 		{
-			GameObject temp = GameObject.FindGameObjectWithTag("Player");
-			if (temp)
-			{
-				global = temp.GetComponent<Global>();
-			}
+			global = Global.getLocalPlayer();
 		}
 	}
 }

@@ -20,9 +20,10 @@ public class OfficeSlot : NetworkBehaviour {
 	
 	public void spawnOffice()
 	{
-		if (GameObject.FindGameObjectWithTag("Player").GetComponent<Global>().playerIdeaIndex == mainIdea && !officeInstance)
+		Global player = Global.getLocalPlayer();
+		if (player.playerIdeaIndex == mainIdea && !officeInstance)
 		{
-			spawnOffice(GameObject.FindGameObjectWithTag("Player").GetComponent<Global>().playerIdeaIndex);
+			spawnOffice(player.playerIdeaIndex);
 		}
 	}
 

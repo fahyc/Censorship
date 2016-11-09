@@ -48,18 +48,32 @@ public class Global : NetworkBehaviour {
 	public LineRenderer lineTemplate;
 	//public Texture selectTexture;
 
+	//void Start()
+	//{
+		
+	//}
+	/*
+	[ClientCallback]
 	void Start()
 	{
+		print("localplayer" + isLocalPlayer);
 		if (!isLocalPlayer)
 		{
-			print("Is not local. becoming inactive");
+			//print("Is not local. becoming inactive");
 			//gameObject.SetActive(false);
-			StartCoroutine(setInactiveSoon());
+			if (isServer)
+			{
+				//print("serverside");
+				StartCoroutine(setInactiveSoon());
+			}
+			else
+			{
+				//print("clientside");
+				gameObject.SetActive(false);
+			}
 			return;
 		}
-		//selector = Instantiate(selector);
-		//selector.gameObject.SetActive(false);
-	}
+	}*/
 	IEnumerator setInactiveSoon()
 	{
 		yield return new WaitForSeconds(1);
@@ -67,13 +81,11 @@ public class Global : NetworkBehaviour {
 	}
     // Use this for initialization
     public override void OnStartLocalPlayer () {
-		
+
+
 		inspector = GameObject.FindGameObjectWithTag("Inspector").GetComponent<Inspect>();
-		//lineTemplate = Instantiate(lineTemplate);
-		//lineTemplate.gameObject.SetActive(false);
 		selectionbox = Instantiate(selectionbox);
 		selectionbox.gameObject.SetActive(false);
-		//infoTextBox = GameObject.FindGameObjectWithTag("")
         currentMoney = startingMoney;
         moneyDiff = income - upkeep;
 		DisableDummy();
@@ -155,9 +167,13 @@ public class Global : NetworkBehaviour {
 	void Update () {
 		// only update for the local player
 
-//		print(mouseToWorld());
-        if (!isLocalPlayer)
+		print("update" + isLocalPlayer);
+		//		print(mouseToWorld());
+		if (!isLocalPlayer)
+		{
 			return;
+			//gameObject.SetActive(false);
+		}
         //infoTextBox.text = text;
         //textImage.enabled = textbg;
 		/*
@@ -272,7 +288,6 @@ public class Global : NetworkBehaviour {
 					DisableDummy();
 				}
 			}
-            //Global.text = "";
 
         }
 
@@ -390,4 +405,17 @@ public class Global : NetworkBehaviour {
             }
         }
     }
+	public static Global getLocalPlayer()
+	{
+		GameObject[] temp = GameObject.FindGameObjectsWithTag("Player");
+		for (int i = 0; i < temp.Length; i++)
+		{
+			Global global = temp[i].GetComponent<Global>();
+			if (global.isLocalPlayer)
+			{
+				return global;
+			}
+		}
+		return null;
+	}
 }

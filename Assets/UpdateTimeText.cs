@@ -10,7 +10,6 @@ public class UpdateTimeText : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         dayRef = GetComponent<Text>();
-    //    timeKeeper = GameObject.FindGameObjectWithTag("Player").GetComponent<TimeBehavior>();
         lastday = 0;
 	}
 	
@@ -18,7 +17,7 @@ public class UpdateTimeText : MonoBehaviour {
 	void Update () {
 		if (!timeKeeper)
 		{
-			GameObject temp = GameObject.FindGameObjectWithTag("Player");
+			Global temp = Global.getLocalPlayer();
 			if (!temp)
 			{
 				//print("none found.");

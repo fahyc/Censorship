@@ -5,6 +5,6 @@ public class NewBehaviourScript : Inspectable {
 
 	public override void DestroySelf()
 	{
-		GetComponent<OfficeSlot>().spawnOffice(GameObject.FindGameObjectWithTag("Player").GetComponent<Global>().playerIdeaIndex);
+		GetComponent<OfficeSlot>().spawnOffice(Global.getLocalPlayer().playerIdeaIndex);
 	}
 }

@@ -22,7 +22,6 @@ public class TimeBehavior : NetworkBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-    //    GameObject[] temp = GameObject.FindGameObjectsWithTag("Player");
 
         if (!isServer)
             return;

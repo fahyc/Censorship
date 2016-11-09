@@ -48,7 +48,7 @@ public class Inspect : UIItem {
 	{
         // print("Destroying: " + inspecting);
         //Refund our player's income. Should we return some of the principle investment or not?
-        GameObject.FindGameObjectWithTag("Player").GetComponent<Global>().moneyDiff += inspecting.GetComponent<Spawnable>().upkeep;
+        Global.getLocalPlayer().moneyDiff += inspecting.GetComponent<Spawnable>().upkeep;
         inspecting.GetComponent<Inspectable>().DestroySelf();
 		Disable();
 	}

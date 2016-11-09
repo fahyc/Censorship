@@ -10,6 +10,7 @@ public class GridAccess : MonoBehaviour {
     public GameObject emptySlot;
     public GameObject subMenuPfab;
     GameObject submenu;
+	Global gi;
 	// Use this for initialization
 	void Start () {
         clearButtons(true);
@@ -42,8 +43,10 @@ public class GridAccess : MonoBehaviour {
                 //print(Grid[i].GetComponent<Button>().onClick);
                 if (cc.commands[i] != null)
                 {
-                    GameObject player = GameObject.FindGameObjectWithTag("Player");
-                    Global gi = player.GetComponent<Global>();
+					if (!gi)
+					{
+						gi = Global.getLocalPlayer();
+					}
                     Grid[i].GetComponent<Button>().onClick = cc.commands[i].GetComponent<Button>().onClick;
                     Grid[i].GetComponent<Button>().GetComponentInChildren<Text>().text = cc.commands[i].GetComponentInChildren<Text>().text;
                     if (cc.commands[i].name == "button_Shill" || cc.commands[i].name == "button_Wall")
