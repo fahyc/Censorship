@@ -18,7 +18,6 @@ public class Node : NetworkBehaviour {
     int thirdImportantIndex;
 
 
-
 	
 	public SpecialIdea specialIdeaPrefab;
     //Gets 
@@ -166,11 +165,13 @@ public class Node : NetworkBehaviour {
             }
         }
 
-        if (oldIndex != importantIndex)
+        if (!shill && oldIndex != importantIndex)
         {
             IdeaList.staticList[importantIndex].updateValue(1);
             if (oldIndex >= 0)
+            {
                 IdeaList.staticList[oldIndex].updateValue(-1);
+            }
         }
 
         //Determine the probability of sending an idea based on the importance to this individual Node.
