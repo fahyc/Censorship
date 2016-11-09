@@ -13,7 +13,7 @@ public class ScrollingCamera : MonoBehaviour {
 
 	Transform t;
 
-
+	public float arrowKeySpeed = 2;
 	float xmin;
 	float ymin;
 	float xmax;
@@ -22,7 +22,8 @@ public class ScrollingCamera : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		t = transform;
-        
+
+		Cursor.lockState = CursorLockMode.Confined;
 		xmin = edgeProportions * Screen.width;
 
 		ymin = edgeProportions * Screen.height;
@@ -33,10 +34,24 @@ public class ScrollingCamera : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
+		if (Input.GetKey(KeyCode.UpArrow))
+		{
+			t.Translate(0, Time.deltaTime * arrowKeySpeed, 0);
+		}
+		if (Input.GetKey(KeyCode.LeftArrow))
+		{
+			t.Translate(-Time.deltaTime * arrowKeySpeed, 0, 0);
+		}
+		if (Input.GetKey(KeyCode.RightArrow))
+		{
+			t.Translate(Time.deltaTime * arrowKeySpeed, 0, 0);
+		}
+		if (Input.GetKey(KeyCode.DownArrow))
+		{
+			t.Translate(0, -Time.deltaTime * arrowKeySpeed, 0);
+		}
 
-
-
-		if(Input.mousePosition.x < xmin && t.position.x > min.x)
+		if (Input.mousePosition.x < xmin && t.position.x > min.x)
 		{
 			t.Translate((Mathf.Abs(Input.mousePosition.x - xmin) * speedMultiplier * baseSpeed + baseSpeed) * -Time.deltaTime,0,0);
 		}

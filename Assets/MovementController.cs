@@ -1,16 +1,23 @@
 ﻿using UnityEngine;
+using UnityEngine.Networking;
 using System.Collections;
 
-public class MovementController : MonoBehaviour {
-	public Vector3 target;
+public class MovementController : NetworkBehaviour {
 	public float moveSpeed;
 	public Transform t;
+
+	[SyncVar]
 	bool moving = false;
+	[SyncVar]
+	public Vector3 origin;
+	[SyncVar]
+	public Vector3 destination;
 
 	public void goTo(Vector3 position)
 	{
 		moving = true;
-		target = position;
+		destination = position;
+		origin = transform.position;
 	}
 
 	// Use this for initialization
@@ -22,8 +29,8 @@ public class MovementController : MonoBehaviour {
 	void Update () {
 		if (moving)
 		{
-			t.Translate((target - t.position).normalized * moveSpeed * Time.deltaTime);
-			if(Vector3.Distance(t.position, target) < moveSpeed * Time.deltaTime)
+			t.Translate((destination - t.position).normalized * moveSpeed * Time.deltaTime);
+			if(Vector3.Distance(t.position, destination) < moveSpeed * Time.deltaTime)
 			{
 				moving = false;
 			}

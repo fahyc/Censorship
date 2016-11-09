@@ -7,9 +7,9 @@ public class Idea : NetworkBehaviour {
 	public string ideaStr;
 	[SyncVar]
 	public Vector3 origin;
-	public Node originObj;
 	[SyncVar]
 	public Vector3 destination;
+	public Node originObj;
 	protected float time = 0;
 	public float speed;
 	public float totalTime;
