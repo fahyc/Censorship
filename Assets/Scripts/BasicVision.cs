@@ -111,7 +111,7 @@ public class BasicVision : NetworkBehaviour {
     void OnTriggerExit2D(Collider2D other)
     {
         // make sure it's actually out of our radius
-        if (!visionCollider.IsTouching(other))
+        if (!visionCollider.IsTouching(other))//Null references!
             ViewObject(other, false);
     }
 

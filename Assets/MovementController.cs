@@ -13,16 +13,23 @@ public class MovementController : NetworkBehaviour {
 	[SyncVar]
 	public Vector3 destination;
 
+	[Client]
 	public void goTo(Vector3 position)
 	{
-		moving = true;
-		destination = position;
-		origin = transform.position;
+		CmdGoTo(position);
 	}
 
 	// Use this for initialization
 	void Start () {
 		t = transform;
+	}
+
+	[Command]
+	public void CmdGoTo(Vector3 position)
+	{
+		moving = true;
+		destination = position;
+		origin = transform.position;
 	}
 	
 	// Update is called once per frame
