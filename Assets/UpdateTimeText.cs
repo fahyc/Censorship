@@ -32,6 +32,7 @@ public class UpdateTimeText : MonoBehaviour {
         dayRef.text = "DAY: " + timeKeeper.day;
         if (timeKeeper.day != lastday)
         {
+			//print("running with " + global.isLocalPlayer);
             global.addIncome();
         }
         lastday = timeKeeper.day;

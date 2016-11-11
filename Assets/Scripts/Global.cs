@@ -167,7 +167,7 @@ public class Global : NetworkBehaviour {
 	void Update () {
 		// only update for the local player
 
-		print("update" + isLocalPlayer);
+		//print("update" + isLocalPlayer);
 		//		print(mouseToWorld());
 		if (!isLocalPlayer)
 		{
@@ -296,8 +296,11 @@ public class Global : NetworkBehaviour {
             currentMoney += 500;
             Debug.Log("Holla holla get dolla");
         }
-
-        income = (int)IdeaList.staticList[playerIdeaIndex].value;
+		if (IdeaList.instance.Prevalence.Count > 0)
+		{
+			income = IdeaList.instance.Prevalence[playerIdeaIndex];
+		}
+//		print("income: " + income + " upkeep " + upkeep);
         moneyDiff = income - upkeep;
     }
 

@@ -276,7 +276,7 @@ public class NodeGroupScript : NetworkBehaviour {
 			//print("links for node " + i + ": " + nodes[i].links.Count);
 			
             NetworkServer.Spawn(nodes[i].gameObject);
-			print(nodes[i].gameObject + " goes to " + nodes[i].GetComponent<NetworkIdentity>().netId);
+//			print(nodes[i].gameObject + " goes to " + nodes[i].GetComponent<NetworkIdentity>().netId);
 		}
 		OfficeSlot office = Instantiate(officeTemplate);
 		office.transform.position = transform.position;

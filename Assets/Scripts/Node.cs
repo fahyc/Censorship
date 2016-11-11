@@ -96,7 +96,7 @@ public class Node : NetworkBehaviour {
 			}
 			linkObj.Add(link);
 		}
-        IdeaList.nodeCount++;
+        IdeaList.instance.nodeCount++;
 	}
 
 	[Client]
@@ -167,11 +167,11 @@ public class Node : NetworkBehaviour {
 
         if (!shill && oldIndex != importantIndex)
         {
-            IdeaList.staticList[importantIndex].updateValue(1);
+            IdeaList.instance.updateValue(importantIndex,1);
             if (oldIndex >= 0)
             {
-                IdeaList.staticList[oldIndex].updateValue(-1);
-            }
+				IdeaList.instance.updateValue(oldIndex, -1);
+			}
         }
 
         //Determine the probability of sending an idea based on the importance to this individual Node.

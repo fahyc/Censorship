@@ -26,7 +26,7 @@ public class ClusterSpawner : NetworkBehaviour {
 	// Use this for initialization
 	public override void OnStartServer () {
 		nodes = new Node[quantity];
-        IdeaList.nodeCount += quantity;
+        IdeaList.instance.nodeCount += quantity;
 		for(int i = 0; i < quantity; i++)
 		{
 			

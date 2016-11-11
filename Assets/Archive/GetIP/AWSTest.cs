@@ -42,7 +42,7 @@ public class AWSTest : MonoBehaviour {
 		{
 			print(w.error);
 			print(w.text);
-			print(w.data);
+		//	print(w.data);
 			
 		}
 		else
