@@ -95,11 +95,14 @@ public class AbstractIdea : System.Object {
 	public int opposite;
 	//public float value;
 	public Color color;
-    //public Event[] events;
-    //int eventIndex = 0;
-    //bool checkingForEvents = false;
-
-    [Serializable]
+	//public Event[] events;
+	//int eventIndex = 0;
+	//bool checkingForEvents = false;
+	public string colorHex()
+	{
+		return ColorToHex(color);
+	}
+	[Serializable]
     public struct Event
     {
         public string name;
