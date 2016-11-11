@@ -151,7 +151,7 @@ public class Global : NetworkBehaviour {
         }
         currentMoney -= costOfUnit.initialCost;
         //moneyDiff -= costOfUnit.upkeep;
-        upkeep -= costOfUnit.upkeep;
+        upkeep += costOfUnit.upkeep;
         // need to find index of prefab to spawn
         int prefabIndex = NetworkManager.singleton.spawnPrefabs.IndexOf(prefabObject.gameObject);
 
@@ -303,6 +303,11 @@ public class Global : NetworkBehaviour {
 //		print("income: " + income + " upkeep " + upkeep);
         moneyDiff = income - upkeep;
     }
+
+	public void addUpkeep(int amount)
+	{
+		upkeep += amount;
+	}
 
 	void select(Inspectable obj)
 	{
