@@ -19,6 +19,7 @@ public class NodeGroupScript : NetworkBehaviour {
     List<List<Node>> groupLinks = new List<List<Node>>();
     List<List<int>> nodeLinks = new List<List<int>>();
     List<NodeGroupScript> connectedGroups = new List<NodeGroupScript>();
+    public List<NodeGroupScript> groupsToConnectTo = new List<NodeGroupScript>();
 
 
 	public OfficeSlot officeTemplate;
@@ -260,6 +261,49 @@ public class NodeGroupScript : NetworkBehaviour {
                     connectedGroups.Add(other);
                 }
                 
+            }
+        }
+
+        //create user defined connections
+        for(int i = 0; i < groupsToConnectTo.Count; i++)
+        {
+            NodeGroupScript otherGroup = groupsToConnectTo[i];
+            if (otherGroup.numNodes != 0)
+            {
+                List<Node> otherNodes = otherGroup.nodes;
+                int connectIndex = nodes.Count - 1;
+                int otherConnectIndex = otherNodes.Count - 1;
+                float minDist = float.PositiveInfinity;
+
+                //find closest node
+                for (int j = 0; j < nodes.Count - 1; j++)
+                {
+                    //TODO: get top 3 closest and randomly choose 1
+                    float dist = Vector3.Distance(nodes[j].transform.position, otherGroup.transform.position);
+                    if (dist < minDist)
+                    {
+                        minDist = dist;
+                        connectIndex = j;
+                    }
+                }
+
+                minDist = maxConnectionDist;
+                for (int j = 0; j < otherNodes.Count - 1; j++)
+                {
+                    //TODO: get top 3 closest and randomly choose 1 but also make sure connection is not the same as initial generated connection
+                    float dist = Vector3.Distance(otherNodes[j].transform.position, this.transform.position);
+                    if (dist < minDist)
+                    {
+                        minDist = dist;
+                        otherConnectIndex = j;
+                    }
+                }
+
+                groupLinks[connectIndex].Add(otherNodes[otherConnectIndex]);
+                if(!connectedGroups.Contains(otherGroup))
+                {
+                    connectedGroups.Add(otherGroup);
+                }
             }
         }
 
