@@ -6,6 +6,7 @@ using System.Collections.Generic;
 public class TeamLobbyManager : NetworkLobbyManager {
 
     public List<int> ideas;
+    public static List<int> playerIdeas;
 
     Dictionary<NetworkConnection, int> teamAssignments;
 
@@ -17,6 +18,7 @@ public class TeamLobbyManager : NetworkLobbyManager {
             Debug.LogWarning("Possible to have players on same team! maxPlayers > ideaCount");
 
         teamAssignments = new Dictionary<NetworkConnection, int>();
+        playerIdeas = ideas;
     }
 	
 	public override GameObject OnLobbyServerCreateLobbyPlayer (NetworkConnection conn, short playerControllerId) {
