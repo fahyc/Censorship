@@ -27,7 +27,7 @@ public class SliderBehavior : MonoBehaviour {
 		if (IdeaList.instance.nodeCount > 0)
 		{
 			tracker.value = (float)IdeaList.instance.Prevalence[associatedScore] / IdeaList.instance.nodeCount;
-			print((float)IdeaList.instance.Prevalence[associatedScore] / IdeaList.instance.nodeCount);
+			//print((float)IdeaList.instance.Prevalence[associatedScore] / IdeaList.instance.nodeCount);
 		}
 	}
 }

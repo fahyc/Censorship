@@ -113,6 +113,7 @@ public class Global : NetworkBehaviour {
         // actually instantiate/initialize the object
         GameObject temp = Instantiate(prefabToSpawn);
         temp.GetComponent<Spawnable>().index = index;
+
         temp.GetComponent<Spawnable>().owner = connectionToClient;
         temp.transform.position = position;
 
@@ -128,7 +129,6 @@ public class Global : NetworkBehaviour {
 			//Destroy(gameObject);
 			return;
 		}
-
         // check that we're spawning inside visible FoW zone
         Collider2D[] hits = Physics2D.OverlapPointAll(pos);
         bool hitLurker = false;
@@ -317,7 +317,12 @@ public class Global : NetworkBehaviour {
 	void clearSelected()
 	{
         //Zero out the command card.
-        commandCard.GetComponent<GridAccess>().OnSelectUnit(null);
+        if (!commandCard.GetComponent<GridAccess>().inSubMenu) {
+            commandCard.GetComponent<GridAccess>().OnSelectUnit(null);
+        } else {
+            commandCard.GetComponent<GridAccess>().toggleButtons(true);
+            //commandCard.GetComponent<GridAccess>().OnSelectUnit(null);
+        }
 		for(int i = 0; i < selected.Count; i++)
 		{
 			selected[i].deselect();
@@ -360,7 +365,7 @@ public class Global : NetworkBehaviour {
 		DisableDummy();
         Vector3 pos= Camera.main.ScreenToWorldPoint(Input.mousePosition.append(Camera.main.transform.position.z * -1));
         activeDummy = (DummyUnit) Instantiate(dummyPrefab, pos, Quaternion.identity);
-        print(activeDummy);
+        //print(activeDummy);
     }
 
 	public void DisableDummy()
