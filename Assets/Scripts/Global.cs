@@ -113,7 +113,6 @@ public class Global : NetworkBehaviour {
         // actually instantiate/initialize the object
         GameObject temp = Instantiate(prefabToSpawn);
         temp.GetComponent<Spawnable>().index = index;
-
         temp.GetComponent<Spawnable>().owner = connectionToClient;
         temp.transform.position = position;
 
@@ -129,6 +128,7 @@ public class Global : NetworkBehaviour {
 			//Destroy(gameObject);
 			return;
 		}
+
         // check that we're spawning inside visible FoW zone
         Collider2D[] hits = Physics2D.OverlapPointAll(pos);
         bool hitLurker = false;
@@ -174,15 +174,30 @@ public class Global : NetworkBehaviour {
 			return;
 			//gameObject.SetActive(false);
 		}
-        //infoTextBox.text = text;
-        //textImage.enabled = textbg;
+		//infoTextBox.text = text;
+		//textImage.enabled = textbg;
 		/*
 		if (overlappingFocusable())
 		{
 			return;
 		}
 		*/
-		if(selectStart != Vector3.zero && (mouseToWorld() - selectStart).magnitude > minSelectionDistance)
+
+
+		if (Input.GetKeyDown(KeyCode.K))
+		{
+			currentMoney += 500;
+			Debug.Log("Holla holla get dolla");
+		}
+		if (IdeaList.instance.Prevalence.Count > 0)
+		{
+			income = IdeaList.instance.Prevalence[playerIdeaIndex];
+		}
+		//		print("income: " + income + " upkeep " + upkeep);
+		moneyDiff = income - upkeep;
+
+
+		if (selectStart != Vector3.zero && (mouseToWorld() - selectStart).magnitude > minSelectionDistance)
 		{
 			DrawSelectBox(mouseToWorld(), selectStart);
 
@@ -226,10 +241,12 @@ public class Global : NetworkBehaviour {
 			//print(currentTool);
 			//always clear the selection.
 			
-			clearSelected();
+			
 			if ((mouseToWorld() - selectStart).magnitude > minSelectionDistance)
 			{
-				//unity's overlap box uses a center and width system so..............................
+				clearSelected();
+				DisableDummy();
+				//unity's overlap box uses a center and width system instead of two points, which is how we store the selection box.
 				Vector3 center = (mouseToWorld() + selectStart) / 2;
 				Vector3 width = mouseToWorld() - selectStart;
 				width = new Vector3(Mathf.Abs(width.x), Mathf.Abs(width.y), 0);
@@ -243,17 +260,21 @@ public class Global : NetworkBehaviour {
 						select(temp);
 					}
 				}
+				selectStart = Vector3.zero;
+				return;
 			}
+
 			selectStart = Vector3.zero;
 			if (currentTool)
 			{//spawn whatever is selected
-				Vector3 position = Camera.main.ScreenToWorldPoint(Input.mousePosition.append(Camera.main.transform.position.z * -1));
-                SpawnObj(currentTool, position, toolIndex);
+				//Vector3 position = Camera.main.ScreenToWorldPoint(Input.mousePosition.append(Camera.main.transform.position.z * -1));
+                SpawnObj(currentTool, activeDummy.transform.position, toolIndex);
 				//print("Current tool: " + currentTool);
 			}
 			else {
 				//or if there is nothing to spawn, clear any focus and ui elements, or inspect whatever is below the mouse.
-				
+				clearSelected();
+				DisableDummy();
 				Vector3 mousePos = Input.mousePosition;
 				mousePos.Set(mousePos.x, mousePos.y, -Camera.main.transform.position.z);
 				Collider2D[] hits = Physics2D.OverlapPointAll(Camera.main.ScreenToWorldPoint(mousePos));
@@ -277,7 +298,7 @@ public class Global : NetworkBehaviour {
 				}
 				if (!hit && !overlappingFocusable())
 				{//Clear the UI if there is nothing below the mouse.
-					//print("clearing UI.");
+				 //print("clearing UI.");
 					Global.text = "";
 					textbg = false;
 					for(int i = 0; i < toHide.Count; i++)
@@ -286,22 +307,13 @@ public class Global : NetworkBehaviour {
 					}
 					toHide.Clear();
 					DisableDummy();
+					clearSelected();
 				}
 			}
 
         }
 
 
-        if (Input.GetKeyDown(KeyCode.K)) {
-            currentMoney += 500;
-            Debug.Log("Holla holla get dolla");
-        }
-		if (IdeaList.instance.Prevalence.Count > 0)
-		{
-			income = IdeaList.instance.Prevalence[playerIdeaIndex];
-		}
-//		print("income: " + income + " upkeep " + upkeep);
-        moneyDiff = income - upkeep;
     }
 
 	public void addUpkeep(int amount)
@@ -316,13 +328,9 @@ public class Global : NetworkBehaviour {
 	}
 	void clearSelected()
 	{
-        //Zero out the command card.
-        if (!commandCard.GetComponent<GridAccess>().inSubMenu) {
-            commandCard.GetComponent<GridAccess>().OnSelectUnit(null);
-        } else {
-            commandCard.GetComponent<GridAccess>().toggleButtons(true);
-            //commandCard.GetComponent<GridAccess>().OnSelectUnit(null);
-        }
+		//Zero out the command card.
+		print("clearing");
+        commandCard.GetComponent<GridAccess>().OnSelectUnit(null);
 		for(int i = 0; i < selected.Count; i++)
 		{
 			selected[i].deselect();
@@ -365,7 +373,7 @@ public class Global : NetworkBehaviour {
 		DisableDummy();
         Vector3 pos= Camera.main.ScreenToWorldPoint(Input.mousePosition.append(Camera.main.transform.position.z * -1));
         activeDummy = (DummyUnit) Instantiate(dummyPrefab, pos, Quaternion.identity);
-        //print(activeDummy);
+        print(activeDummy);
     }
 
 	public void DisableDummy()
@@ -430,5 +438,33 @@ public class Global : NetworkBehaviour {
 			}
 		}
 		return null;
+	}
+	public Vector2 closestSpawnableLoc(Vector2 position)
+	{
+		//Vector2 closest = new Vector3(float.MaxValue, float.MaxValue);
+		int closestIndex = 0;
+		float closestDist = float.MaxValue;
+		for(int i = 0; i < selected.Count; i++)
+		{
+			if(selected[i].spawnRange == 0)
+			{
+				continue;
+			}
+			float dist = (position - selected[i].transform.position.xy()).magnitude;
+			if (dist < selected[i].spawnRange)
+			{
+				return position;
+			}
+			if(dist < closestDist)
+			{
+				closestDist = dist;
+				closestIndex = i;
+			}
+		}
+		if(selected.Count == 0)
+		{
+			Debug.LogWarning("Warning, no offices selected but we are still running a dummy.");
+		}
+		return selected[closestIndex].transform.position.xy() + ((position - selected[closestIndex].transform.position.xy()).normalized * selected[closestIndex].spawnRange); 
 	}
 }
