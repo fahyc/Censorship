@@ -2,7 +2,9 @@
 using UnityEngine.Networking;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
+[System.Serializable]
 public class NodeGroupScript : NetworkBehaviour {
 
     public int maxNodes = 15;
@@ -13,13 +15,13 @@ public class NodeGroupScript : NetworkBehaviour {
     public float ideaSpawnRateMax = 0.01f;
     public Node referenceNode;
     public GameObject referenceMediaNode;
-    public string mainIdea;
-    public float mainStrength = .5f;
+    public string mainIdea = "";
+    public float mainStrength = .9f;
     List<Node> nodes = new List<Node>();
     List<List<Node>> groupLinks = new List<List<Node>>();
     List<List<int>> nodeLinks = new List<List<int>>();
     List<NodeGroupScript> connectedGroups = new List<NodeGroupScript>();
-
+    public NodeGroupScript[] groupsToConnectTo = new NodeGroupScript[5];
 
 	public OfficeSlot officeTemplate;
 
@@ -263,20 +265,83 @@ public class NodeGroupScript : NetworkBehaviour {
             }
         }
 
+        //create user defined connections
+        for(int i = 0; i < groupsToConnectTo.Length; i++)
+        {
+            if(groupsToConnectTo[i] != null)
+            {
+                NodeGroupScript otherGroup = groupsToConnectTo[i];
+                if (otherGroup.numNodes != 0)
+                {
+                    List<Node> otherNodes = otherGroup.nodes;
+                    int connectIndex = nodes.Count - 1;
+                    int otherConnectIndex = otherNodes.Count - 1;
+                    SortedList<float, int> topThree = new SortedList<float, int>();
+                    SortedList<float, int> otherTopThree = new SortedList<float, int>();
+
+                    //find closest node
+                    for (int j = 0; j < nodes.Count - 1; j++)
+                    {
+                        float dist = Vector3.Distance(nodes[j].transform.position, otherGroup.transform.position);
+                        if (topThree.Count < 3 || dist < topThree.Keys.Last())
+                        {
+                            if (topThree.Count >= 3)
+                            {
+                                topThree.RemoveAt(2);
+                            }
+                            topThree.Add(dist, j);
+                        }
+                    }
+                    connectIndex = topThree.Values.ElementAt(Random.Range(0, 2));
+
+                    for (int j = 0; j < otherNodes.Count - 1; j++)
+                    {
+                        //TODO: get top 3 closest and randomly choose 1 but also make sure connection is not the same as initial generated connection
+                        float dist = Vector3.Distance(otherNodes[j].transform.position, this.transform.position);
+                        if (otherTopThree.Count < 3 || dist < otherTopThree.Keys.Last())
+                        {
+                            if (otherTopThree.Count >= 3)
+                            {
+                                otherTopThree.RemoveAt(2);
+                            }
+                            otherTopThree.Add(dist, j);
+                        }
+                    }
+                    otherConnectIndex = otherTopThree.Values.ElementAt(Random.Range(0, 2));
+                    if (nodes[connectIndex].links.Contains(otherNodes[otherConnectIndex]))
+                    {
+                        int invalidIndex = otherTopThree.Values.IndexOf(otherConnectIndex);
+                        otherTopThree.RemoveAt(invalidIndex);
+                        otherConnectIndex = otherTopThree.Values.ElementAt(Random.Range(0, 1));
+                    }
+
+                    groupLinks[connectIndex].Add(otherNodes[otherConnectIndex]);
+                    if (!connectedGroups.Contains(otherGroup))
+                    {
+                        connectedGroups.Add(otherGroup);
+                    }
+                }
+            }
+        }
+
         for (int i = 0; i < nodes.Count; i++)
         {
-            
             float[] ideaStrengths = new float[IdeaList.staticList.Length];
             for (int j = 0; j < ideaStrengths.Length; j++)
             {
+                if(TeamLobbyManager.playerIdeas.Contains(j))
+                {
+                    ideaStrengths[j] = 0.0f;
+                }
                 ideaStrengths[j] = Random.Range(0f, 1f);
             }
-            ideaStrengths[IdeaList.staticDict[mainIdea]] = Mathf.Max(mainStrength, ideaStrengths[IdeaList.staticDict[mainIdea]]);
+            if(mainIdea != "")
+            {
+                ideaStrengths[IdeaList.staticDict[mainIdea]] = Mathf.Max(mainStrength, ideaStrengths[IdeaList.staticDict[mainIdea]]);
+            }
             nodes[i].ideaStrengths = ideaStrengths;
-			//print("links for node " + i + ": " + nodes[i].links.Count);
 			
             NetworkServer.Spawn(nodes[i].gameObject);
-//			print(nodes[i].gameObject + " goes to " + nodes[i].GetComponent<NetworkIdentity>().netId);
 		}
 		OfficeSlot office = Instantiate(officeTemplate);
 		office.transform.position = transform.position;

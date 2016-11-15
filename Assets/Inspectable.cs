@@ -5,6 +5,8 @@ using System.Collections;
 public class Inspectable : NetworkBehaviour {
 	public bool mobile = false;
 
+	public float spawnRange = 0;
+
 	public bool selected;
 
 	public SpriteRenderer selectorTemplate;
