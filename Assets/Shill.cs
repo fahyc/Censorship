@@ -17,7 +17,8 @@ public class Shill : Spawnable
 		float[] strengths = new float[IdeaList.staticList.Length];
 		SpriteRenderer renderer = GetComponent<SpriteRenderer>();
 		renderer.sprite = sprite;
-		//print(node.ideaStrengths);
+        //print(node.ideaStrengths);
+        print(index);
 		strengths[index] = 1;
         node.shill = true;
 		node.SetStrengths(strengths);
