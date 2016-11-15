@@ -6,16 +6,21 @@ using UnityEngine.Networking;
 public class DummyUnit : MonoBehaviour {
 
     Transform t;
-    
+
+	Global g;
+
     void Start()
     {
         t = transform;
+		g = Global.getLocalPlayer();
     }
 
     void Update() {
-        t.position = Camera.main.ScreenToWorldPoint(Input.mousePosition.append(Camera.main.transform.position.z * -1));
+        Vector3 position = Camera.main.ScreenToWorldPoint(Input.mousePosition.append(Camera.main.transform.position.z * -1));
 
-        Collider2D[] hits = Physics2D.OverlapPointAll(t.position);
+
+		t.position = g.closestSpawnableLoc(position);
+		Collider2D[] hits = Physics2D.OverlapPointAll(t.position);
         bool hitLurker = false;
         foreach(Collider2D h in hits)
         {
