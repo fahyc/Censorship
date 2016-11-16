@@ -43,7 +43,7 @@ public class OfficeSlot : NetworkBehaviour {
 	{
 		GetComponent<SpriteRenderer>().enabled = setTo;
 		GetComponent<Collider2D>().enabled = setTo;
-		enabled = setTo;
+		//enabled = setTo;
 	}
 
 	public override void OnStartServer() {
