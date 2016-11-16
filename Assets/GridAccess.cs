@@ -32,8 +32,9 @@ public class GridAccess : UIItem {
                 //g.GetComponent<Button>().onClick.RemoveAllListeners();
                 g.GetComponent<Button>().onClick = emptySlot.GetComponent<Button>().onClick;
 
-                assignButton(g, emptySlot);
                 // g.GetComponent<Button>().GetComponentInChildren<Text>().text = "Empty";
+                g.GetComponent<Button>().onClick.RemoveAllListeners();
+                assignButton(g, emptySlot);
                 
             }
         }
@@ -49,20 +50,18 @@ public class GridAccess : UIItem {
     }
     public void clearOutSubMenu() {
         print("Executing now");
-        if (inSubMenu) {
-            foreach (GameObject s in submenu) {
-                if (s != null) {
-                    Destroy(s);
-                    print("DELET THIS");
-                }
+        foreach (GameObject s in submenu) {
+            if (s != null) {
+                Destroy(s);
             }
-            inSubMenu = false;
         }
+        inSubMenu = false;
+        
     }
     public void OnSelectUnit(GameObject newUnit) {
         if (newUnit == null) {
             clearButtons(true);
-            inSubMenu = false;
+            //inSubMenu = false;
             return;
         } 
         CommandCard cc = newUnit.GetComponent<CommandCard>();
@@ -154,7 +153,7 @@ public class GridAccess : UIItem {
 
 
             temp.transform.SetParent(Grid[i].transform, false);
-            print(temp.GetComponent<RectTransform>().rect.width);
+
             temp.GetComponent<RectTransform>().rect.Set(15, 15, 30, 30);
 
             //onClick = AdditionalOnClicks[0].;
