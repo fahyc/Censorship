@@ -54,7 +54,7 @@ public class Office : Spawnable {
 		bar.SetFill(defenses);
 	}
 	[ServerCallback]
-	protected virtual void OnDestroy()
+	protected override void OnDestroy()
 	{
 		base.OnDestroy();
 		slot.RpcSetVisible(true);
