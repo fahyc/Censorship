@@ -16,6 +16,7 @@ public class GridAccess : UIItem {
     public GameObject buttons;
     public UnityEvent[] AdditionalOnClicks;
     public bool inSubMenu = false;
+    public string tooltips = "[idea]";
     Global gi;
     // Use this for initialization
     void Start() {
@@ -44,11 +45,22 @@ public class GridAccess : UIItem {
     void Update() {
         
     }
-
+    public void clearOutSubMenu() {
+        print("Executing now");
+        if (inSubMenu) {
+            foreach (GameObject s in submenu) {
+                if (s != null) {
+                    Destroy(s);
+                    print("DELET THIS");
+                }
+            }
+            inSubMenu = false;
+        }
+    }
     public void OnSelectUnit(GameObject newUnit) {
         if (newUnit == null) {
             clearButtons(true);
-            
+            inSubMenu = false;
             return;
         } 
         CommandCard cc = newUnit.GetComponent<CommandCard>();
@@ -84,23 +96,30 @@ public class GridAccess : UIItem {
         }
     }
     void SubmenuCreation(DummyUnit inDummy) {
-        inSubMenu = true;
         print("woohoo");
         clearButtons(true);
         for (int i = 0; i < IdeaList.staticList.Length; i++) {
             GameObject temp = Instantiate(buttons);
             if (inDummy.name == "DummyNode")
-                temp.GetComponent<SpawnScript>().Initiate("blah blah", IdeaList.staticList[i].color, sref, i);
+                temp.GetComponent<SpawnScript>().Initiate(tooltips.Replace("[idea]", IdeaList.staticList[i].name), IdeaList.staticList[i].color, sref, i);
             else if (inDummy.name == "DummyWall")
-                temp.GetComponent<SpawnScript>().Initiate("blah blah", IdeaList.staticList[i].color, wref, i);
+                temp.GetComponent<SpawnScript>().Initiate(tooltips.Replace("[idea]", IdeaList.staticList[i].name), IdeaList.staticList[i].color, wref, i);
             temp.GetComponent<Button>().onClick.AddListener(() => gi.EnableDummy(inDummy));
+
             submenu[i] = temp;
+
+
             temp.transform.SetParent(Grid[i].transform, false);
+            print(temp.GetComponent<RectTransform>().rect.width);
+            temp.GetComponent<RectTransform>().rect.Set(15, 15, 30, 30);
+
             //onClick = AdditionalOnClicks[0].;
             //if (AdditionalOnClicks.Length > 0) {
             //    temp.GetComponent<Button>().onClick.AddListener(() => { AdditionalOnClicks[0].Invoke(); });
             //}
         }
+        print("Set insubmenu to true");
+        inSubMenu = true;
 
         ////Submenu s = Instantiate<Submenu>(sm);
         //for (int z = 0; z < IdeaList.staticList.Length; z++) {
