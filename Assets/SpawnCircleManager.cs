@@ -22,7 +22,7 @@ public class SpawnCircleManager : MonoBehaviour {
 
 	public static void Spawn(float radius, Vector2 position)
 	{
-		print("spawning");
+
 		SpawnCircleManager circle;
 		if (circles.Count > activeIndex)
 		{

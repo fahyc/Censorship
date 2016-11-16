@@ -30,7 +30,7 @@ public class GridAccess : UIItem {
         foreach (GameObject g in Grid) {
             if (g.GetComponent<Button>() != null) {
                 //g.GetComponent<Button>().onClick.RemoveAllListeners();
-                g.GetComponent<Button>().onClick = emptySlot.GetComponent<Button>().onClick;
+                g.GetComponent<Button>().onClick.RemoveAllListeners();
                 g.GetComponent<Button>().GetComponentInChildren<Text>().text = "Empty";
                 
             }
@@ -47,15 +47,13 @@ public class GridAccess : UIItem {
     }
     public void clearOutSubMenu() {
         print("Executing now");
-        if (inSubMenu) {
-            foreach (GameObject s in submenu) {
-                if (s != null) {
-                    Destroy(s);
-                    print("DELET THIS");
-                }
+        foreach (GameObject s in submenu) {
+            if (s != null) {
+                Destroy(s);
             }
-            inSubMenu = false;
         }
+        inSubMenu = false;
+        
     }
     public void OnSelectUnit(GameObject newUnit) {
         if (newUnit == null) {
@@ -75,6 +73,7 @@ public class GridAccess : UIItem {
                     }
                     Grid[i].GetComponent<Button>().onClick = cc.commands[i].GetComponent<Button>().onClick;
                     Grid[i].GetComponent<Button>().GetComponentInChildren<Text>().text = cc.commands[i].GetComponentInChildren<Text>().text;
+                    
                     if (cc.commands[i].name == "button_Shill" || cc.commands[i].name == "button_Wall") {
                         //Put behavior for submenus here.
                         //Grid[i].GetComponentInChildren<Submenu>().Enable();
