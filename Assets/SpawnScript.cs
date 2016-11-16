@@ -18,6 +18,7 @@ public class SpawnScript : MonoBehaviour {
 
 	public void Initiate(string tooltip, Color color,Spawnable p, int i)
 	{
+        print(i);
 		product = p;
         img.color = color;
         mouseOver = tooltip;

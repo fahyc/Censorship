@@ -219,6 +219,7 @@ public class Global : NetworkBehaviour {
 			currentTool = null;
             
             DisableDummy();
+			SpawnCircleManager.Clear();
 
 			Vector3 pt = mouseToWorld();
 			Vector3 averageStart = Vector3.zero;
@@ -281,7 +282,7 @@ public class Global : NetworkBehaviour {
 			}
 			else {
 				//or if there is nothing to spawn, clear any focus and ui elements, or inspect whatever is below the mouse.
-				clearSelected();
+				//clearSelected();
 				DisableDummy();
 				Vector3 mousePos = Input.mousePosition;
 				mousePos.Set(mousePos.x, mousePos.y, -Camera.main.transform.position.z);
@@ -337,8 +338,15 @@ public class Global : NetworkBehaviour {
 	void clearSelected()
 	{
 		//Zero out the command card.
+		print("clearing out the submenu? " + commandCard.GetComponent<GridAccess>().inSubMenu);
+        if (commandCard.GetComponent<GridAccess>().inSubMenu) {
+            commandCard.GetComponent<GridAccess>().clearOutSubMenu();
+            commandCard.GetComponent<GridAccess>().OnSelectUnit(null);
+        } else {
+            commandCard.GetComponent<GridAccess>().OnSelectUnit(null);
+        }
 		print("clearing");
-        commandCard.GetComponent<GridAccess>().OnSelectUnit(null);
+		SpawnCircleManager.Clear();
 		for(int i = 0; i < selected.Count; i++)
 		{
 			selected[i].deselect();
@@ -445,13 +453,12 @@ public class Global : NetworkBehaviour {
 				return global;
 			}
 		}
-
-        Debug.LogWarning("Local player object not found!");
 		return null;
 	}
 	public Vector2 closestSpawnableLoc(Vector2 position)
 	{
 		//Vector2 closest = new Vector3(float.MaxValue, float.MaxValue);
+		SpawnCircleManager.Clear();
 		int closestIndex = 0;
 		float closestDist = float.MaxValue;
 		for(int i = 0; i < selected.Count; i++)
@@ -460,6 +467,7 @@ public class Global : NetworkBehaviour {
 			{
 				continue;
 			}
+			SpawnCircleManager.Spawn(selected[i].spawnRange * 2, selected[i].transform.position);
 			float dist = (position - selected[i].transform.position.xy()).magnitude;
 			if (dist < selected[i].spawnRange)
 			{
