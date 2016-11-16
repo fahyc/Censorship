@@ -54,8 +54,9 @@ public class Office : Spawnable {
 		bar.SetFill(defenses);
 	}
 	[ServerCallback]
-	void OnDestroy()
+	protected virtual void OnDestroy()
 	{
+		base.OnDestroy();
 		slot.RpcSetVisible(true);
 		//NetworkServer.FindLocalObject(slotId).GetComponent<OfficeSlot>().setVisible(true);
 	}

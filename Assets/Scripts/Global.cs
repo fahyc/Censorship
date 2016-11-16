@@ -327,6 +327,7 @@ public class Global : NetworkBehaviour {
 
 	public void addUpkeep(int amount)
 	{
+		print("adding upkeep " + amount);
 		upkeep += amount;
 	}
 

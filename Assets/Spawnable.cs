@@ -33,9 +33,10 @@ public class Spawnable : NetworkBehaviour {
             GetComponent<SpriteRenderer>().color = disabledColor;
         }
     }
-	void OnDestroy()
+	protected virtual void OnDestroy()
 	{
-        if (Global.isReady())
-            Global.getLocalPlayer().addUpkeep(-upkeep);
+		//if (Global.isReady())
+		print("Destroying " + this);
+		Global.getLocalPlayer().addUpkeep(-upkeep);
 	}
 }

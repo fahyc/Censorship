@@ -83,8 +83,9 @@ public class Hacker : Spawnable {
         //yield return new /*WaitForSeconds*/(1.0f);
     }
 
-    void OnDestroy()
+	protected override void OnDestroy()
     {
+		base.OnDestroy();
         if (laser != null)
             NetworkServer.Destroy(laser.gameObject);
     }
