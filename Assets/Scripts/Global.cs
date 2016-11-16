@@ -338,8 +338,7 @@ public class Global : NetworkBehaviour {
 	void clearSelected()
 	{
 		//Zero out the command card.
-		print("clearing out the submenu? " + commandCard.GetComponent<GridAccess>().inSubMenu);
-		print("clearing");
+
         if (commandCard.GetComponent<GridAccess>().inSubMenu) {
             commandCard.GetComponent<GridAccess>().clearOutSubMenu();
         }
