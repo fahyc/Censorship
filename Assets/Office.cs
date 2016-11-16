@@ -19,8 +19,8 @@ public class Office : Spawnable {
 		bar = Instantiate(bar);
 		bar.transform.parent = transform;
 		bar.transform.localPosition = barOffset;
-		GetComponent<SpriteRenderer>().color = IdeaList.staticList[index].color;
-		bar.SetColor(IdeaList.staticList[index].color);
+		GetComponent<SpriteRenderer>().color = IdeaList.instance.list[index].color;
+		bar.SetColor(IdeaList.instance.list[index].color);
 	}
 	
 	// Update is called once per frame

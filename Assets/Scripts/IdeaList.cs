@@ -7,13 +7,11 @@ using UnityEngine.Networking;
 class IdeaList : NetworkBehaviour {
 
     public AbstractIdea[] list;
-    public static AbstractIdea[] staticList;
 
 	[SyncVar]
     public int nodeCount = 0;
 
     public Dictionary<string, int> ideaDict = new Dictionary<string, int>();
-    public static Dictionary<string, int> staticDict;
 
 	//public static List<int> Prevalence;
 	//public static int[] Prevalence;
@@ -23,26 +21,18 @@ class IdeaList : NetworkBehaviour {
 
 	public static IdeaList instance;
 
-	public 
-
     void Awake()
     {
-		
-		//Prevalence = new SyncListInt();
-		
-		
+        //Prevalence = new SyncListInt();
         instance = this;
-        staticList = list;
         for (int i = 0; i < list.Length; i++)
         {
             ideaDict.Add(list[i].name, i);
         }
-
-        staticDict = ideaDict;
     }
-	
-	void Start()
-	{
+
+    public override void OnStartServer()
+    {
 		for (int i = 0; i < list.Length; i++)
 		{
 			Prevalence.Add(0);
@@ -65,10 +55,10 @@ class IdeaList : NetworkBehaviour {
 		/*
 		IEnumerator checkEvent(AbstractIdea idea)
 		{
-			int index = staticDict[idea.name];
-			float ratio = staticList[index].value / (float) nodeCount;
+			int index = instance.ideaDict[idea.name];
+			float ratio = instance.list[index].value / (float) nodeCount;
 
-			while (ratio > staticList[index].getEventThreshold())
+			while (ratio > instance.list[index].getEventThreshold())
 			{
 				//Debug.Log(idea.name + ": " + ratio);
 
@@ -80,7 +70,7 @@ class IdeaList : NetworkBehaviour {
 
 				yield return new WaitForSeconds(1);
 
-				ratio = staticList[index].value / (float) nodeCount;
+				ratio = instance.list[index].value / (float) nodeCount;
 			}
 
 			idea.stopChecking();

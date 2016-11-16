@@ -17,10 +17,10 @@ public class Submenu : UIItem {
 	// Use this for initialization
 	void Start () {
         print("Starting submenu");
-		for(int i = 0; i < IdeaList.staticList.Length; i++)
+		for(int i = 0; i < IdeaList.instance.list.Length; i++)
 		{
 			SpawnScript temp = Instantiate<SpawnScript>(buttons);
-			temp.Initiate(tooltips.Replace("[idea]", IdeaList.staticList[i].name), IdeaList.staticList[i].color,product, i);
+			temp.Initiate(tooltips.Replace("[idea]", IdeaList.instance.list[i].name), IdeaList.instance.list[i].color,product, i);
             temp.transform.SetParent(transform, false);
 			//onClick = AdditionalOnClicks[0].;
 			if (AdditionalOnClicks.Length > 0)

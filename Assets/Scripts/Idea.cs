@@ -36,7 +36,7 @@ public class Idea : NetworkBehaviour {
     // Use this for initialization
     public virtual void Start() {
 		totalTime = (origin - destination).magnitude/speed;
-		GetComponent<SpriteRenderer>().color = IdeaList.staticList[IdeaList.staticDict[ideaStr]].color;
+		GetComponent<SpriteRenderer>().color = IdeaList.instance.list[IdeaList.instance.ideaDict[ideaStr]].color;
 	}
 
 	// Update is called once per frame
@@ -79,7 +79,7 @@ public class Idea : NetworkBehaviour {
         if (Input.GetMouseButtonDown(0)) {
             Global.textbg = true;
             Global.text = "";
-            Global.text = "<size=16><b><color=#" + ColorToHex(IdeaList.staticList[index].color) + ">" + ideaStr + "</color></b></size>" + ": " + IdeaList.staticList[index].description;
+            Global.text = "<size=16><b><color=#" + ColorToHex(IdeaList.instance.list[index].color) + ">" + ideaStr + "</color></b></size>" + ": " + IdeaList.instance.list[index].description;
         }
     }
 

@@ -326,7 +326,7 @@ public class NodeGroupScript : NetworkBehaviour {
 
         for (int i = 0; i < nodes.Count; i++)
         {
-            float[] ideaStrengths = new float[IdeaList.staticList.Length];
+            float[] ideaStrengths = new float[IdeaList.instance.list.Length];
             for (int j = 0; j < ideaStrengths.Length; j++)
             {
                 if(TeamLobbyManager.playerIdeas.Contains(j))
@@ -337,7 +337,7 @@ public class NodeGroupScript : NetworkBehaviour {
             }
             if(mainIdea != "")
             {
-                ideaStrengths[IdeaList.staticDict[mainIdea]] = 1.0f;
+                ideaStrengths[IdeaList.instance.ideaDict[mainIdea]] = 1.0f;
             }
             nodes[i].ideaStrengths = ideaStrengths;
 			

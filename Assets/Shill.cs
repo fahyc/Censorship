@@ -14,7 +14,7 @@ public class Shill : Spawnable
 		{
 			node.clientLinkTo(DummyNode.nodes[i]);
 		}
-		float[] strengths = new float[IdeaList.staticList.Length];
+		float[] strengths = new float[IdeaList.instance.list.Length];
 		SpriteRenderer renderer = GetComponent<SpriteRenderer>();
 		renderer.sprite = sprite;
         //print(node.ideaStrengths);
