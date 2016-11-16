@@ -332,8 +332,10 @@ public class NodeGroupScript : NetworkBehaviour {
                 if(TeamLobbyManager.playerIdeas.Contains(j))
                 {
                     ideaStrengths[j] = 0.0f;
+                } else
+                {
+                    ideaStrengths[j] = Random.Range(0f, 1f);
                 }
-                ideaStrengths[j] = Random.Range(0f, 1f);
             }
             if(mainIdea != "")
             {

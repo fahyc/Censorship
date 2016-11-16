@@ -40,4 +40,8 @@ public class Office : Spawnable {
 		}
 		bar.SetFill(defenses);
 	}
+	void OnDestroy()
+	{
+		slot.setVisible(true);
+	}
 }

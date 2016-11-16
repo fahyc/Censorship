@@ -35,6 +35,15 @@ public class OfficeSlot : NetworkBehaviour {
 		temp.transform.parent = transform;
 		officeInstance = temp;
 		NetworkServer.Spawn(temp.gameObject);
+		//gameObject.SetActive(false);
+		setVisible(false);
+	}
+
+	public void setVisible(bool setTo)
+	{
+		GetComponent<SpriteRenderer>().enabled = setTo;
+		GetComponent<Collider2D>().enabled = setTo;
+		//enabled = setTo;
 	}
 
 	public override void OnStartServer() {
