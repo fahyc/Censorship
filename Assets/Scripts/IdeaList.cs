@@ -47,22 +47,6 @@ class IdeaList : NetworkBehaviour {
 	{
 		Prevalence[index] += amt;
 	}
-<<<<<<< HEAD
-    /*
-    public static void rollForEvent(AbstractIdea idea)
-    {
-        instance.StartCoroutine(instance.checkEvent(idea));
-    }*/
-    /*
-    IEnumerator checkEvent(AbstractIdea idea)
-    {
-        int index = staticDict[idea.name];
-        float ratio = staticList[index].value / (float) nodeCount;
-
-        while (ratio > staticList[index].getEventThreshold())
-        {
-            //Debug.Log(idea.name + ": " + ratio);
-=======
 		/*
 		public static void rollForEvent(AbstractIdea idea)
 		{
@@ -77,29 +61,22 @@ class IdeaList : NetworkBehaviour {
 			while (ratio > instance.list[index].getEventThreshold())
 			{
 				//Debug.Log(idea.name + ": " + ratio);
->>>>>>> origin/master
 
-            if (UnityEngine.Random.value < 0.08)
-            {
-                idea.triggerEvent();
-                break;
-            }
+				if (UnityEngine.Random.value < 0.08)
+				{
+					idea.triggerEvent();
+					break;
+				}
 
-            yield return new WaitForSeconds(1);
+				yield return new WaitForSeconds(1);
 
-<<<<<<< HEAD
-            ratio = staticList[index].value / (float) nodeCount;
-        }
-=======
 				ratio = instance.list[index].value / (float) nodeCount;
 			}
->>>>>>> origin/master
 
-        idea.stopChecking();
-        yield return null;
-    }*/
-    
-}
+			idea.stopChecking();
+			yield return null;
+		}*/
+	}
 
 	[Serializable]
 public class AbstractIdea : System.Object {
@@ -156,5 +133,4 @@ public class AbstractIdea : System.Object {
         string hex = color.r.ToString("X2") + color.g.ToString("X2") + color.b.ToString("X2");
         return hex;
     }
-
 }//
