@@ -331,13 +331,8 @@ public class Global : NetworkBehaviour {
 	{
 		//Zero out the command card.
 		print("clearing out the submenu? " + commandCard.GetComponent<GridAccess>().inSubMenu);
-        if (commandCard.GetComponent<GridAccess>().inSubMenu) {
-            commandCard.GetComponent<GridAccess>().clearOutSubMenu();
-            commandCard.GetComponent<GridAccess>().OnSelectUnit(null);
-        } else {
-            commandCard.GetComponent<GridAccess>().OnSelectUnit(null);
-        }
 		print("clearing");
+        commandCard.GetComponent<GridAccess>().OnSelectUnit(null);
 		SpawnCircleManager.Clear();
 		for(int i = 0; i < selected.Count; i++)
 		{
