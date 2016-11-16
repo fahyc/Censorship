@@ -58,7 +58,7 @@ public class Node : NetworkBehaviour {
 			Debug.LogWarning("Getting sprite. This shouldn't happen.");
 			sprite = GetComponent<SpriteRenderer>();
 		}
-		sprite.color = IdeaList.staticList[i].color;
+		sprite.color = IdeaList.instance.list[i].color;
 	}
 
 	public int index;
@@ -66,7 +66,7 @@ public class Node : NetworkBehaviour {
     // Use this for initialization
     public override void OnStartServer () {
 		//Get a reference to the global game object that keeps track of the ideological climate.
-		ideasList = IdeaList.staticList;// GameObject.Find("EventSystem").GetComponent<IdeaList>().list;
+		ideasList = IdeaList.instance.list;// GameObject.Find("EventSystem").GetComponent<IdeaList>().list;
 		links = new List<Node>(linksSeed);
 
         //ideaStrengths = new float[ideasList.Length];
@@ -248,7 +248,7 @@ public class Node : NetworkBehaviour {
 	public void RpcChangeColor(int index)
 	{
 		///print(index);
-		sprite.color = IdeaList.staticList[index].color;
+		sprite.color = IdeaList.instance.list[index].color;
 	}
 
     [Server]
@@ -286,7 +286,7 @@ public class Node : NetworkBehaviour {
 			SpecialIdea obj = Instantiate(special);
 			obj.visited = special.visited;
 			obj.strength -= 1;
-			sendIdea(special.ideaStr, links[i], IdeaList.staticDict[special.ideaStr], obj);
+			sendIdea(special.ideaStr, links[i], IdeaList.instance.ideaDict[special.ideaStr], obj);
 		}
 	}
 
@@ -395,7 +395,7 @@ public class Node : NetworkBehaviour {
         }
     }
 
-	[Server]
+	[ServerCallback]
 	void OnDestroy()
 	{
 		for(int i = 0; i < links.Count; i++)

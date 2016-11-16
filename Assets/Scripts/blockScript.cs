@@ -12,7 +12,7 @@ public class blockScript : Spawnable {
 	// Use this for initialization
 	void Start () {
 		if (index != -1) {
-			GetComponent<SpriteRenderer>().color = IdeaList.staticList[index].color;
+			GetComponent<SpriteRenderer>().color = IdeaList.instance.list[index].color;
 		}
 	}
 	
