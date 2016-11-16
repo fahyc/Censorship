@@ -59,7 +59,6 @@ public class Hacker : Spawnable {
 
     [Server]
     void fireShot() {
-        print("imma firin mah laser");
         //Pick a random enemy and shoot at it.
         int targetIndex = Mathf.FloorToInt(Random.Range(0, num_inRange));
         GameObject target = enemiesNear[targetIndex];
@@ -81,11 +80,9 @@ public class Hacker : Spawnable {
     }
     IEnumerator networkLaser(LineRenderer l)
     {
-        print("Create Networked Laser");
 
         NetworkServer.Spawn(l.gameObject);
         yield return new WaitForSeconds(1.0f);
-        print("Destroy networked laser");
         NetworkServer.UnSpawn(l.gameObject);
         Destroy(l);
 
