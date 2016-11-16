@@ -60,12 +60,12 @@ public class ClusterSpawner : NetworkBehaviour {
                     seed[k] = nodes[k];
                 }
 				spawn.linksSeed = seed;
-				float[] ideaStrengths = new float[IdeaList.staticList.Length];
+				float[] ideaStrengths = new float[IdeaList.instance.list.Length];
 				for(int j = 0; j < ideaStrengths.Length; j++)
 				{
 					ideaStrengths[j] = Random.Range(0f, 1f);
 				}
-				ideaStrengths[IdeaList.staticDict[mainIdea]] = Mathf.Max( mainStrength, ideaStrengths[IdeaList.staticDict[mainIdea]]);
+				ideaStrengths[IdeaList.instance.ideaDict[mainIdea]] = Mathf.Max( mainStrength, ideaStrengths[IdeaList.instance.ideaDict[mainIdea]]);
 				//ideaStrengths.print();
 				spawn.stubborn = stubborn;
 				spawn.ideaStrengths = ideaStrengths;

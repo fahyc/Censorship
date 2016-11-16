@@ -10,7 +10,7 @@ public class SliderBehavior : MonoBehaviour {
     public float sliderMax=0.25f;
 	// Use this for initialization
 	void Start () {
-        ideaTracker = IdeaList.staticList[associatedScore];
+        ideaTracker = IdeaList.instance.list[associatedScore];
         tracker = GetComponentInParent<Slider>();
         tracker.maxValue = sliderMax;
         fill.color = ideaTracker.color;

@@ -211,6 +211,7 @@ public class Global : NetworkBehaviour {
 			currentTool = null;
             
             DisableDummy();
+			SpawnCircleManager.Clear();
 
 			Vector3 pt = mouseToWorld();
 			Vector3 averageStart = Vector3.zero;
@@ -336,6 +337,8 @@ public class Global : NetworkBehaviour {
         } else {
             commandCard.GetComponent<GridAccess>().OnSelectUnit(null);
         }
+		print("clearing");
+		SpawnCircleManager.Clear();
 		for(int i = 0; i < selected.Count; i++)
 		{
 			selected[i].deselect();
@@ -447,6 +450,7 @@ public class Global : NetworkBehaviour {
 	public Vector2 closestSpawnableLoc(Vector2 position)
 	{
 		//Vector2 closest = new Vector3(float.MaxValue, float.MaxValue);
+		SpawnCircleManager.Clear();
 		int closestIndex = 0;
 		float closestDist = float.MaxValue;
 		for(int i = 0; i < selected.Count; i++)
@@ -455,6 +459,7 @@ public class Global : NetworkBehaviour {
 			{
 				continue;
 			}
+			SpawnCircleManager.Spawn(selected[i].spawnRange * 2, selected[i].transform.position);
 			float dist = (position - selected[i].transform.position.xy()).magnitude;
 			if (dist < selected[i].spawnRange)
 			{

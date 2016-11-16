@@ -35,10 +35,19 @@ public class OfficeSlot : NetworkBehaviour {
 		temp.transform.parent = transform;
 		officeInstance = temp;
 		NetworkServer.Spawn(temp.gameObject);
+		//gameObject.SetActive(false);
+		setVisible(false);
+	}
+
+	public void setVisible(bool setTo)
+	{
+		GetComponent<SpriteRenderer>().enabled = setTo;
+		GetComponent<Collider2D>().enabled = setTo;
+		//enabled = setTo;
 	}
 
 	public override void OnStartServer() {
-		nodeCountList = new int[IdeaList.staticList.Length];
+		nodeCountList = new int[IdeaList.instance.list.Length];
 		
 	}
 
@@ -54,7 +63,7 @@ public class OfficeSlot : NetworkBehaviour {
 			Debug.LogWarning("Getting sprite. This shouldn't happen.");
 			r = GetComponent<SpriteRenderer>();
 		}
-		r.color = IdeaList.staticList[mainIdea].color;
+		r.color = IdeaList.instance.list[mainIdea].color;
 	}
 
 	int index;
@@ -83,7 +92,7 @@ public class OfficeSlot : NetworkBehaviour {
 				//}
 			}
 			mainIdea = maxIndex;
-			nodeCountList = new int[IdeaList.staticList.Length];
+			nodeCountList = new int[IdeaList.instance.list.Length];
 			index = 0;
 		}
 	}
