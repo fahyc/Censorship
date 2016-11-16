@@ -16,7 +16,7 @@ public class NodeGroupScript : NetworkBehaviour {
     public Node referenceNode;
     public GameObject referenceMediaNode;
     public string mainIdea = "";
-    public float mainStrength = .9f;
+    //public float mainStrength = .9f;
     List<Node> nodes = new List<Node>();
     List<List<Node>> groupLinks = new List<List<Node>>();
     List<List<int>> nodeLinks = new List<List<int>>();
@@ -332,12 +332,14 @@ public class NodeGroupScript : NetworkBehaviour {
                 if(TeamLobbyManager.playerIdeas.Contains(j))
                 {
                     ideaStrengths[j] = 0.0f;
+                } else
+                {
+                    ideaStrengths[j] = Random.Range(0f, 1f);
                 }
-                ideaStrengths[j] = Random.Range(0f, 1f);
             }
             if(mainIdea != "")
             {
-                ideaStrengths[IdeaList.staticDict[mainIdea]] = Mathf.Max(mainStrength, ideaStrengths[IdeaList.staticDict[mainIdea]]);
+                ideaStrengths[IdeaList.staticDict[mainIdea]] = 1.0f;
             }
             nodes[i].ideaStrengths = ideaStrengths;
 			
