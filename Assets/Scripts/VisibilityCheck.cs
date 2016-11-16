@@ -78,11 +78,16 @@ public class VisibilityCheck : NetworkBehaviour {
             // unless we're initializing, only make viewable to lurkers
         foreach (Spawnable l in lurkersWatching)
         {
+            if (l == null) {
+                continue;
+            }
             if (visibleToLurkers || l.GetComponent<BasicVision>().seesAll)
             {
                 observers.Add(l.owner);
             }
         }
+
+        lurkersWatching.Remove(null);
 
         foreach (VisibilityCheck v in connectedEntities)
         {

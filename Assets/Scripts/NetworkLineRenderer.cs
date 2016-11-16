@@ -111,4 +111,13 @@ public class NetworkLineRenderer : NetworkBehaviour {
     {
         lineColor = c;
     }
+
+    public IEnumerator networkLaser()
+    {
+        NetworkServer.Spawn(gameObject);
+        yield return new WaitForSeconds(1.0f);
+        NetworkServer.Destroy(gameObject);
+        // Destroy(l);
+
+    }
 }
