@@ -34,7 +34,7 @@ public class GridAccess : UIItem {
 
                 // g.GetComponent<Button>().GetComponentInChildren<Text>().text = "Empty";
                 g.GetComponent<Button>().onClick.RemoveAllListeners();
-                assignButton(g, emptySlot);
+                // assignButton(g, emptySlot);
                 
             }
         }
