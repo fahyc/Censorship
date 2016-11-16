@@ -60,7 +60,7 @@ public class GridAccess : UIItem {
     public void OnSelectUnit(GameObject newUnit) {
         if (newUnit == null) {
             clearButtons(true);
-            inSubMenu = false;
+            //inSubMenu = false;
             return;
         } 
         CommandCard cc = newUnit.GetComponent<CommandCard>();
@@ -110,7 +110,7 @@ public class GridAccess : UIItem {
 
 
             temp.transform.SetParent(Grid[i].transform, false);
-            print(temp.GetComponent<RectTransform>().rect.width);
+
             temp.GetComponent<RectTransform>().rect.Set(15, 15, 30, 30);
 
             //onClick = AdditionalOnClicks[0].;
