@@ -1,16 +1,20 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using UnityEngine.Networking;
 
-public class IdeaDescription : MonoBehaviour {
+public class IdeaDescription : NetworkBehaviour {
 
 	Text text;
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    public override void OnStartLocalPlayer () {
 		text = GetComponent<Text>();
 
-		AbstractIdea idea = IdeaList.staticList[Global.getLocalPlayer().playerIdeaIndex];
+        Global player = Global.getLocalPlayer();
+
+		AbstractIdea idea = IdeaList.instance.list[player.playerIdeaIndex];
+
 		text.text = text.text.Replace("[idea]", idea.name).Replace("[color]", idea.colorHex()).Replace("[description]", idea.description);
 
 		GameObject[] obj = GameObject.FindGameObjectsWithTag("DynamicColor");
@@ -18,10 +22,5 @@ public class IdeaDescription : MonoBehaviour {
 		{
 			obj[i].GetComponent<Image>().color = idea.color;
 		}
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
 	}
 }

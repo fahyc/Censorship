@@ -87,12 +87,12 @@ public class GridAccess : UIItem {
         inSubMenu = true;
         print("woohoo");
         clearButtons(true);
-        for (int i = 0; i < IdeaList.staticList.Length; i++) {
+        for (int i = 0; i < IdeaList.instance.list.Length; i++) {
             GameObject temp = Instantiate(buttons);
             if (inDummy.name == "DummyNode")
-                temp.GetComponent<SpawnScript>().Initiate("blah blah", IdeaList.staticList[i].color, sref, i);
+                temp.GetComponent<SpawnScript>().Initiate("blah blah", IdeaList.instance.list[i].color, sref, i);
             else if (inDummy.name == "DummyWall")
-                temp.GetComponent<SpawnScript>().Initiate("blah blah", IdeaList.staticList[i].color, wref, i);
+                temp.GetComponent<SpawnScript>().Initiate("blah blah", IdeaList.instance.list[i].color, wref, i);
             temp.GetComponent<Button>().onClick.AddListener(() => gi.EnableDummy(inDummy));
             submenu[i] = temp;
             temp.transform.SetParent(Grid[i].transform, false);
@@ -103,12 +103,12 @@ public class GridAccess : UIItem {
         }
 
         ////Submenu s = Instantiate<Submenu>(sm);
-        //for (int z = 0; z < IdeaList.staticList.Length; z++) {
-        //    Grid[z].GetComponent<Image>().color = IdeaList.staticList[z].color;
+        //for (int z = 0; z < IdeaList.instance.list.Length; z++) {
+        //    Grid[z].GetComponent<Image>().color = IdeaList.instance.list[z].color;
         //    Grid[z].GetComponent<Button>().onClick.AddListener(() => gi.EnableDummy(inDummy));
         //    //print(temp);
         //    if (inDummy.name == "DummyNode") {
-        //        Grid[z].GetComponent<SpawnScript>().Initiate("Spawn a shill", IdeaList.staticList[z].color, sref, z);
+        //        Grid[z].GetComponent<SpawnScript>().Initiate("Spawn a shill", IdeaList.instance.list[z].color, sref, z);
         //        SpawnScript temp = Grid[z].GetComponent<SpawnScript>();
 
         //        Button tempb = Grid[z].GetComponent<Button>();
@@ -119,11 +119,11 @@ public class GridAccess : UIItem {
         //        //print(sref);
         //    } else if (inDummy.name == "DummyWall") {
         //        int index = z;
-        //        Grid[z].GetComponent<SpawnScript>().Initiate("Spawn a wall", IdeaList.staticList[z].color, wref, index);
+        //        Grid[z].GetComponent<SpawnScript>().Initiate("Spawn a wall", IdeaList.instance.list[z].color, wref, index);
         //    }
         //    //Grid[i].
         //}
-        //for(int j=0; j < IdeaList.staticList.Length; j++) {
+        //for(int j=0; j < IdeaList.instance.list.Length; j++) {
         //    SpawnScript d = temp[j];
         //    Grid[j].GetComponent<Button>().onClick.AddListener(() => d.Spawn());
         //}

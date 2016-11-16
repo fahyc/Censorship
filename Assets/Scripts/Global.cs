@@ -439,6 +439,8 @@ public class Global : NetworkBehaviour {
 				return global;
 			}
 		}
+
+        Debug.LogWarning("Local player object not found!");
 		return null;
 	}
 	public Vector2 closestSpawnableLoc(Vector2 position)
