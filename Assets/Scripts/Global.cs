@@ -332,6 +332,14 @@ public class Global : NetworkBehaviour {
 
 	void select(Inspectable obj)
 	{
+		Spawnable temp = obj.GetComponent<Spawnable>();
+		if (temp)
+		{
+			if (temp.owner != connectionToClient)
+			{
+				return;
+			}
+		}
 		selected.Add(obj);
 		obj.select();
 	}
@@ -506,6 +514,7 @@ public class Global : NetworkBehaviour {
 		temp.transform.SetParent(transform);
 		slot.officeInstance = temp;
 		temp.GetComponent<Office>().slot = slot;
+		temp.owner = connectionToClient;
 		NetworkServer.Spawn(temp.gameObject);
 		slot.CmdSetVisible(false);
 	}
