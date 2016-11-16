@@ -274,7 +274,7 @@ public class Global : NetworkBehaviour {
 			}
 			else {
 				//or if there is nothing to spawn, clear any focus and ui elements, or inspect whatever is below the mouse.
-				clearSelected();
+				//clearSelected();
 				DisableDummy();
 				Vector3 mousePos = Input.mousePosition;
 				mousePos.Set(mousePos.x, mousePos.y, -Camera.main.transform.position.z);
