@@ -98,12 +98,12 @@ public class GridAccess : UIItem {
     void SubmenuCreation(DummyUnit inDummy) {
         print("woohoo");
         clearButtons(true);
-        for (int i = 0; i < IdeaList.staticList.Length; i++) {
+        for (int i = 0; i < IdeaList.instance.list.Length; i++) {
             GameObject temp = Instantiate(buttons);
             if (inDummy.name == "DummyNode")
-                temp.GetComponent<SpawnScript>().Initiate(tooltips.Replace("[idea]", IdeaList.staticList[i].name), IdeaList.staticList[i].color, sref, i);
+                temp.GetComponent<SpawnScript>().Initiate(tooltips.Replace("[idea]", IdeaList.instance.list[i].name), IdeaList.instance.list[i].color, sref, i);
             else if (inDummy.name == "DummyWall")
-                temp.GetComponent<SpawnScript>().Initiate(tooltips.Replace("[idea]", IdeaList.staticList[i].name), IdeaList.staticList[i].color, wref, i);
+                temp.GetComponent<SpawnScript>().Initiate(tooltips.Replace("[idea]", IdeaList.instance.list[i].name), IdeaList.instance.list[i].color, wref, i);
             temp.GetComponent<Button>().onClick.AddListener(() => gi.EnableDummy(inDummy));
 
             submenu[i] = temp;
