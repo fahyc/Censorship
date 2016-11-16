@@ -46,5 +46,9 @@ public class SpawnCircleManager : MonoBehaviour {
 		template = circleTemplate;
 		gameObject.SetActive(false);
 	}
-	
+	void OnDestroy()
+	{
+		circles.Clear();
+		activeIndex = 0;
+	}
 }

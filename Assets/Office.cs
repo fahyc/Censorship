@@ -12,6 +12,11 @@ public class Office : Spawnable {
 	public Vector2 barOffset;
 
 	public float captureSpeed = .2f;
+
+	[SyncVar]
+	NetworkInstanceId slotId;
+	
+
 	// Use this for initialization
 	void Start () {
 		//slot = GetComponentInParent<OfficeSlot>();
@@ -22,14 +27,18 @@ public class Office : Spawnable {
 		GetComponent<SpriteRenderer>().color = IdeaList.instance.list[index].color;
 		bar.SetColor(IdeaList.instance.list[index].color);
 	}
-	
+
 	// Update is called once per frame
-	void Update () {
+	void Update() {
 		if (!isLocalPlayer)
 		{
 			return;
 		}
-		if(slot.mainIdea != index)
+		if (slotId!=NetworkInstanceId.Invalid)
+		{
+			slotId = slot.GetComponent<NetworkIdentity>().netId;
+		}
+		if (slot.mainIdea != index)
 		{
 			defenses -= captureSpeed * Time.deltaTime;
 			if(defenses <= 0)
@@ -44,8 +53,10 @@ public class Office : Spawnable {
 		}
 		bar.SetFill(defenses);
 	}
+	[ServerCallback]
 	void OnDestroy()
 	{
-		slot.setVisible(true);
+		slot.RpcSetVisible(true);
+		//NetworkServer.FindLocalObject(slotId).GetComponent<OfficeSlot>().setVisible(true);
 	}
 }

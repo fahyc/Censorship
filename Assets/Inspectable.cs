@@ -50,6 +50,16 @@ public class Inspectable : NetworkBehaviour {
 		}
 	}
 
+	void OnDestroy()
+	{
+		Global g = Global.getLocalPlayer();
+		if (g)
+		{
+			g.deSelect(this);
+		}
+	}
+
+
     [Command]
     void CmdDestroySelf()
     {

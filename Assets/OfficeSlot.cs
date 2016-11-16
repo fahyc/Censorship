@@ -36,7 +36,7 @@ public class OfficeSlot : NetworkBehaviour {
 		Global.getLocalPlayer().spawnOffice(idea,this);
 		//CmdSpawnOffice(idea);
 		//gameObject.SetActive(false);
-		setVisible(false);
+		//CmdSetVisible(false);
 	}
 	//public void spawnOffice(int idea)
 	//{
@@ -58,8 +58,16 @@ public class OfficeSlot : NetworkBehaviour {
 	//	NetworkServer.Spawn(temp.gameObject);
 	//}
 
-	public void setVisible(bool setTo)
+	[Command]
+	public void CmdSetVisible(bool setTo)
 	{
+		RpcSetVisible(setTo);
+	}
+	
+	[ClientRpc]
+	public void RpcSetVisible(bool setTo)
+	{
+		print("Setting visible to " + setTo);
 		GetComponent<SpriteRenderer>().enabled = setTo;
 		GetComponent<Collider2D>().enabled = setTo;
 		//enabled = setTo;
@@ -80,12 +88,14 @@ public class OfficeSlot : NetworkBehaviour {
 		onChangeIndex(mainIdea);
 	}
 
+
+
 	public void onChangeIndex(int i)
 	{
 
 		if (!r)
 		{
-			Debug.LogWarning("Getting sprite. This shouldn't happen.");
+//			Debug.LogWarning("Getting sprite. This shouldn't happen.");
 			r = GetComponent<SpriteRenderer>();
 		}
 		r.color = IdeaList.instance.list[i].color;
