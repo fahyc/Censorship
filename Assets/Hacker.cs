@@ -25,7 +25,7 @@ public class Hacker : Spawnable {
         if (!isLocalPlayer) {
             Collider2D[] collisions = Physics2D.OverlapCircleAll(transform.position, attackRadius, 1 << LayerMask.NameToLayer("Targetable"));
 
-            if (collisions != null && collisions.Length != oldLength) {
+            if (collisions != null) {
                 num_inRange = 0;
                 foreach (Collider2D col in collisions) {
                     Spawnable m = col.gameObject.GetComponent<Spawnable>();
