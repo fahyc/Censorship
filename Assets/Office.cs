@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine.Networking;
 
 public class Office : Spawnable {
-	OfficeSlot slot;
+	public OfficeSlot slot;
 
 	float defenses;
 
@@ -14,10 +14,10 @@ public class Office : Spawnable {
 	public float captureSpeed = .2f;
 	// Use this for initialization
 	void Start () {
-		slot = GetComponentInParent<OfficeSlot>();
+		//slot = GetComponentInParent<OfficeSlot>();
 		defenses = 0;
 		bar = Instantiate(bar);
-		bar.transform.parent = transform;
+		bar.transform.SetParent(transform);
 		bar.transform.localPosition = barOffset;
 		GetComponent<SpriteRenderer>().color = IdeaList.instance.list[index].color;
 		bar.SetColor(IdeaList.instance.list[index].color);
@@ -25,6 +25,10 @@ public class Office : Spawnable {
 	
 	// Update is called once per frame
 	void Update () {
+		if (!isLocalPlayer)
+		{
+			return;
+		}
 		if(slot.mainIdea != index)
 		{
 			defenses -= captureSpeed * Time.deltaTime;

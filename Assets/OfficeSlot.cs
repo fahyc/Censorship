@@ -25,19 +25,38 @@ public class OfficeSlot : NetworkBehaviour {
 		{
 			spawnOffice(player.playerIdeaIndex);
 		}
+		else
+		{
+			print("Error, " + player.playerIdeaIndex + " does not equal " + mainIdea);
+		}
 	}
-
 	public void spawnOffice(int idea)
 	{
-		Spawnable temp = Instantiate(office);
-		temp.transform.position = transform.position;
-		temp.index = idea;
-		temp.transform.parent = transform;
-		officeInstance = temp;
-		NetworkServer.Spawn(temp.gameObject);
+		print("spawning");
+		Global.getLocalPlayer().spawnOffice(idea,this);
+		//CmdSpawnOffice(idea);
 		//gameObject.SetActive(false);
 		setVisible(false);
 	}
+	//public void spawnOffice(int idea)
+	//{
+	//	print("spawning");
+	//	CmdSpawnOffice(idea);
+	//	//gameObject.SetActive(false);
+	//	setVisible(false);
+	//}
+
+	//[Command]
+	//public void CmdSpawnOffice(int idea)
+	//{
+	//	Spawnable temp = Instantiate(office);
+	//	temp.transform.position = transform.position;
+	//	temp.index = idea;
+	//	temp.transform.parent = transform;
+	//	officeInstance = temp;
+	//	temp.GetComponent<Office>().slot = this;
+	//	NetworkServer.Spawn(temp.gameObject);
+	//}
 
 	public void setVisible(bool setTo)
 	{
@@ -56,14 +75,21 @@ public class OfficeSlot : NetworkBehaviour {
 		r = GetComponent<SpriteRenderer>();
 	}
 
+	public override void OnStartClient()
+	{
+		onChangeIndex(mainIdea);
+	}
+
 	public void onChangeIndex(int i)
 	{
+		print("new index: " + i);
 		if (!r)
 		{
 			Debug.LogWarning("Getting sprite. This shouldn't happen.");
 			r = GetComponent<SpriteRenderer>();
 		}
-		r.color = IdeaList.instance.list[mainIdea].color;
+		r.color = IdeaList.instance.list[i].color;
+		mainIdea = i;
 	}
 
 	int index;

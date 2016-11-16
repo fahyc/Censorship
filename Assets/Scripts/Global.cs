@@ -483,4 +483,23 @@ public class Global : NetworkBehaviour {
 		}
 		return selected[closestIndex].transform.position.xy() + ((position - selected[closestIndex].transform.position.xy()).normalized * selected[closestIndex].spawnRange); 
 	}
+
+	public void spawnOffice(int officeIdea,OfficeSlot slot)
+	{
+		CmdSpawnOffice(officeIdea, slot.GetComponent<NetworkIdentity>().netId);
+	}
+
+
+	[Command]
+	public void CmdSpawnOffice(int idea, NetworkInstanceId id)
+	{
+		OfficeSlot slot = NetworkServer.FindLocalObject(id).GetComponent<OfficeSlot>();
+		Spawnable temp = Instantiate(slot.office);
+		temp.transform.position = slot.transform.position;
+		temp.index = idea;
+		temp.transform.SetParent(transform);
+		slot.officeInstance = temp;
+		temp.GetComponent<Office>().slot = slot;
+		NetworkServer.Spawn(temp.gameObject);
+	}
 }
