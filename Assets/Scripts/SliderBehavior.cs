@@ -9,12 +9,16 @@ public class SliderBehavior : MonoBehaviour {
     Slider tracker;
     public float sliderMax=0.25f;
 	// Use this for initialization
-	void Start () {
-        ideaTracker = IdeaList.instance.list[associatedScore];
+	public IEnumerator Start () {
+
         tracker = GetComponentInParent<Slider>();
+        Text txtRef = GetComponentInChildren<Text>();
+
+        yield return new WaitUntil (() => IdeaList.isReady());
+
+        ideaTracker = IdeaList.instance.list[associatedScore];
         tracker.maxValue = sliderMax;
         fill.color = ideaTracker.color;
-        Text txtRef = GetComponentInChildren<Text>(); 
         txtRef.text = ideaTracker.name;
         txtRef.alignment = TextAnchor.MiddleCenter;
         txtRef.color = Color.white;
@@ -23,11 +27,15 @@ public class SliderBehavior : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		//print("running " + IdeaList.nodeCount);
-		if (IdeaList.instance.nodeCount > 0)
-		{
-			tracker.value = (float)IdeaList.instance.Prevalence[associatedScore] / IdeaList.instance.nodeCount;
-			//print((float)IdeaList.instance.Prevalence[associatedScore] / IdeaList.instance.nodeCount);
-		}
+        //print("running " + IdeaList.nodeCount);
+        // Debug.LogFormat("IdeaList instance is {0}", IdeaList.instance);
+        if (IdeaList.isReady())
+        {
+            if (IdeaList.instance.nodeCount > 0)
+            {
+                tracker.value = (float)IdeaList.instance.Prevalence[associatedScore] / IdeaList.instance.nodeCount;
+                //print((float)IdeaList.instance.Prevalence[associatedScore] / IdeaList.instance.nodeCount);
+            }
+        }
 	}
 }

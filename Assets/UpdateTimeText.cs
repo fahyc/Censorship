@@ -17,12 +17,9 @@ public class UpdateTimeText : MonoBehaviour {
 	void Update () {
 		if (!timeKeeper)
 		{
-			Global temp = Global.getLocalPlayer();
-			if (!temp)
-			{
-				//print("none found.");
-				return;
-			}
+            if (!Global.isReady())
+                return;
+            Global temp = Global.getLocalPlayer();
 			timeKeeper = temp.GetComponent<TimeBehavior>(); 
 		}
 		if (!global)

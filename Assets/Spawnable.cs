@@ -35,6 +35,7 @@ public class Spawnable : NetworkBehaviour {
     }
 	void OnDestroy()
 	{
-		Global.getLocalPlayer().addUpkeep(-upkeep);
+        if (Global.isReady())
+            Global.getLocalPlayer().addUpkeep(-upkeep);
 	}
 }

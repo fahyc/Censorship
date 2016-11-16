@@ -3,13 +3,13 @@ using System.Collections;
 
 public class GlobalInterface : MonoBehaviour {
 
-	Global global;
-	
+	Global global = null;
 
 	public void EnableDummy(DummyUnit dummy)
 	{
         print(dummy);
-		global.EnableDummy(dummy);
+        if (global != null)
+            global.EnableDummy(dummy);
 	}
 	/*
 	public void SetTool(Spawnable obj, int index)
@@ -19,9 +19,9 @@ public class GlobalInterface : MonoBehaviour {
 	*/
 	// Update is called once per frame
 	void Update () {
-		if (!global)
+		if (!global && Global.isReady())
 		{
-			global = Global.getLocalPlayer();
+            global = Global.getLocalPlayer();
 		}
 	}
 }

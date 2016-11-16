@@ -48,6 +48,13 @@ public class Global : NetworkBehaviour {
 	public LineRenderer lineTemplate;
 	//public Texture selectTexture;
 
+    public static Global localPlayer = null;
+
+    public static bool isReady()
+    {
+        return localPlayer != null;
+    }
+
 	//void Start()
 	//{
 		
@@ -81,7 +88,6 @@ public class Global : NetworkBehaviour {
 	}
     // Use this for initialization
     public override void OnStartLocalPlayer () {
-
 
 		inspector = GameObject.FindGameObjectWithTag("Inspector").GetComponent<Inspect>();
 		selectionbox = Instantiate(selectionbox);
@@ -165,6 +171,9 @@ public class Global : NetworkBehaviour {
     // Update is called once per frame
     [ClientCallback]
 	void Update () {
+        if (!isReady())
+            localPlayer = getLocalPlayer();
+
 		// only update for the local player
 
 		//print("update" + isLocalPlayer);
@@ -174,15 +183,14 @@ public class Global : NetworkBehaviour {
 			return;
 			//gameObject.SetActive(false);
 		}
-		//infoTextBox.text = text;
-		//textImage.enabled = textbg;
-		/*
+        //infoTextBox.text = text;
+        //textImage.enabled = textbg;
+        /*
 		if (overlappingFocusable())
 		{
 			return;
 		}
 		*/
-
 
 		if (Input.GetKeyDown(KeyCode.K))
 		{

@@ -3,17 +3,18 @@ using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.Networking;
 
-public class IdeaDescription : NetworkBehaviour {
+public class IdeaDescription : MonoBehaviour {
 
 	Text text;
 
     // Use this for initialization
-    public override void OnStartLocalPlayer () {
+    public IEnumerator Start () {
 		text = GetComponent<Text>();
 
-        Global player = Global.getLocalPlayer();
+        yield return new WaitUntil (() => Global.isReady());   // wait until global is ready to initialize
+        yield return new WaitUntil (() => IdeaList.isReady());   // wait until global is ready to initialize
 
-		AbstractIdea idea = IdeaList.instance.list[player.playerIdeaIndex];
+		AbstractIdea idea = IdeaList.instance.list[Global.localPlayer.playerIdeaIndex];
 
 		text.text = text.text.Replace("[idea]", idea.name).Replace("[color]", idea.colorHex()).Replace("[description]", idea.description);
 

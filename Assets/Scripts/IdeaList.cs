@@ -19,19 +19,24 @@ class IdeaList : NetworkBehaviour {
 	//[SyncVar(hook = "setPrevalence")]
 	public SyncListInt Prevalence = new SyncListInt();
 
-	public static IdeaList instance;
+	public static IdeaList instance = null;
 
     void Awake()
     {
         //Prevalence = new SyncListInt();
-        instance = this;
         for (int i = 0; i < list.Length; i++)
         {
             ideaDict.Add(list[i].name, i);
         }
+        instance = this;
     }
 
-    public override void OnStartServer()
+    public static bool isReady()
+    {
+        return instance != null;
+    }
+
+    public override void OnStartAuthority()
     {
 		for (int i = 0; i < list.Length; i++)
 		{
