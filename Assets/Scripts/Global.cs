@@ -335,6 +335,12 @@ public class Global : NetworkBehaviour {
 		selected.Add(obj);
 		obj.select();
 	}
+
+	public void deSelect(Inspectable obj)
+	{
+		obj.deselect();
+		selected.Remove(obj);
+	}
 	void clearSelected()
 	{
 		//Zero out the command card.
@@ -501,5 +507,6 @@ public class Global : NetworkBehaviour {
 		slot.officeInstance = temp;
 		temp.GetComponent<Office>().slot = slot;
 		NetworkServer.Spawn(temp.gameObject);
+		slot.CmdSetVisible(false);
 	}
 }
