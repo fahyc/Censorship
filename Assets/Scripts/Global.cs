@@ -46,7 +46,10 @@ public class Global : NetworkBehaviour {
 	public float minSelectionDistance = .5f;
 	//bool selecting;
 	public LineRenderer lineTemplate;
-	//public Texture selectTexture;
+    //public Texture selectTexture;
+
+    bool gameOver = false;
+    bool winner = false;
 
 	//void Start()
 	//{
@@ -82,8 +85,8 @@ public class Global : NetworkBehaviour {
     // Use this for initialization
     public override void OnStartLocalPlayer () {
 
-
-		inspector = GameObject.FindGameObjectWithTag("Inspector").GetComponent<Inspect>();
+        WinConditionChecker.instance.activePlayerIdeas.Add(playerIdeaIndex);
+        inspector = GameObject.FindGameObjectWithTag("Inspector").GetComponent<Inspect>();
 		selectionbox = Instantiate(selectionbox);
 		selectionbox.gameObject.SetActive(false);
         currentMoney = startingMoney;
@@ -163,160 +166,199 @@ public class Global : NetworkBehaviour {
     }
 
     // Update is called once per frame
-    [ClientCallback]
 	void Update () {
-		// only update for the local player
 
-		//print("update" + isLocalPlayer);
-		//		print(mouseToWorld());
-		if (!isLocalPlayer)
-		{
-			return;
-			//gameObject.SetActive(false);
-		}
-		//infoTextBox.text = text;
-		//textImage.enabled = textbg;
-		/*
-		if (overlappingFocusable())
-		{
-			return;
-		}
-		*/
+        if(isClient)
+        {
+            if(WinConditionChecker.instance.winningIdea != -1)
+            {
+                if(WinConditionChecker.instance.winningIdea == playerIdeaIndex)
+                {
+                    winner = true;
+                }
 
-
-		if (Input.GetKeyDown(KeyCode.K))
-		{
-			currentMoney += 500;
-			Debug.Log("Holla holla get dolla");
-		}
-		if (IdeaList.instance.Prevalence.Count > 0)
-		{
-			income = IdeaList.instance.Prevalence[playerIdeaIndex];
-		}
-		//		print("income: " + income + " upkeep " + upkeep);
-		moneyDiff = income - upkeep;
-
-
-		if (selectStart != Vector3.zero && (mouseToWorld() - selectStart).magnitude > minSelectionDistance)
-		{
-			DrawSelectBox(mouseToWorld(), selectStart);
-
-		}
-		else
-		{
-			selectionbox.gameObject.SetActive(false);
-		}
-
-        if(Input.GetMouseButtonDown(1)) {
-			currentTool = null;
+                gameOver = WinConditionChecker.instance.gameOver;
+            }
             
-            DisableDummy();
+            // only update for the local player
 
-			Vector3 pt = mouseToWorld();
-			Vector3 averageStart = Vector3.zero;
-			int mobilecount = selected.Count;
-			for(int i = 0; i< selected.Count; i++)
-			{
-				if (!selected[i].GetComponent<MovementController>())
-				{
-					mobilecount--;
-					continue;
-				}
-				averageStart += selected[i].transform.position;
-			}
-			if (selected.Count > 0){averageStart /= mobilecount;}
-			for (int i = 0; i < selected.Count; i++)
-			{
-				Vector3 dif =  selected[i].transform.position - averageStart;
-				selected[i].goTo(dif + pt);
-			}
-		}
+            //print("update" + isLocalPlayer);
+            //		print(mouseToWorld());
+            if (!isLocalPlayer)
+            {
+                return;
+                //gameObject.SetActive(false);
+            }
+            //infoTextBox.text = text;
+            //textImage.enabled = textbg;
+            /*
+            if (overlappingFocusable())
+            {
+                return;
+            }
+            */
 
-		if (Input.GetMouseButtonDown(0))
-		{
-			selectStart = mouseToWorld(); //Camera.main.ScreenToWorldPoint(Input.mousePosition.append(Camera.main.transform.position.z * -1));
-		}
-		if (Input.GetMouseButtonUp(0)) {
-			//if left mouse button
-			//print(currentTool);
-			//always clear the selection.
-			
-			
-			if ((mouseToWorld() - selectStart).magnitude > minSelectionDistance)
-			{
-				clearSelected();
-				DisableDummy();
-				//unity's overlap box uses a center and width system instead of two points, which is how we store the selection box.
-				Vector3 center = (mouseToWorld() + selectStart) / 2;
-				Vector3 width = mouseToWorld() - selectStart;
-				width = new Vector3(Mathf.Abs(width.x), Mathf.Abs(width.y), 0);
-				Collider2D[] selectCol = Physics2D.OverlapBoxAll(center, width, 0);
-				//print("start: " + center  + "width: " + width + " hit " + selectCol.Length + " objects" );
-				for (int i = 0; i < selectCol.Length; i++)
-				{
-					Inspectable temp = selectCol[i].GetComponent<Inspectable>();
-					if (temp && temp.enabled)
-					{
-						select(temp);
-					}
-				}
-				selectStart = Vector3.zero;
-				return;
-			}
 
-			selectStart = Vector3.zero;
-			if (currentTool)
-			{//spawn whatever is selected
-				//Vector3 position = Camera.main.ScreenToWorldPoint(Input.mousePosition.append(Camera.main.transform.position.z * -1));
-                SpawnObj(currentTool, activeDummy.transform.position, toolIndex);
-				//print("Current tool: " + currentTool);
-			}
-			else {
-				//or if there is nothing to spawn, clear any focus and ui elements, or inspect whatever is below the mouse.
-				clearSelected();
-				DisableDummy();
-				Vector3 mousePos = Input.mousePosition;
-				mousePos.Set(mousePos.x, mousePos.y, -Camera.main.transform.position.z);
-				Collider2D[] hits = Physics2D.OverlapPointAll(Camera.main.ScreenToWorldPoint(mousePos));
-				//print("trying clear ui.");
-				bool hit = false;
-				for (int i = 0; i < hits.Length; i++)
-				{//try inspecting something
-					Inspectable temp = hits[i].GetComponent<Inspectable>();
-					// Make sure we have authority on the object we're looking at
-					if (temp && temp.hasAuthority && temp.enabled)
-					{
-						// print("enabling Inspect");
-						inspector.Enable(temp.gameObject);
-						select(temp);
-						hit = true;
-					}
-					else if (hits[i].GetComponent<Inspect>())
-					{
-						hit = true;
-					}
-				}
-				if (!hit && !overlappingFocusable())
-				{//Clear the UI if there is nothing below the mouse.
-				 //print("clearing UI.");
-					Global.text = "";
-					textbg = false;
-					for(int i = 0; i < toHide.Count; i++)
-					{
-						toHide[i].Disable();
-					}
-					toHide.Clear();
-					DisableDummy();
-					clearSelected();
-				}
-			}
+            if (Input.GetKeyDown(KeyCode.K))
+            {
+                currentMoney += 500;
+                Debug.Log("Holla holla get dolla");
+            }
+            if (IdeaList.instance.Prevalence.Count > 0)
+            {
+                income = IdeaList.instance.Prevalence[playerIdeaIndex];
+            }
+            //		print("income: " + income + " upkeep " + upkeep);
+            moneyDiff = income - upkeep;
 
+
+            if (selectStart != Vector3.zero && (mouseToWorld() - selectStart).magnitude > minSelectionDistance)
+            {
+                DrawSelectBox(mouseToWorld(), selectStart);
+
+            }
+            else
+            {
+                selectionbox.gameObject.SetActive(false);
+            }
+
+            if (Input.GetMouseButtonDown(1))
+            {
+                currentTool = null;
+
+                DisableDummy();
+
+                Vector3 pt = mouseToWorld();
+                Vector3 averageStart = Vector3.zero;
+                int mobilecount = selected.Count;
+                for (int i = 0; i < selected.Count; i++)
+                {
+                    if (!selected[i].GetComponent<MovementController>())
+                    {
+                        mobilecount--;
+                        continue;
+                    }
+                    averageStart += selected[i].transform.position;
+                }
+                if (selected.Count > 0) { averageStart /= mobilecount; }
+                for (int i = 0; i < selected.Count; i++)
+                {
+                    Vector3 dif = selected[i].transform.position - averageStart;
+                    selected[i].goTo(dif + pt);
+                }
+            }
+
+            if (Input.GetMouseButtonDown(0))
+            {
+                selectStart = mouseToWorld(); //Camera.main.ScreenToWorldPoint(Input.mousePosition.append(Camera.main.transform.position.z * -1));
+            }
+            if (Input.GetMouseButtonUp(0))
+            {
+                //if left mouse button
+                //print(currentTool);
+                //always clear the selection.
+
+
+                if ((mouseToWorld() - selectStart).magnitude > minSelectionDistance)
+                {
+                    clearSelected();
+                    DisableDummy();
+                    //unity's overlap box uses a center and width system instead of two points, which is how we store the selection box.
+                    Vector3 center = (mouseToWorld() + selectStart) / 2;
+                    Vector3 width = mouseToWorld() - selectStart;
+                    width = new Vector3(Mathf.Abs(width.x), Mathf.Abs(width.y), 0);
+                    Collider2D[] selectCol = Physics2D.OverlapBoxAll(center, width, 0);
+                    //print("start: " + center  + "width: " + width + " hit " + selectCol.Length + " objects" );
+                    for (int i = 0; i < selectCol.Length; i++)
+                    {
+                        Inspectable temp = selectCol[i].GetComponent<Inspectable>();
+                        if (temp && temp.enabled)
+                        {
+                            select(temp);
+                        }
+                    }
+                    selectStart = Vector3.zero;
+                    return;
+                }
+
+                selectStart = Vector3.zero;
+                if (currentTool)
+                {//spawn whatever is selected
+                 //Vector3 position = Camera.main.ScreenToWorldPoint(Input.mousePosition.append(Camera.main.transform.position.z * -1));
+                    SpawnObj(currentTool, activeDummy.transform.position, toolIndex);
+                    //print("Current tool: " + currentTool);
+                }
+                else
+                {
+                    //or if there is nothing to spawn, clear any focus and ui elements, or inspect whatever is below the mouse.
+                    clearSelected();
+                    DisableDummy();
+                    Vector3 mousePos = Input.mousePosition;
+                    mousePos.Set(mousePos.x, mousePos.y, -Camera.main.transform.position.z);
+                    Collider2D[] hits = Physics2D.OverlapPointAll(Camera.main.ScreenToWorldPoint(mousePos));
+                    //print("trying clear ui.");
+                    bool hit = false;
+                    for (int i = 0; i < hits.Length; i++)
+                    {//try inspecting something
+                        Inspectable temp = hits[i].GetComponent<Inspectable>();
+                        // Make sure we have authority on the object we're looking at
+                        if (temp && temp.hasAuthority && temp.enabled)
+                        {
+                            // print("enabling Inspect");
+                            inspector.Enable(temp.gameObject);
+                            select(temp);
+                            hit = true;
+                        }
+                        else if (hits[i].GetComponent<Inspect>())
+                        {
+                            hit = true;
+                        }
+                    }
+                    if (!hit && !overlappingFocusable())
+                    {//Clear the UI if there is nothing below the mouse.
+                     //print("clearing UI.");
+                        Global.text = "";
+                        textbg = false;
+                        for (int i = 0; i < toHide.Count; i++)
+                        {
+                            toHide[i].Disable();
+                        }
+                        toHide.Clear();
+                        DisableDummy();
+                        clearSelected();
+                    }
+                }
+
+            }
+        } else
+        {
+            if(gameOver && isServer)
+            {
+                //TODO: stop server or something
+            }
         }
+		
 
 
     }
 
-	public void addUpkeep(int amount)
+    void OnGUI() // OnGUI is called twice per frame
+    {
+        if (gameOver)
+        {
+            if(winner)
+            {
+                GUI.Label(new Rect(50, 50, 100, 25), "winner");
+            }
+            else
+            {
+                GUI.Label(new Rect(50, 50, 100, 25), "loser");
+            }
+
+        } 
+    }
+
+    public void addUpkeep(int amount)
 	{
 		upkeep += amount;
 	}
