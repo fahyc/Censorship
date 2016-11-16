@@ -92,7 +92,7 @@ public class OfficeSlot : NetworkBehaviour {
 
 	public void onChangeIndex(int i)
 	{
-		print("new index: " + i);
+
 		if (!r)
 		{
 //			Debug.LogWarning("Getting sprite. This shouldn't happen.");

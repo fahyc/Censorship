@@ -9,10 +9,12 @@ public class NetworkLineRenderer : NetworkBehaviour {
 	SyncListPosition points = new SyncListPosition ();
 	public Vector3 v1;
 	public Vector3 v2;
-
+    [SyncVar]
+    public Color lineColor;
 	public override void OnStartServer() {
 		points.Add(v1);
 		points.Add(v2);
+        
 	}
 	/*
     [Server]
@@ -38,7 +40,8 @@ public class NetworkLineRenderer : NetworkBehaviour {
     public override void OnStartClient() {
 		GetComponent<LineRenderer> ().SetPosition (0, points[0]);
 		GetComponent<LineRenderer> ().SetPosition (1, points[1]);
-
+        GetComponent<LineRenderer>().SetColors(lineColor, lineColor);
+        
         //VisibilityCheck v = GetComponent<VisibilityCheck>();
 
         Vector2 p0 = points[0];
@@ -103,4 +106,9 @@ public class NetworkLineRenderer : NetworkBehaviour {
 		GetComponent<LineRenderer> ().SetPosition (0, pt1);
 		GetComponent<LineRenderer> ().SetPosition (1, pt2);
 	}
+
+    public void setColor(Color c)
+    {
+        lineColor = c;
+    }
 }

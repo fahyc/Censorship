@@ -59,7 +59,6 @@ public class Hacker : Spawnable {
 
     [Server]
     void fireShot() {
-        print("imma firin mah laser");
         //Pick a random enemy and shoot at it.
         int targetIndex = Mathf.FloorToInt(Random.Range(0, num_inRange));
         GameObject target = enemiesNear[targetIndex];
@@ -68,24 +67,26 @@ public class Hacker : Spawnable {
         GetComponent<VisibilityCheck>().AddConnection(laser.gameObject);
         laser.SetColors(Color.green, Color.green);
         laser.GetComponent<NetworkLineRenderer>().setPoints(transform.position, target.transform.position);
-        NetworkServer.Spawn(laser.gameObject);
-        /*
-        LineRenderer laser = gameObject.AddComponent<LineRenderer>();
-        laser.SetWidth(0.025f, 0.025f);
-        laser.SetColors(Color.green, Color.green);
-        laser.SetVertexCount(2);
-        laser.SetPosition(0, transform.position);
-        laser.SetPosition(1, target.transform.position);
-        */
+        laser.GetComponent<NetworkLineRenderer>().setColor(Color.green);
+
+        StartCoroutine(networkLaser(laser));
         ableToFire = false;
         timeSinceLastShot = Time.time;
         Destroy(target);
-        Destroy(laser, 1.0f);
+        //Destroy(laser, 1.0f);
         //Destroy(laser);
 
         //yield return new /*WaitForSeconds*/(1.0f);
     }
+    IEnumerator networkLaser(LineRenderer l)
+    {
 
+        NetworkServer.Spawn(l.gameObject);
+        yield return new WaitForSeconds(1.0f);
+        NetworkServer.UnSpawn(l.gameObject);
+        Destroy(l);
+
+    }
     void OnDrawGizmos() {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, attackRadius);
