@@ -20,11 +20,11 @@ public class Global : NetworkBehaviour {
 	static List<UIItem> toHide = new List<UIItem>();
 	static List<RectTransform> focusTakers = new List<RectTransform>();
 	//static List<UIItem> 
-	Inspect inspector;
+	//Inspect inspector;
 
 	public List<Inspectable> selected = new List<Inspectable>();
 	
-    public Inspect inspectCanvas;
+   // public Inspect inspectCanvas;
 
     public DummyUnit activeDummy;
     public GameObject commandCard;
@@ -89,7 +89,7 @@ public class Global : NetworkBehaviour {
     // Use this for initialization
     public override void OnStartLocalPlayer () {
 
-		inspector = GameObject.FindGameObjectWithTag("Inspector").GetComponent<Inspect>();
+//		inspector = GameObject.FindGameObjectWithTag("Inspector").GetComponent<Inspect>();
 		selectionbox = Instantiate(selectionbox);
 		selectionbox.gameObject.SetActive(false);
         currentMoney = startingMoney;
@@ -296,7 +296,7 @@ public class Global : NetworkBehaviour {
 					if (temp && temp.hasAuthority && temp.enabled)
 					{
 						// print("enabling Inspect");
-						inspector.Enable(temp.gameObject);
+//						inspector.Enable(temp.gameObject);
 						select(temp);
 						hit = true;
 					}
