@@ -56,7 +56,6 @@ public class GridAccess : UIItem {
                 Destroy(s);
             }
         }
-        inSubMenu = false;
         
     }
     public void OnSelectUnit(GameObject newUnit) {
@@ -106,14 +105,19 @@ public class GridAccess : UIItem {
     {
         // get the image component of the grid
         Image dstImg = null;
+        int z = 0;
         foreach (Image i in dst.GetComponentsInChildren<Image>())
         {
+            z++;
+            if (z > 2) continue;
+
             if (i.transform.parent != null)
             {
                 dstImg = i;
+                
             }
         }
-
+        //dstImg = dst.GetComponentInChildren<Image>();
         // and of the button we want
         Image srcImg = null;
         foreach (Image i in src.GetComponentsInChildren<Image>())
@@ -121,9 +125,10 @@ public class GridAccess : UIItem {
             if (i.transform.parent != null)
             {
                 srcImg = i;
+            
             }
         }
-
+        //srcImg = src.GetComponentInChildren<Image>();
         // set them appropriately
         if (dstImg != null && srcImg != null)
         {
