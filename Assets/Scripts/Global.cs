@@ -71,6 +71,7 @@ public class Global : NetworkBehaviour {
 
     bool winner = false;
     bool gameOver = false;
+    public Text ggInfo;
 
 	//void Start()
 	//{
@@ -129,6 +130,7 @@ public class Global : NetworkBehaviour {
             controlGroups.Add(selected);
         }
         WinConditionChecker.instance.activePlayerIdeas.Add(playerIdeaIndex);
+        ggInfo = GameObject.FindGameObjectsWithTag("GameOver")[0].GetComponent<Text>();
     }
 	
 	
@@ -194,14 +196,35 @@ public class Global : NetworkBehaviour {
     // Update is called once per frame
     [ClientCallback]
 	void Update () {
-
+        if(gameOver)
+        {
+            if(winner)
+            {
+                if(ggInfo != null)
+                {
+                    ggInfo.text = "YOU WON!";
+                    ggInfo.enabled = true;
+                }
+            } else
+            {
+                if (ggInfo != null)
+                {
+                    ggInfo.text = "YOU LOST!";
+                    ggInfo.enabled = true;
+                }
+            }
+            //shutdown server if host
+            if(isServer)
+            {
+                //shutdown server
+            }
+        }
         if (WinConditionChecker.instance.winningIdea != -1)
         {
             if (WinConditionChecker.instance.winningIdea == playerIdeaIndex)
             {
                 winner = true;
             }
-            print("game over, winner is:" + WinConditionChecker.instance.winningIdea);
             gameOver = WinConditionChecker.instance.gameOver;
         }
 
