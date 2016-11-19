@@ -5,6 +5,7 @@ using UnityEngine.Networking;
 public class Office : Spawnable {
 	public OfficeSlot slot;
 
+	[SyncVar]
 	float defenses;
 
 	public ProgressBar bar;
@@ -30,29 +31,31 @@ public class Office : Spawnable {
 
 	// Update is called once per frame
 	void Update() {
-		if (!isLocalPlayer)
+		if (isServer)
 		{
-			return;
-		}
-		if (slotId!=NetworkInstanceId.Invalid)
-		{
-			slotId = slot.GetComponent<NetworkIdentity>().netId;
-		}
-		if (slot.mainIdea != index)
-		{
-			defenses -= captureSpeed * Time.deltaTime;
-			if(defenses <= 0)
+			if (slot.mainIdea != index)
 			{
-				NetworkServer.Destroy(gameObject);
+				defenses -= captureSpeed * Time.deltaTime;
+				if (defenses <= 0)
+				{
+					NetworkServer.Destroy(gameObject);
+				}
 			}
-		}
-		else
-		{
-			defenses += captureSpeed * Time.deltaTime;
-			defenses = Mathf.Clamp01(defenses);
+			else
+			{
+				defenses += captureSpeed * Time.deltaTime;
+				defenses = Mathf.Clamp01(defenses);
+			}
+			//return;
+
+			if (slotId != NetworkInstanceId.Invalid)
+			{
+				slotId = slot.GetComponent<NetworkIdentity>().netId;
+			}
 		}
 		bar.SetFill(defenses);
 	}
+
 	[ServerCallback]
 	protected override void OnDestroy()
 	{

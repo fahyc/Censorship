@@ -13,8 +13,13 @@ public class Spawnable : NetworkBehaviour {
     public bool disabled = false;
     public Color disabledColor = Color.gray;
 
-
-
+	
+	void Start()
+	{
+		
+		//GetComponent<SpriteRenderer>().color = IdeaList.instance.list[index].color;
+	}
+	
 
     //public override void OnStartLocalPlayer() {
     //    owningPlayer = LayerMask.NameToLayer("PlayerOwned");

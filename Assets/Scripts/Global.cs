@@ -71,33 +71,7 @@ public class Global : NetworkBehaviour {
 
     bool winner = false;
     bool gameOver = false;
-
-	//void Start()
-	//{
-		
-	//}
-	/*
-	[ClientCallback]
-	void Start()
-	{
-		print("localplayer" + isLocalPlayer);
-		if (!isLocalPlayer)
-		{
-			//print("Is not local. becoming inactive");
-			//gameObject.SetActive(false);
-			if (isServer)
-			{
-				//print("serverside");
-				StartCoroutine(setInactiveSoon());
-			}
-			else
-			{
-				//print("clientside");
-				gameObject.SetActive(false);
-			}
-			return;
-		}
-	}*/
+	
 	IEnumerator setInactiveSoon()
 	{
 		yield return new WaitForSeconds(1);
@@ -105,8 +79,6 @@ public class Global : NetworkBehaviour {
 	}
     // Use this for initialization
     public override void OnStartLocalPlayer () {
-
-//		inspector = GameObject.FindGameObjectWithTag("Inspector").GetComponent<Inspect>();
 		selectionbox = Instantiate(selectionbox);
 		selectionbox.gameObject.SetActive(false);
         currentMoney = startingMoney;
@@ -171,8 +143,9 @@ public class Global : NetworkBehaviour {
         {
             return;
         }
-
+		
         Spawnable costOfUnit = prefabObject.GetComponent<Spawnable>();
+		print("Spawning with cost: " + costOfUnit);
         //Do we have money to spawn this wall? If not, just quit. Also, we should probably display "No money to build" somewhere in the UI.
         if (currentMoney < costOfUnit.initialCost)
         {
@@ -207,37 +180,23 @@ public class Global : NetworkBehaviour {
 
         if (!isReady())
             localPlayer = getLocalPlayer();
-
-		// only update for the local player
-
-		//print("update" + isLocalPlayer);
-		//		print(mouseToWorld());
+		
 		if (!isLocalPlayer)
 		{
 			return;
-			//gameObject.SetActive(false);
 		}
-        //infoTextBox.text = text;
-        //textImage.enabled = textbg;
-        /*
-		if (overlappingFocusable())
-		{
-			return;
-		}
-		*/
 		if (IdeaList.instance.Prevalence.Count > 0)
 		{
 			income = IdeaList.instance.Prevalence[playerIdeaIndex];
 		}
-		//		print("income: " + income + " upkeep " + upkeep);
 		moneyDiff = income - upkeep;
 
         //Detect any modifier keys that can be pressed and held down.
-        if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) {
+        /*if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) {
             shiftDown = true;
         } else {
             shiftDown = false;
-        }
+        }*/
         if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) {
             ctrlDown = true;
         } else {
@@ -248,7 +207,6 @@ public class Global : NetworkBehaviour {
         if (selectStart != Vector3.zero && (mouseToWorld() - selectStart).magnitude > minSelectionDistance)
 		{
 			DrawSelectBox(mouseToWorld(), selectStart);
-
 		}
 		else
 		{
@@ -320,10 +278,7 @@ public class Global : NetworkBehaviour {
 		}
 		if (Input.GetMouseButtonUp(0)) {
 			//if left mouse button
-			//print(currentTool);
-			//always clear the selection.
-			
-			
+						
 			if ((mouseToWorld() - selectStart).magnitude > minSelectionDistance)
 			{
 				clearSelected();
@@ -582,6 +537,8 @@ public class Global : NetworkBehaviour {
 
 	public void spawnOffice(int officeIdea,OfficeSlot slot)
 	{
+		upkeep += slot.office.upkeep;
+		currentMoney -= slot.office.initialCost;
 		CmdSpawnOffice(officeIdea, slot.GetComponent<NetworkIdentity>().netId);
 	}
 
