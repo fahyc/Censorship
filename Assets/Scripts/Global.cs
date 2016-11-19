@@ -297,14 +297,16 @@ public class Global : NetworkBehaviour {
                 } else {
                     clearSelected();
                     selectControlGroup(i);
-                    if(lastPressedNumber == i && Time.time - lastPressedTime <= doubleTapWindow ) {
-                        Vector3 avgPos = Vector3.zero;
-                        for(int x=0; x<selected.Count; x++) {
-                            avgPos += selected[x].transform.position;
+                    if(selected.Count > 0) { 
+                        if(lastPressedNumber == i && Time.time - lastPressedTime <= doubleTapWindow ) {
+                            Vector3 avgPos = Vector3.zero;
+                            for(int x=0; x<selected.Count; x++) {
+                                avgPos += selected[x].transform.position;
+                            }
+                            avgPos.x = avgPos.x / selected.Count;
+                            avgPos.y = avgPos.y / selected.Count;
+                            Camera.main.transform.position = new Vector3(avgPos.x, avgPos.y, Camera.main.transform.position.z);
                         }
-                        avgPos.x = avgPos.x / selected.Count;
-                        avgPos.y = avgPos.y / selected.Count;
-                        Camera.main.transform.position = new Vector3(avgPos.x, avgPos.y, Camera.main.transform.position.z);
                     }
                     lastPressedTime = Time.time;
                     lastPressedNumber = i;

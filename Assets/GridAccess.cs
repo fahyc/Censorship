@@ -27,19 +27,23 @@ public class GridAccess : UIItem {
         //submenu.GetComponent<Submenu>().Disable();
     }
     void clearButtons(bool noneSelected) {
+        print("Clearing buttons");
         foreach (GameObject g in Grid) {
             if (g.GetComponent<Button>() != null) {
                 //g.GetComponent<Button>().onClick.RemoveAllListeners();
                 g.GetComponent<Button>().onClick = emptySlot.GetComponent<Button>().onClick;
-
                 // g.GetComponent<Button>().GetComponentInChildren<Text>().text = "Empty";
                 g.GetComponent<Button>().onClick.RemoveAllListeners();
-                // assignButton(g, emptySlot);
-                
+                assignButton(g, emptySlot);
+
             }
+        }
+        if (inSubMenu) {
+            clearOutSubMenu();
         }
     }
     public void toggleButtons(bool enabled) {
+        print("toggling on? " + enabled);
         foreach(GameObject g in Grid) {
             g.SetActive(enabled);
         }
@@ -163,31 +167,5 @@ public class GridAccess : UIItem {
         }
         print("Set insubmenu to true");
         inSubMenu = true;
-
-        ////Submenu s = Instantiate<Submenu>(sm);
-        //for (int z = 0; z < IdeaList.staticList.Length; z++) {
-        //    Grid[z].GetComponent<Image>().color = IdeaList.staticList[z].color;
-        //    Grid[z].GetComponent<Button>().onClick.AddListener(() => gi.EnableDummy(inDummy));
-        //    //print(temp);
-        //    if (inDummy.name == "DummyNode") {
-        //        Grid[z].GetComponent<SpawnScript>().Initiate("Spawn a shill", IdeaList.staticList[z].color, sref, z);
-        //        SpawnScript temp = Grid[z].GetComponent<SpawnScript>();
-
-        //        Button tempb = Grid[z].GetComponent<Button>();
-        //        int what = z;
-        //        Spawnable t = Instantiate(sref);
-        //        tempb.onClick.AddListener(() => Global.setTool(t, what));
-        //        //Grid[i].GetComponent<Button>().onClick.AddListener(() => temp.Spawn());
-        //        //print(sref);
-        //    } else if (inDummy.name == "DummyWall") {
-        //        int index = z;
-        //        Grid[z].GetComponent<SpawnScript>().Initiate("Spawn a wall", IdeaList.staticList[z].color, wref, index);
-        //    }
-        //    //Grid[i].
-        //}
-        //for(int j=0; j < IdeaList.staticList.Length; j++) {
-        //    SpawnScript d = temp[j];
-        //    Grid[j].GetComponent<Button>().onClick.AddListener(() => d.Spawn());
-        //}
     }
 }
