@@ -281,7 +281,9 @@ public class Global : NetworkBehaviour {
 						
 			if ((mouseToWorld() - selectStart).magnitude > minSelectionDistance)
 			{
-				clearSelected();
+                //If we are holding down shift, we're adding this box selection to our current selection.
+                if(!Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.RightShift))
+				    clearSelected();
 				DisableDummy();
 				//unity's overlap box uses a center and width system instead of two points, which is how we store the selection box.
 				Vector3 center = (mouseToWorld() + selectStart) / 2;
