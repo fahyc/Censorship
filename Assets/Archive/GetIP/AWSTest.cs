@@ -9,7 +9,8 @@ using System;
 
 public class AWSTest : MonoBehaviour {
 	public string value;
-	public string url;
+	public string sendurl;
+	public string geturl;
 	public string upload;
 
 
@@ -22,17 +23,30 @@ public class AWSTest : MonoBehaviour {
 		//WWW request = new WWW(url);
 		//WWWForm form = new WWWForm();
 		//form.AddField("key", key);
-		StartCoroutine(Post());
+		//StartCoroutine(Post(upload));
 
 	}
-	IEnumerator Post()
+
+
+
+	public void SendUpdate(string uploadJSON)
+	{
+		StartCoroutine(Post(sendurl,uploadJSON));
+	}
+
+	public void RequestUpdate(IPListener listener)
+	{
+		StartCoroutine(Post(geturl, upload, listener));
+	}
+
+	IEnumerator Post(string url, string send,IPListener callback = null)
 	{
 		//WWWForm form = new WWWForm();
 		//form.AddField("true",upload);
 		//form.AddField("test", upload);
-		string sendData = "\"test:asdf\"";
+		//string sendData = "\"test:asdf\"";
 		//form.
-		WWW w = new WWW(url, Encoding.ASCII.GetBytes(sendData));
+		WWW w = new WWW(url, Encoding.ASCII.GetBytes(send));
 		/*foreach(string s in form.headers.Keys)
 		{
 			print(s + "::" + form.headers[s]);
@@ -47,6 +61,10 @@ public class AWSTest : MonoBehaviour {
 		}
 		else
 		{
+			if(callback != null)
+			{
+				callback.getData(w.text);
+			}
 			print(w.text);
 		}
 		
