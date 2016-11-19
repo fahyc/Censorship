@@ -27,7 +27,6 @@ public class GridAccess : UIItem {
         //submenu.GetComponent<Submenu>().Disable();
     }
     void clearButtons(bool noneSelected) {
-        print("Clearing buttons");
         foreach (GameObject g in Grid) {
             if (g.GetComponent<Button>() != null) {
                 //g.GetComponent<Button>().onClick.RemoveAllListeners();
@@ -43,7 +42,6 @@ public class GridAccess : UIItem {
         }
     }
     public void toggleButtons(bool enabled) {
-        print("toggling on? " + enabled);
         foreach(GameObject g in Grid) {
             g.SetActive(enabled);
         }
@@ -53,7 +51,6 @@ public class GridAccess : UIItem {
         
     }
     public void clearOutSubMenu() {
-        print("Executing now");
         foreach (GameObject s in submenu) {
             if (s != null) {
                 Destroy(s);
@@ -143,7 +140,6 @@ public class GridAccess : UIItem {
     }
 
     void SubmenuCreation(DummyUnit inDummy) {
-        print("woohoo");
         clearButtons(true);
         for (int i = 0; i < IdeaList.instance.list.Length; i++) {
             GameObject temp = Instantiate(buttons);
@@ -165,7 +161,6 @@ public class GridAccess : UIItem {
             //    temp.GetComponent<Button>().onClick.AddListener(() => { AdditionalOnClicks[0].Invoke(); });
             //}
         }
-        print("Set insubmenu to true");
         inSubMenu = true;
     }
 }
