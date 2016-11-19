@@ -30,8 +30,11 @@ public class GridAccess : UIItem {
         foreach (GameObject g in Grid) {
             if (g.GetComponent<Button>() != null) {
                 //g.GetComponent<Button>().onClick.RemoveAllListeners();
+                g.GetComponent<Button>().onClick = emptySlot.GetComponent<Button>().onClick;
+
+                // g.GetComponent<Button>().GetComponentInChildren<Text>().text = "Empty";
                 g.GetComponent<Button>().onClick.RemoveAllListeners();
-                g.GetComponent<Button>().GetComponentInChildren<Text>().text = "Empty";
+                // assignButton(g, emptySlot);
                 
             }
         }
@@ -71,9 +74,12 @@ public class GridAccess : UIItem {
                     if (!gi) {
                         gi = Global.getLocalPlayer();
                     }
+
                     Grid[i].GetComponent<Button>().onClick = cc.commands[i].GetComponent<Button>().onClick;
-                    Grid[i].GetComponent<Button>().GetComponentInChildren<Text>().text = cc.commands[i].GetComponentInChildren<Text>().text;
-                    
+
+                    // set the image component of the grid
+                    assignButton(Grid[i], cc.commands[i]);
+
                     if (cc.commands[i].name == "button_Shill" || cc.commands[i].name == "button_Wall") {
                         //Put behavior for submenus here.
                         //Grid[i].GetComponentInChildren<Submenu>().Enable();
@@ -89,11 +95,49 @@ public class GridAccess : UIItem {
                 }
                 else {
                     Grid[i].GetComponent<Button>().onClick = emptySlot.GetComponent<Button>().onClick;
-                    Grid[i].GetComponent<Button>().GetComponentInChildren<Text>().text = "Empty";
+                    assignButton(Grid[i], emptySlot);
                 }
             }
         }
     }
+
+    void assignButton (GameObject dst, GameObject src)
+    {
+        // get the image component of the grid
+        Image dstImg = null;
+        foreach (Image i in dst.GetComponentsInChildren<Image>())
+        {
+            if (i.transform.parent != null)
+            {
+                dstImg = i;
+            }
+        }
+
+        // and of the button we want
+        Image srcImg = null;
+        foreach (Image i in src.GetComponentsInChildren<Image>())
+        {
+            if (i.transform.parent != null)
+            {
+                srcImg = i;
+            }
+        }
+
+        // set them appropriately
+        if (dstImg != null && srcImg != null)
+        {
+            dstImg.sprite = srcImg.sprite;
+            dstImg.color = srcImg.color;
+            dstImg.preserveAspect = srcImg.preserveAspect;
+
+            // dstImg.rectTransform.position = srcImg.rectTransform.position;
+            dstImg.rectTransform.pivot = srcImg.rectTransform.pivot;
+            dstImg.rectTransform.localScale = srcImg.rectTransform.localScale;
+        }
+
+        dst.GetComponent<Image>().color = src.GetComponent<Image>().color;
+    }
+
     void SubmenuCreation(DummyUnit inDummy) {
         print("woohoo");
         clearButtons(true);
