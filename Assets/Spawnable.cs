@@ -42,6 +42,10 @@ public class Spawnable : NetworkBehaviour {
 	{
 		//if (Global.isReady())
 		print("Destroying " + this);
-		Global.getLocalPlayer().addUpkeep(-upkeep);
+		Global global = Global.getLocalPlayer();
+		if (global)
+		{
+			global.addUpkeep(-upkeep);
+		}
 	}
 }

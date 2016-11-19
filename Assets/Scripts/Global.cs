@@ -533,6 +533,8 @@ public class Global : NetworkBehaviour {
 		if(selected.Count == 0)
 		{
 			Debug.LogWarning("Warning, no offices selected but we are still running a dummy.");
+			DisableDummy();
+			return Vector2.zero;
 		}
 		return selected[closestIndex].transform.position.xy() + ((position - selected[closestIndex].transform.position.xy()).normalized * selected[closestIndex].spawnRange); 
 	}

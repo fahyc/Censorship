@@ -60,7 +60,10 @@ public class Office : Spawnable {
 	protected override void OnDestroy()
 	{
 		base.OnDestroy();
-		slot.RpcSetVisible(true);
+		if (slot)
+		{
+			slot.RpcSetVisible(true);
+		}
 		//NetworkServer.FindLocalObject(slotId).GetComponent<OfficeSlot>().setVisible(true);
 	}
 }
