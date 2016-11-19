@@ -369,7 +369,11 @@ public class Global : NetworkBehaviour {
 					if (temp && temp.hasAuthority && temp.enabled)
 					{
 						// print("enabling Inspect");
-//						inspector.Enable(temp.gameObject);
+						//						inspector.Enable(temp.gameObject);
+						if (!Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.RightShift))
+						{
+							clearSelected();
+						}
 						select(temp);
 						hit = true;
 					}
