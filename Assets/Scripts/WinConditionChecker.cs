@@ -23,9 +23,13 @@ public class WinConditionChecker : NetworkBehaviour
 	void Update () {
         if (!gameOver && activePlayerIdeas.Count > 0)
         {
+            
             for (int i = 0; i < activePlayerIdeas.Count; i++)
             {
-                if (IdeaList.instance.Prevalence[activePlayerIdeas[i]] / IdeaList.instance.nodeCount > winCondition)
+                float num = IdeaList.instance.Prevalence[activePlayerIdeas[i]];
+                float total = IdeaList.instance.nodeCount;
+                print("PERCENTAGE!! " + num / total);
+                if (num / total > winCondition)
                 {
                     winningIdea = activePlayerIdeas[i];
                     gameOver = true;

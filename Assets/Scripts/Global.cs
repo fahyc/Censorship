@@ -55,6 +55,9 @@ public class Global : NetworkBehaviour {
         return localPlayer != null;
     }
 
+    bool winner = false;
+    bool gameOver = false;
+
 	//void Start()
 	//{
 		
@@ -106,6 +109,7 @@ public class Global : NetworkBehaviour {
         //Center camera on start positions.    
         GameObject.FindGameObjectWithTag("MainCamera").transform.position = new Vector3(transform.position.x, transform.position.y, -10);
         commandCard = GameObject.FindGameObjectWithTag("CommandCard");
+        WinConditionChecker.instance.activePlayerIdeas.Add(playerIdeaIndex);
     }
 	
 	
@@ -171,6 +175,17 @@ public class Global : NetworkBehaviour {
     // Update is called once per frame
     [ClientCallback]
 	void Update () {
+
+        if (WinConditionChecker.instance.winningIdea != -1)
+        {
+            if (WinConditionChecker.instance.winningIdea == playerIdeaIndex)
+            {
+                winner = true;
+            }
+            print("game over, winner is:" + WinConditionChecker.instance.winningIdea);
+            gameOver = WinConditionChecker.instance.gameOver;
+        }
+
         if (!isReady())
             localPlayer = getLocalPlayer();
 
