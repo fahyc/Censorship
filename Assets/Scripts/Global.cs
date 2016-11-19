@@ -284,8 +284,9 @@ public class Global : NetworkBehaviour {
                     selectControlGroup(i);
                     if(lastPressedNumber == i && Time.time - lastPressedTime <= doubleTapWindow ) {
                         print("Center camera on selection");
+                        Vector3 avgPos = Vector3.zero;
                         for(int x=0; x<selected.Count; x++) {
-
+                            avgPos += selected[x].transform.position;
                         }
                     }
                     lastPressedTime = Time.time;
