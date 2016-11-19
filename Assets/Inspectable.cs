@@ -50,6 +50,12 @@ public class Inspectable : NetworkBehaviour {
 		}
 	}
 
+    public void Stop() {
+        if (movement) {
+            movement.Stop();
+        }
+    }
+
 	void OnDestroy()
 	{
 		Global g = Global.getLocalPlayer();

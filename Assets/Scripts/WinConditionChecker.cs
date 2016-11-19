@@ -10,7 +10,7 @@ public class WinConditionChecker : NetworkBehaviour
     public static WinConditionChecker instance;
     public bool gameOver = false;
     public int winningIdea = -1;
-    public float winCondition = 0.6f;
+    public float winCondition = 0.3f;
 
     // Use this for initialization
     void Awake()
@@ -23,10 +23,15 @@ public class WinConditionChecker : NetworkBehaviour
 	void Update () {
         if (!gameOver && activePlayerIdeas.Count > 0)
         {
+            
             for (int i = 0; i < activePlayerIdeas.Count; i++)
             {
-                if (IdeaList.instance.Prevalence[activePlayerIdeas[i]] / IdeaList.instance.nodeCount > winCondition)
+                float num = IdeaList.instance.Prevalence[activePlayerIdeas[i]];
+                float total = IdeaList.instance.nodeCount;
+                //print("PERCENTAGE!! " + num / total);
+                if (num / total > winCondition)
                 {
+                    //print("OVER!!!!!!!!!!!!!!!!");
                     winningIdea = activePlayerIdeas[i];
                     gameOver = true;
                 }

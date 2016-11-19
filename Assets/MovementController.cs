@@ -31,6 +31,16 @@ public class MovementController : NetworkBehaviour {
 		destination = position;
 		origin = transform.position;
 	}
+    [Client]
+    public void Stop() {
+        CmdStop();
+    }
+    [Command]
+    public void CmdStop() {
+        moving = false;
+        destination = transform.position;
+        
+    }
 	
 	// Update is called once per frame
 	void Update () {

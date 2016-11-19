@@ -23,7 +23,7 @@ public class Global : NetworkBehaviour {
 	//Inspect inspector;
 
 	public List<Inspectable> selected = new List<Inspectable>();
-	
+    public List<List<Inspectable>> controlGroups = new List<List<Inspectable>>(10);
    // public Inspect inspectCanvas;
 
     public DummyUnit activeDummy;
@@ -41,6 +41,20 @@ public class Global : NetworkBehaviour {
 
 	public SpriteRenderer selectionbox;
 
+    //Keep track of modifier keys that are being held down.
+    bool ctrlDown = false;
+    bool altDown = false;
+    bool shiftDown = false;
+
+    //Array of number keys so we can see if these are pressed in a non-ugly fashion.
+    KeyCode[] nkc = {KeyCode.Alpha0, KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4, KeyCode.Alpha5, KeyCode.Alpha6, KeyCode.Alpha7,
+        KeyCode.Alpha8, KeyCode.Alpha9};
+
+    //Double tapping a control group should center the camera on the selection.
+    public float doubleTapWindow = 1.0f;
+    int lastPressedNumber = -1;
+    float lastPressedTime = 0.0f;
+
 	//public RectTransform selector;
 	public Vector3 selectStart;
 	public float minSelectionDistance = .5f;
@@ -54,6 +68,9 @@ public class Global : NetworkBehaviour {
     {
         return localPlayer != null;
     }
+
+    bool winner = false;
+    bool gameOver = false;
 
 	//void Start()
 	//{
@@ -106,6 +123,12 @@ public class Global : NetworkBehaviour {
         //Center camera on start positions.    
         GameObject.FindGameObjectWithTag("MainCamera").transform.position = new Vector3(transform.position.x, transform.position.y, -10);
         commandCard = GameObject.FindGameObjectWithTag("CommandCard");
+
+        //Initialize contorlgroups
+        for(int i=0; i<10; i++) {
+            controlGroups.Add(selected);
+        }
+        WinConditionChecker.instance.activePlayerIdeas.Add(playerIdeaIndex);
     }
 	
 	
@@ -171,6 +194,17 @@ public class Global : NetworkBehaviour {
     // Update is called once per frame
     [ClientCallback]
 	void Update () {
+
+        if (WinConditionChecker.instance.winningIdea != -1)
+        {
+            if (WinConditionChecker.instance.winningIdea == playerIdeaIndex)
+            {
+                winner = true;
+            }
+            print("game over, winner is:" + WinConditionChecker.instance.winningIdea);
+            gameOver = WinConditionChecker.instance.gameOver;
+        }
+
         if (!isReady())
             localPlayer = getLocalPlayer();
 
@@ -191,12 +225,6 @@ public class Global : NetworkBehaviour {
 			return;
 		}
 		*/
-
-		if (Input.GetKeyDown(KeyCode.K))
-		{
-			currentMoney += 500;
-			Debug.Log("Holla holla get dolla");
-		}
 		if (IdeaList.instance.Prevalence.Count > 0)
 		{
 			income = IdeaList.instance.Prevalence[playerIdeaIndex];
@@ -204,8 +232,20 @@ public class Global : NetworkBehaviour {
 		//		print("income: " + income + " upkeep " + upkeep);
 		moneyDiff = income - upkeep;
 
+        //Detect any modifier keys that can be pressed and held down.
+        if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) {
+            shiftDown = true;
+        } else {
+            shiftDown = false;
+        }
+        if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) {
+            ctrlDown = true;
+        } else {
+            ctrlDown = false;
+        }
 
-		if (selectStart != Vector3.zero && (mouseToWorld() - selectStart).magnitude > minSelectionDistance)
+
+        if (selectStart != Vector3.zero && (mouseToWorld() - selectStart).magnitude > minSelectionDistance)
 		{
 			DrawSelectBox(mouseToWorld(), selectStart);
 
@@ -240,7 +280,38 @@ public class Global : NetworkBehaviour {
 				selected[i].goTo(dif + pt);
 			}
 		}
+        //Stop all movement if we have selected units
+        if (Input.GetKeyDown(KeyCode.S)) {
+            if(selected.Count > 0) {
+                //print("stop these " + selected.Count + " units!");
+                for(int i=0; i < selected.Count; i++) {
+                    selected[i].Stop();
+                }
+            }
+        }
+        // CONTROL GROUP CODE
+        for (int i = 0; i < nkc.Length; i++) {
+            if (Input.GetKeyDown(nkc[i])) {
+                if (ctrlDown) {
+                    controlGroups[i] = new List<Inspectable>(selected);
+                } else {
+                    clearSelected();
+                    selectControlGroup(i);
+                    if(lastPressedNumber == i && Time.time - lastPressedTime <= doubleTapWindow ) {
+                        Vector3 avgPos = Vector3.zero;
+                        for(int x=0; x<selected.Count; x++) {
+                            avgPos += selected[x].transform.position;
+                        }
+                        avgPos.x = avgPos.x / selected.Count;
+                        avgPos.y = avgPos.y / selected.Count;
+                        Camera.main.transform.position = new Vector3(avgPos.x, avgPos.y, Camera.main.transform.position.z);
+                    }
+                    lastPressedTime = Time.time;
+                    lastPressedNumber = i;
 
+                }
+            }
+        }
 		if (Input.GetMouseButtonDown(0))
 		{
 			selectStart = mouseToWorld(); //Camera.main.ScreenToWorldPoint(Input.mousePosition.append(Camera.main.transform.position.z * -1));
@@ -296,7 +367,11 @@ public class Global : NetworkBehaviour {
 					if (temp && temp.hasAuthority && temp.enabled)
 					{
 						// print("enabling Inspect");
-//						inspector.Enable(temp.gameObject);
+						//						inspector.Enable(temp.gameObject);
+						if (!Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.RightShift))
+						{
+							clearSelected();
+						}
 						select(temp);
 						hit = true;
 					}
@@ -324,8 +399,13 @@ public class Global : NetworkBehaviour {
 
 
     }
+    private void selectControlGroup(int ctrlIndex) {
+        for (int i = 0; i < controlGroups[ctrlIndex].Count; i++) {
+            select(controlGroups[ctrlIndex][i]);
+        }
 
-	public void addUpkeep(int amount)
+    }
+    public void addUpkeep(int amount)
 	{
 		print("adding upkeep " + amount);
 		upkeep += amount;
