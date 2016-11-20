@@ -68,26 +68,27 @@ public class GridAccess : UIItem {
 
         if (cc != null) {
             clearButtons(false);
-            for (int i = 0; i < Grid.Length; i++) {
-                //print(Grid[i].GetComponent<Button>().onClick);
-                if (cc.commands[i] != null) {
-                    if (!gi) {
-                        gi = Global.getLocalPlayer();
-                    }
+			for (int i = 0; i < Grid.Length; i++) {
+				//print(Grid[i].GetComponent<Button>().onClick);
+				if (cc.commands[i] != null) {
+					if (!gi) {
+						gi = Global.getLocalPlayer();
+					}
 
-                    Grid[i].GetComponent<Button>().onClick = cc.commands[i].GetComponent<Button>().onClick;
+					Grid[i].GetComponent<Button>().onClick = cc.commands[i].GetComponent<Button>().onClick;
 
-                    // set the image component of the grid
-                    assignButton(Grid[i], cc.commands[i]);
+					// set the image component of the grid
+					assignButton(Grid[i], cc.commands[i]);
 
-                    if (cc.commands[i].name == "button_Shill" || cc.commands[i].name == "button_Wall") {
-                        //Put behavior for submenus here.
-                        //Grid[i].GetComponentInChildren<Submenu>().Enable();
-                        DummyUnit temp1 = cc.commands[i].GetComponent<LinkedDummy>().dummy.GetComponent<DummyUnit>();
-                        //Grid[i].AddComponent<SpawnScript>();
-                        Grid[i].GetComponent<Button>().onClick.AddListener(() => SubmenuCreation(temp1));
-                    }
-                    else if (cc.commands[i].name == "button_Lurker" || cc.commands[i].name == "button_Investigator" || cc.commands[i].name == "button_Hacker") {
+					if (cc.commands[i].name == "button_Shill" || cc.commands[i].name == "button_Wall") {
+						//Put behavior for submenus here.
+						//Grid[i].GetComponentInChildren<Submenu>().Enable();
+						DummyUnit temp1 = cc.commands[i].GetComponent<LinkedDummy>().dummy.GetComponent<DummyUnit>();
+						//Grid[i].AddComponent<SpawnScript>();
+						Grid[i].GetComponent<Button>().onClick.AddListener(() => SubmenuCreation(temp1));
+					}
+					else if (cc.commands[i].name == "button_Lurker" || cc.commands[i].name == "button_Investigator" || cc.commands[i].name == "button_Hacker"
+							|| cc.commands[i].name == "button_Firewall" || cc.commands[i].name == "button_Botnet") {
                         DummyUnit temp = cc.commands[i].GetComponent<LinkedDummy>().dummy.GetComponent<DummyUnit>();
 
                         Grid[i].GetComponent<Button>().onClick.AddListener(() => gi.EnableDummy(temp));

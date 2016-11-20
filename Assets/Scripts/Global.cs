@@ -437,6 +437,7 @@ public class Global : NetworkBehaviour {
 
 	public void EnableDummy(DummyUnit dummyPrefab)
 	{
+		print("enabling dummy " + dummyPrefab);
 		DisableDummy();
         Vector3 pos= Camera.main.ScreenToWorldPoint(Input.mousePosition.append(Camera.main.transform.position.z * -1));
         activeDummy = (DummyUnit) Instantiate(dummyPrefab, pos, Quaternion.identity);

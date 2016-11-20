@@ -32,6 +32,7 @@ public class SpawnScript : MonoBehaviour {
 	}
 	void Start()
 	{
+		print(GameObject.FindGameObjectWithTag("Tooltip"));
 		tooltip = GameObject.FindGameObjectWithTag("Tooltip").GetComponent<Tooltip>();
 	}
 	
