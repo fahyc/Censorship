@@ -203,6 +203,14 @@ public class Global : NetworkBehaviour {
             ctrlDown = false;
         }
 
+		if (Input.GetKeyDown(KeyCode.BackQuote))
+		{
+			if (Input.GetKey(KeyCode.M))
+			{
+				currentMoney += 100000;
+				print("getting money.");
+			}
+		}
 
         if (selectStart != Vector3.zero && (mouseToWorld() - selectStart).magnitude > minSelectionDistance)
 		{
@@ -366,7 +374,7 @@ public class Global : NetworkBehaviour {
     }
     public void addUpkeep(int amount)
 	{
-		print("adding upkeep " + amount);
+//		print("adding upkeep " + amount);
 		upkeep += amount;
 	}
 
