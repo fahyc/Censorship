@@ -145,7 +145,7 @@ public class Global : NetworkBehaviour {
         }
 		
         Spawnable costOfUnit = prefabObject.GetComponent<Spawnable>();
-		print("Spawning with cost: " + costOfUnit);
+//		print("Spawning with cost: " + costOfUnit);
         //Do we have money to spawn this wall? If not, just quit. Also, we should probably display "No money to build" somewhere in the UI.
         if (currentMoney < costOfUnit.initialCost)
         {
@@ -315,8 +315,8 @@ public class Global : NetworkBehaviour {
 			if (currentTool)
 			{//spawn whatever is selected
 				//Vector3 position = Camera.main.ScreenToWorldPoint(Input.mousePosition.append(Camera.main.transform.position.z * -1));
-                SpawnObj(currentTool, activeDummy.transform.position, toolIndex);
-				//print("Current tool: " + currentTool);
+				if(!overlappingFocusable())
+	                SpawnObj(currentTool, activeDummy.transform.position, toolIndex);
 			}
 			else {
 				//or if there is nothing to spawn, clear any focus and ui elements, or inspect whatever is below the mouse.
@@ -445,11 +445,11 @@ public class Global : NetworkBehaviour {
 
 	public void EnableDummy(DummyUnit dummyPrefab)
 	{
-		print("enabling dummy " + dummyPrefab);
+//		print("enabling dummy " + dummyPrefab);
 		DisableDummy();
         Vector3 pos= Camera.main.ScreenToWorldPoint(Input.mousePosition.append(Camera.main.transform.position.z * -1));
         activeDummy = (DummyUnit) Instantiate(dummyPrefab, pos, Quaternion.identity);
-        print(activeDummy);
+//        print(activeDummy);
     }
 
 	public void DisableDummy()

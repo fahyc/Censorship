@@ -14,8 +14,8 @@ public class GroupFire : MonoBehaviour {
 			{
 				continue;
 			}
-			Global.getLocalPlayer().moneyDiff += inspecting.GetComponent<Spawnable>().upkeep;
-			inspecting.GetComponent<Inspectable>().DestroySelf();
+			//Global.getLocalPlayer().moneyDiff += inspecting.GetComponent<Spawnable>().upkeep;
+			inspecting.DestroySelf();
 		}
 	}
 }

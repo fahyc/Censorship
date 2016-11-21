@@ -32,7 +32,7 @@ public class OfficeSlot : NetworkBehaviour {
 	}
 	public void spawnOffice(int idea)
 	{
-		print("spawning");
+		//print("spawning");
 		Global.getLocalPlayer().spawnOffice(idea,this);
 		//CmdSpawnOffice(idea);
 		//gameObject.SetActive(false);
@@ -67,7 +67,7 @@ public class OfficeSlot : NetworkBehaviour {
 	[ClientRpc]
 	public void RpcSetVisible(bool setTo)
 	{
-		print("Setting visible to " + setTo);
+//		print("Setting visible to " + setTo);
 		GetComponent<SpriteRenderer>().enabled = setTo;
 		GetComponent<Collider2D>().enabled = setTo;
 		//enabled = setTo;

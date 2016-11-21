@@ -41,7 +41,7 @@ public class Spawnable : NetworkBehaviour {
 	protected virtual void OnDestroy()
 	{
 		//if (Global.isReady())
-		print("Destroying " + this);
+//		print("Destroying " + this);
 		Global global = Global.getLocalPlayer();
 		if (global)
 		{
