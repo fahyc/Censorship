@@ -76,7 +76,7 @@ public class GridAccess : UIItem {
 					}
 
 					Grid[i].GetComponent<Button>().onClick = cc.commands[i].GetComponent<Button>().onClick;
-
+					Grid[i].GetComponent<SpawnScript>().mouseOver = cc.commands[i].GetComponent<SpawnScript>().mouseOver;
 					// set the image component of the grid
 					assignButton(Grid[i], cc.commands[i]);
 

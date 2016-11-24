@@ -19,7 +19,7 @@ public class WinConditionChecker : NetworkBehaviour
 	}
 	
 	// Update is called once per frame
-    [Server]
+    [ServerCallback]
 	void Update () {
         if (!gameOver && activePlayerIdeas.Count > 0)
         {

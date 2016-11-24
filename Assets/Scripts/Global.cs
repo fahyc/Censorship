@@ -79,6 +79,8 @@ public class Global : NetworkBehaviour {
 	}
     // Use this for initialization
     public override void OnStartLocalPlayer () {
+		print("||" + selectionbox + "||" + NetworkManager.singleton + "||" + lurkerPrefab + "||" + 
+			GameObject.FindGameObjectWithTag("MainCamera") + "||" + controlGroups + "||" + WinConditionChecker.instance + "||");
 		selectionbox = Instantiate(selectionbox);
 		selectionbox.gameObject.SetActive(false);
         currentMoney = startingMoney;
