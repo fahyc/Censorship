@@ -14,6 +14,7 @@ public class LobbyMenu : MonoBehaviour, IPListener {
     public GameObject scrollViewPrefab;
     public GameObject gameInfoPrefab;
     public GameObject hostMenuPrefab;
+    public GameObject hostInfoPrefab;
 
     NetworkManagerHUD managerHUD;
 
@@ -84,15 +85,21 @@ public class LobbyMenu : MonoBehaviour, IPListener {
     // Show a screen to set up the information for the game being hosted 
     public void toggleHostScreen()
     {
+        bool shouldDisplay = true;
         // clear out game list
         foreach (Transform i in gameList.transform)
         {
+            if (i.gameObject.name == "GameHostMenu")
+                shouldDisplay = false;
             GameObject.Destroy(i.gameObject);
         }
 
-        // Display hosting menu
-        GameObject hostMenu = Instantiate(hostMenuPrefab);
-        hostMenu.transform.SetParent(gameList.transform);
+        if (shouldDisplay)
+        {
+            // Display hosting menu
+            GameObject hostMenu = Instantiate(hostMenuPrefab);
+            hostMenu.transform.SetParent(gameList.transform);
+        }
     }
 
     public void requestGameList()
@@ -118,7 +125,7 @@ public class LobbyMenu : MonoBehaviour, IPListener {
         }
 
         // show new info
-        GameObject gameInfo = Instantiate(gameInfoPrefab);
+        GameObject gameInfo = Instantiate(hostInfoPrefab);
         gameInfo.transform.SetParent(gameList.transform);
 
         gameInfo.transform.Find("GameName").GetComponent<Text>().text = gameInfo.transform.Find("GameName").GetComponent<Text>().text.Replace("[name]", gameName);
