@@ -13,6 +13,7 @@ public class LobbyMenu : MonoBehaviour, IPListener {
     // prefabs
     public GameObject scrollViewPrefab;
     public GameObject gameInfoPrefab;
+    public GameObject hostMenuPrefab;
 
     NetworkManagerHUD managerHUD;
 
@@ -83,7 +84,15 @@ public class LobbyMenu : MonoBehaviour, IPListener {
     // Show a screen to set up the information for the game being hosted 
     public void toggleHostScreen()
     {
+        // clear out game list
+        foreach (Transform i in gameList.transform)
+        {
+            GameObject.Destroy(i.gameObject);
+        }
 
+        // Display hosting menu
+        GameObject hostMenu = Instantiate(hostMenuPrefab);
+        hostMenu.transform.SetParent(gameList.transform);
     }
 
     public void requestGameList()
@@ -94,6 +103,31 @@ public class LobbyMenu : MonoBehaviour, IPListener {
     // actually host a game given the information
     public void hostGame()
     {
+        // First get values for game to host
+        GameObject scenarioDropdown = gameList.transform.Find("Scenario").gameObject;
+        GameObject playerDropdown = gameList.transform.Find("Scenario").gameObject;
+
+        string gameName = gameList.GetComponentInChildren<InputField>().GetComponentInChildren<Text>().text;
+        string scenarioName = scenarioDropdown.GetComponentInChildren<Dropdown>().GetComponentInChildren<Text>().text;
+        int maxPlayers = playerDropdown.GetComponentInChildren<Dropdown>().value + 2;   // add 2 since index zero = 2 players
+
+        // Clear out old host button
+        foreach (Transform i in gameList.transform)
+        {
+            GameObject.Destroy(i.gameObject);
+        }
+
+        // show new info
+        GameObject gameInfo = Instantiate(gameInfoPrefab);
+        gameInfo.transform.SetParent(gameList.transform);
+
+        gameInfo.transform.Find("GameName").GetComponent<Text>().text = gameInfo.transform.Find("GameName").GetComponent<Text>().text.Replace("[name]", gameName);
+        gameInfo.transform.Find("Scenario").GetComponent<Text>().text = gameInfo.transform.Find("Scenario").GetComponent<Text>().text.Replace("[name]", scenarioName);
+        gameInfo.transform.Find("PlayerCount").GetComponent<Text>().text = gameInfo.transform.Find("PlayerCount").GetComponent<Text>().text.Replace("[cur]", "0").Replace("[max]", maxPlayers.ToString());
+
+
+        // Now actually do the work of hosting the game
+
         GameInfo info = new GameInfo();
         info.ip = Network.player.ipAddress;
         info.name = "New game";
