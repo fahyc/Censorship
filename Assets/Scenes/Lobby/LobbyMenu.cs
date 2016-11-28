@@ -7,19 +7,24 @@ using System.Collections.Generic;
 
 public class LobbyMenu : MonoBehaviour, IPListener {
 
-    public TeamLobbyManager manager;
+    TeamLobbyManager manager;
     public GameObject mainPanel;
 
     // prefabs
     public GameObject scrollViewPrefab;
     public GameObject gameInfoPrefab;
     public GameObject hostMenuPrefab;
-    public GameObject hostInfoPrefab;
+    public GameObject lobbyInfoPrefab;
+
+    public static LobbyMenu _instance;
+
+    Text playerCountText;
 
     NetworkManagerHUD managerHUD;
 
     GameObject scrollView;
     GameObject gameList;
+    GameObject gameHostMenu;
 
     AWSTest aws;
 
@@ -35,6 +40,8 @@ public class LobbyMenu : MonoBehaviour, IPListener {
         public string ip;
         public int Time;
         public string name;
+        public string scenario;
+        public int maxPlayers;
     }
 
     List<GameInfo> availableGames;
@@ -42,6 +49,8 @@ public class LobbyMenu : MonoBehaviour, IPListener {
 
     void Start()
     {
+        _instance = this;
+        manager = GameObject.FindObjectOfType<TeamLobbyManager>();
         managerHUD = manager.GetComponent<NetworkManagerHUD>();
         aws = manager.GetComponent<AWSTest>();
         scrollView = Instantiate(scrollViewPrefab);
@@ -59,14 +68,25 @@ public class LobbyMenu : MonoBehaviour, IPListener {
         refreshGameList(info.arr);
     }
 
+    public void clearList()
+    {
+        if (gameList != null)
+        {
+            foreach (Transform i in gameList.transform)
+            {
+                GameObject.Destroy(i.gameObject);
+            }
+        }
+    }
+
     void refreshGameList(GameInfo[] info)
     {
         availableGames = new List<GameInfo>(info);
 
-        foreach (Transform i in gameList.transform)
-        {
-            GameObject.Destroy(i.gameObject);
-        }
+        if (gameList == null)
+            return;
+
+        clearList();
 
         foreach (GameInfo i in availableGames)
         {
@@ -78,27 +98,45 @@ public class LobbyMenu : MonoBehaviour, IPListener {
     {
         GameObject newGame = Instantiate(gameInfoPrefab);
         newGame.transform.Find("GameName").GetComponent<Text>().text = info.name;
+        newGame.transform.Find("ScenarioName").GetComponent<Text>().text = info.scenario;
+        newGame.transform.Find("NumPlayers").GetComponent<Text>().text = newGame.transform.Find("NumPlayers").GetComponent<Text>().text.Replace("[max]", info.maxPlayers.ToString());
+        newGame.transform.Find("JoinButton").GetComponent<Button>().onClick.AddListener(() => joinGame(info));
         newGame.transform.SetParent(gameList.transform);
     }
 
+    void joinGame(GameInfo info)
+    {
+        GameObject gameInfo = displayLobbyInfo(info);
+        gameInfo.transform.Find("Buttons/CancelButton").GetComponent<Button>().onClick.AddListener(requestGameList);
+        gameInfo.transform.Find("Buttons/CancelButton").GetComponent<Button>().onClick.AddListener(manager.StopClient);
+
+        // assign proper IP first
+        manager.networkAddress = info.ip;
+        manager.StartClient();
+    }
 
     // Show a screen to set up the information for the game being hosted 
     public void toggleHostScreen()
     {
-        bool shouldDisplay = true;
-        // clear out game list
-        foreach (Transform i in gameList.transform)
-        {
-            if (i.gameObject.name == "GameHostMenu")
-                shouldDisplay = false;
-            GameObject.Destroy(i.gameObject);
-        }
-
-        if (shouldDisplay)
+        clearList();
+        if (gameHostMenu == null)
         {
             // Display hosting menu
-            GameObject hostMenu = Instantiate(hostMenuPrefab);
-            hostMenu.transform.SetParent(gameList.transform);
+            gameHostMenu = Instantiate(hostMenuPrefab);
+            gameHostMenu.transform.SetParent(gameList.transform);
+
+            gameHostMenu.transform.Find("Buttons/HostButton").GetComponent<Button>().onClick.AddListener(hostGame);
+            gameHostMenu.transform.Find("Buttons/CancelButton").GetComponent<Button>().onClick.AddListener(toggleHostScreen);
+            gameHostMenu.transform.Find("Buttons/CancelButton").GetComponent<Button>().onClick.AddListener(requestGameList);
+
+            // also disable refreshing game list
+            mainPanel.transform.Find("ButtonPanel/RefreshButton").GetComponent<Button>().interactable = false;
+        }
+        else {
+            gameHostMenu = null;
+
+            // also enable refreshing game list
+            mainPanel.transform.Find("ButtonPanel/RefreshButton").GetComponent<Button>().interactable = true;
         }
     }
 
@@ -111,34 +149,63 @@ public class LobbyMenu : MonoBehaviour, IPListener {
     public void hostGame()
     {
         // First get values for game to host
-        GameObject scenarioDropdown = gameList.transform.Find("Scenario").gameObject;
-        GameObject playerDropdown = gameList.transform.Find("Scenario").gameObject;
+        GameObject scenarioDropdown = gameHostMenu.transform.Find("Scenario").gameObject;
+        GameObject playerDropdown = gameHostMenu.transform.Find("MaxPlayers").gameObject;
 
-        string gameName = gameList.GetComponentInChildren<InputField>().GetComponentInChildren<Text>().text;
+        string gameName = gameList.GetComponentInChildren<InputField>().text;
         string scenarioName = scenarioDropdown.GetComponentInChildren<Dropdown>().GetComponentInChildren<Text>().text;
         int maxPlayers = playerDropdown.GetComponentInChildren<Dropdown>().value + 2;   // add 2 since index zero = 2 players
 
-        // Clear out old host button
-        foreach (Transform i in gameList.transform)
-        {
-            GameObject.Destroy(i.gameObject);
-        }
-
-        // show new info
-        GameObject gameInfo = Instantiate(hostInfoPrefab);
-        gameInfo.transform.SetParent(gameList.transform);
-
-        gameInfo.transform.Find("GameName").GetComponent<Text>().text = gameInfo.transform.Find("GameName").GetComponent<Text>().text.Replace("[name]", gameName);
-        gameInfo.transform.Find("Scenario").GetComponent<Text>().text = gameInfo.transform.Find("Scenario").GetComponent<Text>().text.Replace("[name]", scenarioName);
-        gameInfo.transform.Find("PlayerCount").GetComponent<Text>().text = gameInfo.transform.Find("PlayerCount").GetComponent<Text>().text.Replace("[cur]", "0").Replace("[max]", maxPlayers.ToString());
-
-
-        // Now actually do the work of hosting the game
+        // prevent empty name
+        if (gameName == "")
+            gameName = "Xenonet Game";
 
         GameInfo info = new GameInfo();
         info.ip = Network.player.ipAddress;
-        info.name = "New game";
+        info.name = gameName;
+        info.scenario = scenarioName;
+        info.maxPlayers = maxPlayers;
+
+        // show the proper info onscreen
+        GameObject gameInfo = displayLobbyInfo(info);
+
+        gameInfo.transform.Find("Buttons/CancelButton").GetComponent<Button>().onClick.AddListener(manager.StopHost);
+        // TODO: need to notify web server about removal of game
+
+        // initialize the lobby first
+        manager.initializeLobby(scenarioName, maxPlayers);
+        // then start hosting
+        manager.StartHost();
+
         aws.SendUpdate(JsonUtility.ToJson(info, true));
+    }
+
+    public void updatePlayerCount(int n)
+    {
+        playerCountText.text = n.ToString();
+    }
+
+    GameObject displayLobbyInfo(GameInfo info)
+    {
+        clearList();
+
+        if (gameHostMenu)
+            gameHostMenu = null;
+
+        // show game info
+        GameObject gameInfo = Instantiate(lobbyInfoPrefab);
+        gameInfo.transform.SetParent(gameList.transform);
+
+        // display proper text for everything
+        gameInfo.transform.Find("GameName").GetComponent<Text>().text = gameInfo.transform.Find("GameName").GetComponent<Text>().text.Replace("[name]", info.name);
+        gameInfo.transform.Find("Scenario").GetComponent<Text>().text = gameInfo.transform.Find("Scenario").GetComponent<Text>().text.Replace("[name]", info.scenario);
+        gameInfo.transform.Find("PlayerCount/Current").GetComponent<Text>().text = "0";
+        gameInfo.transform.Find("PlayerCount/Max").GetComponent<Text>().text = info.maxPlayers.ToString();
+
+        Text t = gameInfo.transform.Find("PlayerCount/Current").GetComponent<Text>();
+        playerCountText = t;
+
+        return gameInfo;
     }
 
     // for debug purposes

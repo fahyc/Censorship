@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -9,9 +10,30 @@ public class TeamLobbyManager : NetworkLobbyManager {
     public static List<int> playerIdeas;
     List<int> ideasLeft;
 
+    public static TeamLobbyManager _singleton;
+
     Dictionary<NetworkConnection, int> teamAssignments;
 
     Dictionary<int, PlayerStartPosition> initialPositions;
+
+    public int playerCount;
+    
+    void Start()
+    {
+        _singleton = this;
+        playerCount = 0;
+    }
+
+    public void initializeLobby(string scenario, int players)
+    {
+        maxPlayers = players;
+        // TODO: change playScene based on scenario
+    }
+
+    public void updatePlayerCount(int n)
+    {
+        playerCount += n;
+    }
 
     public override void OnLobbyStartServer()
     {
@@ -56,5 +78,13 @@ public class TeamLobbyManager : NetworkLobbyManager {
 
         Debug.LogWarning("Unable to find start position with correct idea index! player spawn is null");
         return null;
+    }
+
+
+    // Client callbacks
+    // ===========
+
+    public override void OnClientError(NetworkConnection conn, int errorCode)
+    {
     }
 }
