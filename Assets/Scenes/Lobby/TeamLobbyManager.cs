@@ -17,17 +17,25 @@ public class TeamLobbyManager : NetworkLobbyManager {
     Dictionary<int, PlayerStartPosition> initialPositions;
 
     public int playerCount;
-    
+
     void Start()
     {
+        // InitUPnP().Wait();
+
+        // Debug.Log("External ip after port mapping: " + my_ip.ToString());
+
         _singleton = this;
         playerCount = 0;
     }
+
+
 
     public void initializeLobby(string scenario, int players)
     {
         maxPlayers = players;
         // TODO: change playScene based on scenario
+
+        playScene = scenario;
     }
 
     public void updatePlayerCount(int n)
