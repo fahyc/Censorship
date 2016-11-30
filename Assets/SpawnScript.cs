@@ -34,7 +34,7 @@ public class SpawnScript : MonoBehaviour {
 	{
 		//		print(GameObject.FindGameObjectWithTag("Tooltip"));
 		tooltip = GameObject.FindGameObjectWithTag("Tooltip").GetComponent<Tooltip>();
-		print("Getting tooltip " + tooltip + "|");
+		//print("Getting tooltip " + tooltip + "|");
 	}
 	
 	public void Spawn()
@@ -47,12 +47,12 @@ public class SpawnScript : MonoBehaviour {
 		//temp.index = index;
 	}
     public void Spawn(int in_index) {
-        print(in_index);
+        //print(in_index);
         Global.setTool(product, in_index);
     }
 	public void ToolTip()
 	{
-		print("activating tooltip with " + mouseOver + " tooltip " + tooltip + "|");
+		//print("activating tooltip with " + mouseOver + " tooltip " + tooltip + "|");
 		tooltip.Activate(mouseOver);
 	}
 	public void ToolTipOff()
