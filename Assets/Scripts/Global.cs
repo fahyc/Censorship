@@ -102,9 +102,17 @@ public class Global : NetworkBehaviour {
         for(int i=0; i<10; i++) {
             controlGroups.Add(selected);
         }
-        WinConditionChecker.instance.activePlayerIdeas.Add(playerIdeaIndex);
+		StartCoroutine(winConditionCheck());
     }
 	
+	IEnumerator winConditionCheck()
+	{
+		while (WinConditionChecker.instance == null)
+		{
+			yield return new YieldInstruction();
+		}
+		WinConditionChecker.instance.activePlayerIdeas.Add(playerIdeaIndex);
+	}
 	
     [Command]
     void CmdSpawnObj(int prefabIndex, Vector2 position, int index)
