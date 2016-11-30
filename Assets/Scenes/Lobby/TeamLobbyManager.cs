@@ -3,6 +3,11 @@ using UnityEngine.Networking;
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
+using Open.Nat;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Net;
+using System;
 
 public class TeamLobbyManager : NetworkLobbyManager {
 
@@ -18,16 +23,82 @@ public class TeamLobbyManager : NetworkLobbyManager {
 
     public int playerCount;
 
+    public static IPAddress my_ip;
+
     void Start()
     {
-        // InitUPnP().Wait();
+        try
+        {
+            InitUPnP().Wait();
+        }
+        catch (AggregateException ae)
+        {
+            // port forwarding failed or timed out
 
-        // Debug.Log("External ip after port mapping: " + my_ip.ToString());
+        }
+
+        Debug.Log("External ip after port mapping: " + my_ip.ToString());
 
         _singleton = this;
         playerCount = 0;
     }
 
+    private static Task InitUPnP()
+    {
+        // Set up the DeviceFound and DeviceLost methods
+        NatDiscoverer disc = new NatDiscoverer();
+        CancellationTokenSource cts = new CancellationTokenSource();
+        cts.CancelAfter(5000);  // 5 second timeout for device discovery
+
+        NatDevice device = null;
+
+        return disc.DiscoverDeviceAsync(PortMapper.Upnp, cts)
+            .ContinueWith(task =>
+            {
+                device = task.Result;
+                Debug.Log("device found: " + device.ToString());
+                return device.GetExternalIPAsync();
+            })
+            .Unwrap()
+            .ContinueWith(task =>
+            {
+                my_ip = task.Result;
+                Task res = null;
+                int pubPort = 7777;
+                while (pubPort < 8000)
+                {
+                    try
+                    {
+                        res = device.CreatePortMapAsync(new Mapping(Protocol.Tcp, 7777, pubPort, "Xenonet Server (TCP)"));
+                        break;
+                    }
+                    catch (MappingException me)
+                    {
+                        pubPort++;
+                    }
+                }
+                return res;
+            })
+            .Unwrap()
+            .ContinueWith(task =>
+            {
+                Task res = null;
+                int pubPort = 7777;
+                while (pubPort < 8000)
+                {
+                    try
+                    {
+                        res = device.CreatePortMapAsync(new Mapping(Protocol.Udp, 7777, pubPort, "Xenonet Server (UDP)"));
+                        break;
+                    }
+                    catch (MappingException me)
+                    {
+                        pubPort++;
+                    }
+                }
+                return res;
+            });
+    }
 
 
     public void initializeLobby(string scenario, int players)
