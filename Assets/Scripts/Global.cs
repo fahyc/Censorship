@@ -130,10 +130,19 @@ public class Global : NetworkBehaviour {
         for(int i=0; i<10; i++) {
             controlGroups.Add(selected);
         }
-        WinConditionChecker.instance.activePlayerIdeas.Add(playerIdeaIndex);
-        ggInfo = GameObject.FindGameObjectsWithTag("GameOver")[0].GetComponent<Text>();
+		StartCoroutine(winConditionCheck());
     }
 	
+	IEnumerator winConditionCheck()
+	{
+		while (WinConditionChecker.instance == null)
+		{
+			yield return new YieldInstruction();
+		}
+		WinConditionChecker.instance.activePlayerIdeas.Add(playerIdeaIndex);
+		WinConditionChecker.instance.activePlayerIdeas.Add(playerIdeaIndex);
+		ggInfo = GameObject.FindGameObjectsWithTag("GameOver")[0].GetComponent<Text>();
+	}
 	
     [Command]
     void CmdSpawnObj(int prefabIndex, Vector2 position, int index)
