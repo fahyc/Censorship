@@ -12,12 +12,12 @@ public class PlaceOfficeScript : MonoBehaviour {
 			OfficeSlot temp = g.selected[i].GetComponent<OfficeSlot>();
 			if (temp)
 			{
-				print("spawning office");
+//				print("spawning office");
 				temp.spawnOffice();
 			}
 			else
 			{
-				print(temp + " is not an office slot ");
+	//			print(temp + " is not an office slot ");
 			}
 		}
 	}

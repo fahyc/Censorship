@@ -30,10 +30,15 @@ public class GridAccess : UIItem {
         foreach (GameObject g in Grid) {
             if (g.GetComponent<Button>() != null) {
                 //g.GetComponent<Button>().onClick.RemoveAllListeners();
+                g.GetComponent<Button>().onClick = emptySlot.GetComponent<Button>().onClick;
+                // g.GetComponent<Button>().GetComponentInChildren<Text>().text = "Empty";
                 g.GetComponent<Button>().onClick.RemoveAllListeners();
-                g.GetComponent<Button>().GetComponentInChildren<Text>().text = "Empty";
-                
+                assignButton(g, emptySlot);
+
             }
+        }
+        if (inSubMenu) {
+            clearOutSubMenu();
         }
     }
     public void toggleButtons(bool enabled) {
@@ -46,13 +51,11 @@ public class GridAccess : UIItem {
         
     }
     public void clearOutSubMenu() {
-        print("Executing now");
         foreach (GameObject s in submenu) {
             if (s != null) {
                 Destroy(s);
             }
         }
-        inSubMenu = false;
         
     }
     public void OnSelectUnit(GameObject newUnit) {
@@ -65,23 +68,27 @@ public class GridAccess : UIItem {
 
         if (cc != null) {
             clearButtons(false);
-            for (int i = 0; i < Grid.Length; i++) {
-                //print(Grid[i].GetComponent<Button>().onClick);
-                if (cc.commands[i] != null) {
-                    if (!gi) {
-                        gi = Global.getLocalPlayer();
-                    }
-                    Grid[i].GetComponent<Button>().onClick = cc.commands[i].GetComponent<Button>().onClick;
-                    Grid[i].GetComponent<Button>().GetComponentInChildren<Text>().text = cc.commands[i].GetComponentInChildren<Text>().text;
-                    
-                    if (cc.commands[i].name == "button_Shill" || cc.commands[i].name == "button_Wall") {
-                        //Put behavior for submenus here.
-                        //Grid[i].GetComponentInChildren<Submenu>().Enable();
-                        DummyUnit temp1 = cc.commands[i].GetComponent<LinkedDummy>().dummy.GetComponent<DummyUnit>();
-                        //Grid[i].AddComponent<SpawnScript>();
-                        Grid[i].GetComponent<Button>().onClick.AddListener(() => SubmenuCreation(temp1));
-                    }
-                    else if (cc.commands[i].name == "button_Lurker" || cc.commands[i].name == "button_Investigator" || cc.commands[i].name == "button_Hacker") {
+			for (int i = 0; i < Grid.Length; i++) {
+				//print(Grid[i].GetComponent<Button>().onClick);
+				if (cc.commands[i] != null) {
+					if (!gi) {
+						gi = Global.getLocalPlayer();
+					}
+
+					Grid[i].GetComponent<Button>().onClick = cc.commands[i].GetComponent<Button>().onClick;
+					Grid[i].GetComponent<SpawnScript>().mouseOver = cc.commands[i].GetComponent<SpawnScript>().mouseOver;
+					// set the image component of the grid
+					assignButton(Grid[i], cc.commands[i]);
+
+					if (cc.commands[i].name == "button_Shill" || cc.commands[i].name == "button_Wall") {
+						//Put behavior for submenus here.
+						//Grid[i].GetComponentInChildren<Submenu>().Enable();
+						DummyUnit temp1 = cc.commands[i].GetComponent<LinkedDummy>().dummy.GetComponent<DummyUnit>();
+						//Grid[i].AddComponent<SpawnScript>();
+						Grid[i].GetComponent<Button>().onClick.AddListener(() => SubmenuCreation(temp1));
+					}
+					else if (cc.commands[i].name == "button_Lurker" || cc.commands[i].name == "button_Investigator" || cc.commands[i].name == "button_Hacker"
+							|| cc.commands[i].name == "button_Firewall" || cc.commands[i].name == "button_Botnet") {
                         DummyUnit temp = cc.commands[i].GetComponent<LinkedDummy>().dummy.GetComponent<DummyUnit>();
 
                         Grid[i].GetComponent<Button>().onClick.AddListener(() => gi.EnableDummy(temp));
@@ -89,13 +96,56 @@ public class GridAccess : UIItem {
                 }
                 else {
                     Grid[i].GetComponent<Button>().onClick = emptySlot.GetComponent<Button>().onClick;
-                    Grid[i].GetComponent<Button>().GetComponentInChildren<Text>().text = "Empty";
+                    assignButton(Grid[i], emptySlot);
                 }
             }
         }
     }
+
+    void assignButton (GameObject dst, GameObject src)
+    {
+        // get the image component of the grid
+        Image dstImg = null;
+        int z = 0;
+        foreach (Image i in dst.GetComponentsInChildren<Image>())
+        {
+            z++;
+            if (z > 2) continue;
+
+            if (i.transform.parent != null)
+            {
+                dstImg = i;
+                
+            }
+        }
+        //dstImg = dst.GetComponentInChildren<Image>();
+        // and of the button we want
+        Image srcImg = null;
+        foreach (Image i in src.GetComponentsInChildren<Image>())
+        {
+            if (i.transform.parent != null)
+            {
+                srcImg = i;
+            
+            }
+        }
+        //srcImg = src.GetComponentInChildren<Image>();
+        // set them appropriately
+        if (dstImg != null && srcImg != null)
+        {
+            dstImg.sprite = srcImg.sprite;
+            dstImg.color = srcImg.color;
+            dstImg.preserveAspect = srcImg.preserveAspect;
+
+            // dstImg.rectTransform.position = srcImg.rectTransform.position;
+            dstImg.rectTransform.pivot = srcImg.rectTransform.pivot;
+            dstImg.rectTransform.localScale = srcImg.rectTransform.localScale;
+        }
+
+        dst.GetComponent<Image>().color = src.GetComponent<Image>().color;
+    }
+
     void SubmenuCreation(DummyUnit inDummy) {
-        print("woohoo");
         clearButtons(true);
         for (int i = 0; i < IdeaList.instance.list.Length; i++) {
             GameObject temp = Instantiate(buttons);
@@ -117,33 +167,6 @@ public class GridAccess : UIItem {
             //    temp.GetComponent<Button>().onClick.AddListener(() => { AdditionalOnClicks[0].Invoke(); });
             //}
         }
-        print("Set insubmenu to true");
         inSubMenu = true;
-
-        ////Submenu s = Instantiate<Submenu>(sm);
-        //for (int z = 0; z < IdeaList.staticList.Length; z++) {
-        //    Grid[z].GetComponent<Image>().color = IdeaList.staticList[z].color;
-        //    Grid[z].GetComponent<Button>().onClick.AddListener(() => gi.EnableDummy(inDummy));
-        //    //print(temp);
-        //    if (inDummy.name == "DummyNode") {
-        //        Grid[z].GetComponent<SpawnScript>().Initiate("Spawn a shill", IdeaList.staticList[z].color, sref, z);
-        //        SpawnScript temp = Grid[z].GetComponent<SpawnScript>();
-
-        //        Button tempb = Grid[z].GetComponent<Button>();
-        //        int what = z;
-        //        Spawnable t = Instantiate(sref);
-        //        tempb.onClick.AddListener(() => Global.setTool(t, what));
-        //        //Grid[i].GetComponent<Button>().onClick.AddListener(() => temp.Spawn());
-        //        //print(sref);
-        //    } else if (inDummy.name == "DummyWall") {
-        //        int index = z;
-        //        Grid[z].GetComponent<SpawnScript>().Initiate("Spawn a wall", IdeaList.staticList[z].color, wref, index);
-        //    }
-        //    //Grid[i].
-        //}
-        //for(int j=0; j < IdeaList.staticList.Length; j++) {
-        //    SpawnScript d = temp[j];
-        //    Grid[j].GetComponent<Button>().onClick.AddListener(() => d.Spawn());
-        //}
     }
 }

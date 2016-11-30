@@ -13,8 +13,13 @@ public class Spawnable : NetworkBehaviour {
     public bool disabled = false;
     public Color disabledColor = Color.gray;
 
-
-
+	
+	void Start()
+	{
+		
+		//GetComponent<SpriteRenderer>().color = IdeaList.instance.list[index].color;
+	}
+	
 
     //public override void OnStartLocalPlayer() {
     //    owningPlayer = LayerMask.NameToLayer("PlayerOwned");
@@ -36,7 +41,11 @@ public class Spawnable : NetworkBehaviour {
 	protected virtual void OnDestroy()
 	{
 		//if (Global.isReady())
-		print("Destroying " + this);
-		Global.getLocalPlayer().addUpkeep(-upkeep);
+//		print("Destroying " + this);
+		Global global = Global.getLocalPlayer();
+		if (global)
+		{
+			global.addUpkeep(-upkeep);
+		}
 	}
 }

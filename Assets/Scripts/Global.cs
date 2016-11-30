@@ -99,6 +99,7 @@ public class Global : NetworkBehaviour {
 			return;
 		}
 	}*/
+
 	IEnumerator setInactiveSoon()
 	{
 		yield return new WaitForSeconds(1);
@@ -106,8 +107,8 @@ public class Global : NetworkBehaviour {
 	}
     // Use this for initialization
     public override void OnStartLocalPlayer () {
-
-//		inspector = GameObject.FindGameObjectWithTag("Inspector").GetComponent<Inspect>();
+		print("||" + selectionbox + "||" + NetworkManager.singleton + "||" + lurkerPrefab + "||" + 
+			GameObject.FindGameObjectWithTag("MainCamera") + "||" + controlGroups + "||" + WinConditionChecker.instance + "||");
 		selectionbox = Instantiate(selectionbox);
 		selectionbox.gameObject.SetActive(false);
         currentMoney = startingMoney;
@@ -173,8 +174,9 @@ public class Global : NetworkBehaviour {
         {
             return;
         }
-
+		
         Spawnable costOfUnit = prefabObject.GetComponent<Spawnable>();
+//		print("Spawning with cost: " + costOfUnit);
         //Do we have money to spawn this wall? If not, just quit. Also, we should probably display "No money to build" somewhere in the UI.
         if (currentMoney < costOfUnit.initialCost)
         {
@@ -230,48 +232,41 @@ public class Global : NetworkBehaviour {
 
         if (!isReady())
             localPlayer = getLocalPlayer();
-
-		// only update for the local player
-
-		//print("update" + isLocalPlayer);
-		//		print(mouseToWorld());
+		
 		if (!isLocalPlayer)
 		{
 			return;
-			//gameObject.SetActive(false);
 		}
-        //infoTextBox.text = text;
-        //textImage.enabled = textbg;
-        /*
-		if (overlappingFocusable())
-		{
-			return;
-		}
-		*/
 		if (IdeaList.instance.Prevalence.Count > 0)
 		{
 			income = IdeaList.instance.Prevalence[playerIdeaIndex];
 		}
-		//		print("income: " + income + " upkeep " + upkeep);
 		moneyDiff = income - upkeep;
 
         //Detect any modifier keys that can be pressed and held down.
-        if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) {
+        /*if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) {
             shiftDown = true;
         } else {
             shiftDown = false;
-        }
+        }*/
         if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) {
             ctrlDown = true;
         } else {
             ctrlDown = false;
         }
 
+		if (Input.GetKeyDown(KeyCode.BackQuote))
+		{
+			if (Input.GetKey(KeyCode.M))
+			{
+				currentMoney += 100000;
+				print("getting money.");
+			}
+		}
 
         if (selectStart != Vector3.zero && (mouseToWorld() - selectStart).magnitude > minSelectionDistance)
 		{
 			DrawSelectBox(mouseToWorld(), selectStart);
-
 		}
 		else
 		{
@@ -320,14 +315,16 @@ public class Global : NetworkBehaviour {
                 } else {
                     clearSelected();
                     selectControlGroup(i);
-                    if(lastPressedNumber == i && Time.time - lastPressedTime <= doubleTapWindow ) {
-                        Vector3 avgPos = Vector3.zero;
-                        for(int x=0; x<selected.Count; x++) {
-                            avgPos += selected[x].transform.position;
+                    if(selected.Count > 0) { 
+                        if(lastPressedNumber == i && Time.time - lastPressedTime <= doubleTapWindow ) {
+                            Vector3 avgPos = Vector3.zero;
+                            for(int x=0; x<selected.Count; x++) {
+                                avgPos += selected[x].transform.position;
+                            }
+                            avgPos.x = avgPos.x / selected.Count;
+                            avgPos.y = avgPos.y / selected.Count;
+                            Camera.main.transform.position = new Vector3(avgPos.x, avgPos.y, Camera.main.transform.position.z);
                         }
-                        avgPos.x = avgPos.x / selected.Count;
-                        avgPos.y = avgPos.y / selected.Count;
-                        Camera.main.transform.position = new Vector3(avgPos.x, avgPos.y, Camera.main.transform.position.z);
                     }
                     lastPressedTime = Time.time;
                     lastPressedNumber = i;
@@ -341,13 +338,12 @@ public class Global : NetworkBehaviour {
 		}
 		if (Input.GetMouseButtonUp(0)) {
 			//if left mouse button
-			//print(currentTool);
-			//always clear the selection.
-			
-			
+						
 			if ((mouseToWorld() - selectStart).magnitude > minSelectionDistance)
 			{
-				clearSelected();
+                //If we are holding down shift, we're adding this box selection to our current selection.
+                if(!Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.RightShift))
+				    clearSelected();
 				DisableDummy();
 				//unity's overlap box uses a center and width system instead of two points, which is how we store the selection box.
 				Vector3 center = (mouseToWorld() + selectStart) / 2;
@@ -371,8 +367,8 @@ public class Global : NetworkBehaviour {
 			if (currentTool)
 			{//spawn whatever is selected
 				//Vector3 position = Camera.main.ScreenToWorldPoint(Input.mousePosition.append(Camera.main.transform.position.z * -1));
-                SpawnObj(currentTool, activeDummy.transform.position, toolIndex);
-				//print("Current tool: " + currentTool);
+				if(!overlappingFocusable())
+	                SpawnObj(currentTool, activeDummy.transform.position, toolIndex);
 			}
 			else {
 				//or if there is nothing to spawn, clear any focus and ui elements, or inspect whatever is below the mouse.
@@ -430,7 +426,7 @@ public class Global : NetworkBehaviour {
     }
     public void addUpkeep(int amount)
 	{
-		print("adding upkeep " + amount);
+//		print("adding upkeep " + amount);
 		upkeep += amount;
 	}
 
@@ -501,10 +497,11 @@ public class Global : NetworkBehaviour {
 
 	public void EnableDummy(DummyUnit dummyPrefab)
 	{
+//		print("enabling dummy " + dummyPrefab);
 		DisableDummy();
         Vector3 pos= Camera.main.ScreenToWorldPoint(Input.mousePosition.append(Camera.main.transform.position.z * -1));
         activeDummy = (DummyUnit) Instantiate(dummyPrefab, pos, Quaternion.identity);
-        print(activeDummy);
+//        print(activeDummy);
     }
 
 	public void DisableDummy()
@@ -597,12 +594,16 @@ public class Global : NetworkBehaviour {
 		if(selected.Count == 0)
 		{
 			Debug.LogWarning("Warning, no offices selected but we are still running a dummy.");
+			DisableDummy();
+			return Vector2.zero;
 		}
 		return selected[closestIndex].transform.position.xy() + ((position - selected[closestIndex].transform.position.xy()).normalized * selected[closestIndex].spawnRange); 
 	}
 
 	public void spawnOffice(int officeIdea,OfficeSlot slot)
 	{
+		upkeep += slot.office.upkeep;
+		currentMoney -= slot.office.initialCost;
 		CmdSpawnOffice(officeIdea, slot.GetComponent<NetworkIdentity>().netId);
 	}
 

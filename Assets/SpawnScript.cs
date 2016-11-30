@@ -14,7 +14,7 @@ public class SpawnScript : MonoBehaviour {
 	//public EventTrigger trigger; 
 	//public Tooltip tooltip;
 
-	Tooltip tooltip;
+	public Tooltip tooltip;
 
 	public void Initiate(string tooltip, Color color,Spawnable p, int i)
 	{
@@ -32,7 +32,9 @@ public class SpawnScript : MonoBehaviour {
 	}
 	void Start()
 	{
+		//		print(GameObject.FindGameObjectWithTag("Tooltip"));
 		tooltip = GameObject.FindGameObjectWithTag("Tooltip").GetComponent<Tooltip>();
+		//print("Getting tooltip " + tooltip + "|");
 	}
 	
 	public void Spawn()
@@ -45,11 +47,12 @@ public class SpawnScript : MonoBehaviour {
 		//temp.index = index;
 	}
     public void Spawn(int in_index) {
-        print(in_index);
+        //print(in_index);
         Global.setTool(product, in_index);
     }
 	public void ToolTip()
 	{
+		//print("activating tooltip with " + mouseOver + " tooltip " + tooltip + "|");
 		tooltip.Activate(mouseOver);
 	}
 	public void ToolTipOff()

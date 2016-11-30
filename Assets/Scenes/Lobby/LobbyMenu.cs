@@ -188,7 +188,8 @@ public class LobbyMenu : MonoBehaviour, IPListener {
         while (true)
         {
             // Send the update every 15 seconds to keep the game listed online
-            aws.SendUpdate(JsonUtility.ToJson(info, true));
+            if (aws)
+                aws.SendUpdate(JsonUtility.ToJson(info, true));
             yield return new WaitForSeconds(15.0f);
         }
     }
