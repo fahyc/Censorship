@@ -39,6 +39,7 @@ public class LobbyMenu : MonoBehaviour, IPListener {
     public class GameInfo
     {
         public string ip;
+        public int port;
         public int Time;
         public string name;
         public string scenario;
@@ -112,8 +113,13 @@ public class LobbyMenu : MonoBehaviour, IPListener {
         lobbyInfo.transform.Find("Buttons/CancelButton").GetComponent<Button>().onClick.AddListener(requestGameList);
         lobbyInfo.transform.Find("Buttons/CancelButton").GetComponent<Button>().onClick.AddListener(manager.StopClient);
 
+        // init UPnP for client as well
+        manager.InitializePorts();
+        Debug.Log("Attempting to join game at " + info.ip + ":" + info.port);
+
         // assign proper IP first
         manager.networkAddress = info.ip;
+        manager.networkPort = info.port;
         manager.StartClient();
     }
 
@@ -162,14 +168,26 @@ public class LobbyMenu : MonoBehaviour, IPListener {
         if (gameName == "")
             gameName = "Xenonet Game";
 
+        // set up UPnP if possible
+        manager.InitializePorts();
+        if (TeamLobbyManager.upnp_enabled)
+        {
+            manager.networkAddress = TeamLobbyManager.my_ip;
+            manager.networkPort = TeamLobbyManager.public_port;
+        }
+
         GameInfo info = new GameInfo();
-        info.ip = Network.player.ipAddress;
+        info.ip = TeamLobbyManager.my_ip;
+        info.port = TeamLobbyManager.public_port;
         info.name = gameName;
         info.scenario = scenarioName;
         info.maxPlayers = maxPlayers;
 
         // show the proper info onscreen
         displayLobbyInfo(info);
+
+        // let the player know if UPnP won't work
+        lobbyInfo.transform.Find("LocalIPWarning").gameObject.SetActive(!TeamLobbyManager.upnp_enabled);
 
         lobbyInfo.transform.Find("Buttons/CancelButton").GetComponent<Button>().onClick.AddListener(manager.StopHost);
         // TODO: need to notify web server about removal of game
