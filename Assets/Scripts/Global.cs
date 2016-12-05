@@ -354,6 +354,7 @@ public class Global : NetworkBehaviour {
                 if(!Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.RightShift))
 				    clearSelected();
 				DisableDummy();
+                currentTool = null; // clear out the current tool
 				//unity's overlap box uses a center and width system instead of two points, which is how we store the selection box.
 				Vector3 center = (mouseToWorld() + selectStart) / 2;
 				Vector3 width = mouseToWorld() - selectStart;
@@ -521,6 +522,7 @@ public class Global : NetworkBehaviour {
 		{
 			Destroy(activeDummy.gameObject);
 		}
+        activeDummy = null;
 	}
 
 	
