@@ -58,8 +58,8 @@ public class Office : Spawnable {
 			{
 				slotId = slot.GetComponent<NetworkIdentity>().netId;
 			}
-		} else
-        {
+		}
+        if(isClient) {
             if (defenses >= 1 && !built)
             {
                 soundObj2.Play();
