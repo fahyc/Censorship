@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine.Events;
-
+using UnityEngine.EventSystems;
 public class GridAccess : UIItem {
     public string selectedUnit;
     public GameObject[] Grid;
@@ -38,7 +38,9 @@ public class GridAccess : UIItem {
             }
         }
         if (inSubMenu) {
-            clearOutSubMenu();
+            foreach(GameObject g in Grid) {
+                //g.GetComponent<EventTrigger>().isActiveAndEnabled = false;
+            }
         }
     }
     public void toggleButtons(bool enabled) {
@@ -48,7 +50,9 @@ public class GridAccess : UIItem {
     }
     // Update is called once per frame
     void Update() {
-        
+        if (inSubMenu) {
+            print("we in there");
+        }
     }
     public void clearOutSubMenu() {
         foreach (GameObject s in submenu) {
@@ -77,8 +81,10 @@ public class GridAccess : UIItem {
 
 					Grid[i].GetComponent<Button>().onClick = cc.commands[i].GetComponent<Button>().onClick;
                     SpawnScript s = cc.commands[i].GetComponent<SpawnScript>();
-                    
-                    Grid[i].GetComponent<SpawnScript>().mouseOver = "($" + s.product.initialCost + ") " + s.mouseOver;
+                    if (s.product != null) {
+                        Grid[i].GetComponent<SpawnScript>().mouseOver = "($" + s.product.initialCost + " | " +
+                            s.product.upkeep + "/Day) " + s.mouseOver;
+                    }
 					// set the image component of the grid
 					assignButton(Grid[i], cc.commands[i]);
 
@@ -151,11 +157,13 @@ public class GridAccess : UIItem {
         clearButtons(true);
         for (int i = 0; i < IdeaList.instance.list.Length; i++) {
             GameObject temp = Instantiate(buttons);
+            Color c = IdeaList.instance.list[i].color;
             if (inDummy.name == "DummyNode")
                 temp.GetComponent<SpawnScript>().Initiate(tooltips.Replace("[idea]", IdeaList.instance.list[i].name), IdeaList.instance.list[i].color, sref, i);
             else if (inDummy.name == "DummyWall")
                 temp.GetComponent<SpawnScript>().Initiate(tooltips.Replace("[idea]", IdeaList.instance.list[i].name), IdeaList.instance.list[i].color, wref, i);
-            temp.GetComponent<Button>().onClick.AddListener(() => gi.EnableDummy(inDummy));
+
+            temp.GetComponent<Button>().onClick.AddListener(() => gi.EnableDummy(inDummy, c));
 
             submenu[i] = temp;
 
