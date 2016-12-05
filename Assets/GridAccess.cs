@@ -38,9 +38,7 @@ public class GridAccess : UIItem {
             }
         }
         if (inSubMenu) {
-            foreach(GameObject g in Grid) {
-                //g.GetComponent<EventTrigger>().isActiveAndEnabled = false;
-            }
+            clearOutSubMenu();
         }
     }
     public void toggleButtons(bool enabled) {
