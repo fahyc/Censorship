@@ -33,6 +33,7 @@ public class GridAccess : UIItem {
                 g.GetComponent<Button>().onClick = emptySlot.GetComponent<Button>().onClick;
                 // g.GetComponent<Button>().GetComponentInChildren<Text>().text = "Empty";
                 g.GetComponent<Button>().onClick.RemoveAllListeners();
+                g.GetComponent<SpawnScript>().mouseOver = "";
                 assignButton(g, emptySlot);
 
             }
@@ -82,6 +83,8 @@ public class GridAccess : UIItem {
                     if (s.product != null) {
                         Grid[i].GetComponent<SpawnScript>().mouseOver = "($" + s.product.initialCost + " | " +
                             s.product.upkeep + "/Day) " + s.mouseOver;
+                    } else {
+                        Grid[i].GetComponent<SpawnScript>().mouseOver = "";
                     }
 					// set the image component of the grid
 					assignButton(Grid[i], cc.commands[i]);
