@@ -126,10 +126,12 @@ public class BasicVision : NetworkBehaviour {
             if (add)
             {
                 vis.AddLurker(gameObject);
+                /*
                 if(!vis.visibleToLurkers && !vis.hasAuthority)
                 {
                     soundObj.Play();
                 }
+                */
             } else {
                 vis.RemoveLurker(gameObject);
             }

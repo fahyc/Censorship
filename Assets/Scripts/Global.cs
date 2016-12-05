@@ -368,8 +368,9 @@ public class Global : NetworkBehaviour {
 				//print("start: " + center  + "width: " + width + " hit " + selectCol.Length + " objects" );
 				for (int i = 0; i < selectCol.Length; i++)
 				{
+					//print(selectCol[i].gameObject);
 					Inspectable temp = selectCol[i].GetComponent<Inspectable>();
-					if (temp && temp.enabled)
+					if (canBeSelected(temp))
 					{
 						select(temp);
 					}
@@ -400,7 +401,7 @@ public class Global : NetworkBehaviour {
 				{//try inspecting something
 					Inspectable temp = hits[i].GetComponent<Inspectable>();
 					// Make sure we have authority on the object we're looking at
-					if (temp && temp.hasAuthority && temp.enabled)
+					if (canBeSelected(temp))
 					{
 						// print("enabling Inspect");
 						//						inspector.Enable(temp.gameObject);
@@ -447,8 +448,30 @@ public class Global : NetworkBehaviour {
 		upkeep += amount;
 	}
 
+	bool canBeSelected(Inspectable ins)
+	{
+		if (!ins) { return false; }
+		Office office = ins.GetComponent<Office>();
+		if(office && office.index == playerIdeaIndex)
+		{
+			return true;
+		}
+		OfficeSlot slot = ins.GetComponent<OfficeSlot>();
+		if (slot)
+		{
+			return true;
+		}
+		if (ins.hasAuthority && ins.enabled)
+		{
+			return true;
+		}
+		return false;
+
+	}
+
 	void select(Inspectable obj)
 	{
+
 		Spawnable temp = obj.GetComponent<Spawnable>();
 		if (temp)
 		{
