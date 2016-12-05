@@ -8,8 +8,16 @@ public class TeamLobbyPlayer : NetworkLobbyPlayer {
     public override void OnClientEnterLobby()
     {
         base.OnClientEnterLobby();
-        TeamLobbyManager._singleton.updatePlayerCount(1);
+        // initial count update
+        TeamLobbyManager._singleton.playerCount++;
         LobbyMenu._instance.updatePlayerCount(TeamLobbyManager._singleton.playerCount);
+        TeamLobbyManager._singleton.updateClientNumbers();
+    }
+
+    [ClientRpc]
+    public void RpcUpdateClientNumbers(int count)
+    {
+        LobbyMenu._instance.updatePlayerCount(count);
     }
 
     public override void OnStartLocalPlayer()
@@ -33,14 +41,12 @@ public class TeamLobbyPlayer : NetworkLobbyPlayer {
 
     public void OnDestroy()
     {
-        TeamLobbyManager._singleton.updatePlayerCount(-1);
+        TeamLobbyManager._singleton.playerCount--;
+        TeamLobbyManager._singleton.updateClientNumbers();
 
         if (isLocalPlayer)
         {
             LobbyMenu._instance.clearList();
-        }
-        else {
-            LobbyMenu._instance.updatePlayerCount(TeamLobbyManager._singleton.playerCount);
         }
     }
 }

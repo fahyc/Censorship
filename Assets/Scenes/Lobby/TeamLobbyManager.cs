@@ -11,9 +11,7 @@ using System;
 
 public class TeamLobbyManager : NetworkLobbyManager {
 
-    public List<int> ideas;
-    public static List<int> playerIdeas;
-    List<int> ideasLeft;
+    public static List<int> playerIdeas = new List<int>();
 
     public static TeamLobbyManager _singleton;
 
@@ -104,61 +102,22 @@ public class TeamLobbyManager : NetworkLobbyManager {
         playScene = scenario;
     }
 
-    public void updatePlayerCount(int n)
+    public void updateClientNumbers()
     {
-        playerCount += n;
-    }
-
-    public override void OnLobbyStartServer()
-    {
-        if (ideas.Count < maxPlayers)
-            Debug.LogWarning("Possible to have players on same team! maxPlayers > ideaCount");
-
-        teamAssignments = new Dictionary<NetworkConnection, int>();
-        playerIdeas = new List<int>(ideas);
-    }
-	
-	public override GameObject OnLobbyServerCreateLobbyPlayer (NetworkConnection conn, short playerControllerId) {
-
-        if (playerIdeas.Count <= 0)
+        foreach(TeamLobbyPlayer p in lobbySlots)
         {
-            Debug.LogWarning("Run out of team assignments! Defaulting to 0");
-            teamAssignments.Add(conn, 0);
+            if (p != null)
+                p.RpcUpdateClientNumbers(playerCount);
         }
-
-        int i = UnityEngine.Random.Range(0, playerIdeas.Count);
-
-        teamAssignments.Add(conn, playerIdeas[i]);
-
-        playerIdeas.RemoveAt(i);
-
-        return base.OnLobbyServerCreateLobbyPlayer(conn, playerControllerId);
-	}
+    }
 
     public override GameObject OnLobbyServerCreateGamePlayer(NetworkConnection conn, short playerControllerId)
     {
-        foreach (PlayerStartPosition p in FindObjectsOfType<PlayerStartPosition>())
-        {
-            if (p.ideaIndex == teamAssignments[conn])
-            {
-                GameObject go = (GameObject)GameObject.Instantiate(gamePlayerPrefab, p.transform.position, Quaternion.identity);
-                go.GetComponent<Global>().playerIdeaIndex = teamAssignments[conn];
-
-                go.SetActive(true);
-
-                return go;
-            }
-        }
-
-        Debug.LogWarning("Unable to find start position with correct idea index! player spawn is null");
-        return null;
-    }
-
-
-    // Client callbacks
-    // ===========
-
-    public override void OnClientError(NetworkConnection conn, int errorCode)
-    {
+        PlayerStartPosition p = GetStartPosition().GetComponent<PlayerStartPosition>();
+        GameObject go = (GameObject)GameObject.Instantiate(gamePlayerPrefab, p.transform.position, Quaternion.identity);
+        go.GetComponent<Global>().playerIdeaIndex = p.ideaIndex;
+        playerIdeas.Add(p.ideaIndex);
+        go.SetActive(true);
+        return go;
     }
 }
