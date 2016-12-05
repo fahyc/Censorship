@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine.Events;
-
+using UnityEngine.EventSystems;
 public class GridAccess : UIItem {
     public string selectedUnit;
     public GameObject[] Grid;
@@ -38,7 +38,9 @@ public class GridAccess : UIItem {
             }
         }
         if (inSubMenu) {
-            clearOutSubMenu();
+            foreach(GameObject g in Grid) {
+                //g.GetComponent<EventTrigger>().isActiveAndEnabled = false;
+            }
         }
     }
     public void toggleButtons(bool enabled) {
@@ -48,7 +50,9 @@ public class GridAccess : UIItem {
     }
     // Update is called once per frame
     void Update() {
-        
+        if (inSubMenu) {
+            print("we in there");
+        }
     }
     public void clearOutSubMenu() {
         foreach (GameObject s in submenu) {
@@ -77,9 +81,10 @@ public class GridAccess : UIItem {
 
 					Grid[i].GetComponent<Button>().onClick = cc.commands[i].GetComponent<Button>().onClick;
                     SpawnScript s = cc.commands[i].GetComponent<SpawnScript>();
-                    
-                    Grid[i].GetComponent<SpawnScript>().mouseOver = "($" + s.product.initialCost + " | " +
-                        s.product.upkeep + "/Day) " + s.mouseOver;
+                    if (s.product != null) {
+                        Grid[i].GetComponent<SpawnScript>().mouseOver = "($" + s.product.initialCost + " | " +
+                            s.product.upkeep + "/Day) " + s.mouseOver;
+                    }
 					// set the image component of the grid
 					assignButton(Grid[i], cc.commands[i]);
 
