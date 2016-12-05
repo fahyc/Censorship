@@ -17,7 +17,10 @@ public class Office : Spawnable {
     public AudioSource soundObj, soundObj2;
     bool built = false;
 
-	[SyncVar]
+    float prevDef = 0;
+    bool kill = false;
+
+    [SyncVar]
 	NetworkInstanceId slotId;
 	
 
@@ -36,15 +39,15 @@ public class Office : Spawnable {
 
 	// Update is called once per frame
 	void Update() {
-		if (isServer)
+        prevDef = defenses;
+        if (isServer)
 		{
 			if (slot.mainIdea != index)
 			{
 				defenses -= captureSpeed * Time.deltaTime;
 				if (defenses <= 0)
 				{
-                    soundObj.Play();
-                    NetworkServer.Destroy(gameObject);
+                    kill = true;
 				}
 			}
 			else
@@ -52,12 +55,6 @@ public class Office : Spawnable {
 				defenses += captureSpeed * Time.deltaTime;
 				defenses = Mathf.Clamp01(defenses);
 			}
-
-            if(defenses >= 1 && !built)
-            {
-                soundObj2.Play();
-                built = true;
-            }
 			//return;
 
 			if (slotId != NetworkInstanceId.Invalid)
@@ -65,6 +62,24 @@ public class Office : Spawnable {
 				slotId = slot.GetComponent<NetworkIdentity>().netId;
 			}
 		}
+        if(isClient) {
+            if (index == Global.getLocalPlayer().playerIdeaIndex)
+            {
+                if (defenses <= 0 && prevDef > defenses)
+                {
+                    soundObj.Play();
+                }
+                if (defenses >= 1 && !built)
+                {
+                    soundObj2.Play();
+                    built = true;
+                }
+            }
+        }
+        if(kill)
+        {
+            NetworkServer.Destroy(gameObject);
+        }
 		bar.SetFill(defenses);
 	}
 

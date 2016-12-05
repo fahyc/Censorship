@@ -11,6 +11,8 @@ public class VisibilityCheck : NetworkBehaviour {
     HashSet<VisibilityCheck> connectedEntities = new HashSet<VisibilityCheck>();
     HashSet<Spawnable> lurkersWatching = new HashSet<Spawnable>();
 
+    AudioSource soundObj;
+
     /*
 	[Server]
 	void Awake()
@@ -20,6 +22,7 @@ public class VisibilityCheck : NetworkBehaviour {
 
     public override void OnStartServer()
     {
+        soundObj = GameObject.FindGameObjectWithTag("enemySeenSound").GetComponent<AudioSource>();
         /*
         // We need to initialize visibility for lurkers
         Collider2D c = GetComponent<Collider2D>();
