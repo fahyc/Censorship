@@ -60,10 +60,17 @@ public class Office : Spawnable {
 			}
 		}
         if(isClient) {
-            if (defenses >= 1 && !built)
+            if(hasAuthority)
             {
-                soundObj2.Play();
-                built = true;
+                if (defenses <= 0)
+                {
+                    soundObj.Play();
+                }
+                if (defenses >= 1 && !built)
+                {
+                    soundObj2.Play();
+                    built = true;
+                }
             }
         }
 		bar.SetFill(defenses);
