@@ -11,6 +11,7 @@ public class LobbyMenu : MonoBehaviour, IPListener {
     public GameObject mainPanel;
 
     // prefabs
+    public GameObject lobbyManagerPrefab;
     public GameObject scrollViewPrefab;
     public GameObject gameInfoPrefab;
     public GameObject hostMenuPrefab;
@@ -53,8 +54,8 @@ public class LobbyMenu : MonoBehaviour, IPListener {
     void Start()
     {
         _instance = this;
-        manager = GameObject.FindObjectOfType<TeamLobbyManager>();
-        managerHUD = manager.GetComponent<NetworkManagerHUD>();
+        manager = Instantiate(lobbyManagerPrefab).GetComponent<TeamLobbyManager>();
+        Debug.Log(manager);
         aws = manager.GetComponent<AWSTest>();
         scrollView = Instantiate(scrollViewPrefab);
         scrollView.transform.SetParent(mainPanel.transform);
@@ -131,6 +132,7 @@ public class LobbyMenu : MonoBehaviour, IPListener {
     // Show a screen to set up the information for the game being hosted 
     public void toggleHostScreen()
     {
+        // stop hosting an existing game / close client
         clearList();
         if (gameHostMenu == null)
         {
@@ -144,18 +146,36 @@ public class LobbyMenu : MonoBehaviour, IPListener {
 
             // also disable refreshing game list
             mainPanel.transform.Find("ButtonPanel/RefreshButton").GetComponent<Button>().interactable = false;
+            mainPanel.transform.Find("ButtonPanel/HostGameButton").GetComponent<Button>().interactable = false;
         }
         else {
             gameHostMenu = null;
 
             // also enable refreshing game list
+            mainPanel.transform.Find("ButtonPanel/HostGameButton").GetComponent<Button>().interactable = true;
             mainPanel.transform.Find("ButtonPanel/RefreshButton").GetComponent<Button>().interactable = true;
         }
     }
 
     public void requestGameList()
     {
+        // first stop client/host if needed
+        manager.StopHost();
+        // make refresh button usable again
+        mainPanel.transform.Find("ButtonPanel/RefreshButton").GetComponent<Button>().interactable = true;
+        mainPanel.transform.Find("ButtonPanel/HostGameButton").GetComponent<Button>().interactable = true;
+
         aws.RequestUpdate(this);
+    }
+
+    public void exitLobbyMenu(int index)
+    {
+        // cleanly exit lobby stuff
+        manager.StopHost();
+        manager.dontDestroyOnLoad = false;
+        Destroy(manager.gameObject);
+        TeamLobbyManager.Shutdown();
+        SceneManager.LoadScene(index);
     }
 
     // actually host a game given the information
@@ -244,6 +264,9 @@ public class LobbyMenu : MonoBehaviour, IPListener {
         Button ready = lobbyInfo.transform.Find("Buttons/ReadyButton").GetComponent<Button>();
         ready.onClick.AddListener(() => ready.interactable = false);
 
+        mainPanel.transform.Find("ButtonPanel/RefreshButton").GetComponent<Button>().interactable = false;
+        mainPanel.transform.Find("ButtonPanel/HostGameButton").GetComponent<Button>().interactable = false;
+
         Text t = lobbyInfo.transform.Find("PlayerCount/Current").GetComponent<Text>();
         playerCountText = t;
     }
@@ -251,12 +274,5 @@ public class LobbyMenu : MonoBehaviour, IPListener {
     public GameObject getLobbyInfo()
     {
         return lobbyInfo;
-    }
-
-    // for debug purposes
-    public void toggleNetManagerGUI()
-    {
-        manager.showLobbyGUI = !manager.showLobbyGUI;
-        managerHUD.showGUI = !managerHUD.showGUI;
     }
 }
