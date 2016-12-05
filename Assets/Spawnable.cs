@@ -13,13 +13,15 @@ public class Spawnable : NetworkBehaviour {
     public bool disabled = false;
     public Color disabledColor = Color.gray;
 
+    AudioSource sound;
+
 	
 	void Start()
 	{
-		
-		//GetComponent<SpriteRenderer>().color = IdeaList.instance.list[index].color;
-	}
-	
+        sound = GameObject.FindGameObjectWithTag("unitLostSound").GetComponent<AudioSource>();
+        //GetComponent<SpriteRenderer>().color = IdeaList.instance.list[index].color;
+    }
+
 
     //public override void OnStartLocalPlayer() {
     //    owningPlayer = LayerMask.NameToLayer("PlayerOwned");
@@ -47,5 +49,15 @@ public class Spawnable : NetworkBehaviour {
 		{
 			global.addUpkeep(-upkeep);
 		}
-	}
+
+        if (isClient && hasAuthority)
+        {
+            sound = GameObject.FindGameObjectWithTag("unitLostSound").GetComponent<AudioSource>();
+            if(sound != null)
+            {
+                sound.Play();
+            }
+            
+        }
+    }
 }
