@@ -52,19 +52,20 @@ public class Office : Spawnable {
 				defenses += captureSpeed * Time.deltaTime;
 				defenses = Mathf.Clamp01(defenses);
 			}
-
-            if(defenses >= 1 && !built)
-            {
-                soundObj2.Play();
-                built = true;
-            }
 			//return;
 
 			if (slotId != NetworkInstanceId.Invalid)
 			{
 				slotId = slot.GetComponent<NetworkIdentity>().netId;
 			}
-		}
+		} else
+        {
+            if (defenses >= 1 && !built)
+            {
+                soundObj2.Play();
+                built = true;
+            }
+        }
 		bar.SetFill(defenses);
 	}
 
