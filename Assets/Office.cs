@@ -60,7 +60,7 @@ public class Office : Spawnable {
 			}
 		}
         if(isClient) {
-            if(hasAuthority)
+            if (index == Global.getLocalPlayer().playerIdeaIndex)
             {
                 if (defenses <= 0)
                 {
