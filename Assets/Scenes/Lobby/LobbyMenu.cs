@@ -44,6 +44,7 @@ public class LobbyMenu : MonoBehaviour, IPListener {
         public string name;
         public string scenario;
         public int maxPlayers;
+        public bool isInternetGame;
     }
 
     List<GameInfo> availableGames;
@@ -104,6 +105,11 @@ public class LobbyMenu : MonoBehaviour, IPListener {
         newGame.transform.Find("ScenarioName").GetComponent<Text>().text = info.scenario;
         newGame.transform.Find("NumPlayers").GetComponent<Text>().text = newGame.transform.Find("NumPlayers").GetComponent<Text>().text.Replace("[max]", info.maxPlayers.ToString());
         newGame.transform.Find("JoinButton").GetComponent<Button>().onClick.AddListener(() => joinGame(info));
+        if (info.isInternetGame)
+            newGame.transform.Find("IsLocal").GetComponent<Text>().text = "Internet";
+        else
+            newGame.transform.Find("IsLocal").GetComponent<Text>().text = "Local";
+
         newGame.transform.SetParent(gameList.transform);
     }
 
@@ -114,7 +120,6 @@ public class LobbyMenu : MonoBehaviour, IPListener {
         lobbyInfo.transform.Find("Buttons/CancelButton").GetComponent<Button>().onClick.AddListener(manager.StopClient);
 
         // init UPnP for client as well
-        manager.InitializePorts();
         Debug.Log("Attempting to join game at " + info.ip + ":" + info.port);
 
         // assign proper IP first
@@ -182,6 +187,7 @@ public class LobbyMenu : MonoBehaviour, IPListener {
         info.name = gameName;
         info.scenario = scenarioName;
         info.maxPlayers = maxPlayers;
+        info.isInternetGame = TeamLobbyManager.upnp_enabled;
 
         // show the proper info onscreen
         displayLobbyInfo(info);
