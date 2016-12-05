@@ -7,6 +7,7 @@ public class BasicVision : NetworkBehaviour {
 
     public bool seesAll = false;
     CircleCollider2D visionCollider;
+    AudioSource soundObj;
 
     public override void OnStartClient()
     {
@@ -67,8 +68,8 @@ public class BasicVision : NetworkBehaviour {
     // get initial nodes
     public override void OnStartServer()
     {
+        soundObj = GameObject.FindGameObjectWithTag("enemySeenSound").GetComponent<AudioSource>();
         // Just do a simple circle overlap check for colliders when spawned
-
         CircleCollider2D c = null;
         foreach (CircleCollider2D col in GetComponentsInChildren<CircleCollider2D>())
         {
@@ -123,9 +124,15 @@ public class BasicVision : NetworkBehaviour {
         if (vis != null)
         {
             if (add)
+            {
                 vis.AddLurker(gameObject);
-            else
+                if(!vis.visibleToLurkers && !vis.hasAuthority)
+                {
+                    soundObj.Play();
+                }
+            } else {
                 vis.RemoveLurker(gameObject);
+            }
             vis.GetComponent<NetworkIdentity>().RebuildObservers(false);
         }
     }

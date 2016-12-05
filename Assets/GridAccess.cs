@@ -33,6 +33,7 @@ public class GridAccess : UIItem {
                 g.GetComponent<Button>().onClick = emptySlot.GetComponent<Button>().onClick;
                 // g.GetComponent<Button>().GetComponentInChildren<Text>().text = "Empty";
                 g.GetComponent<Button>().onClick.RemoveAllListeners();
+                g.GetComponent<SpawnScript>().mouseOver = "";
                 assignButton(g, emptySlot);
 
             }
@@ -48,8 +49,8 @@ public class GridAccess : UIItem {
     }
     // Update is called once per frame
     void Update() {
-        if (inSubMenu) {
-            print("we in there");
+        foreach(GameObject g in Grid) {
+            g.GetComponent<SpawnScript>().isEnabled = !inSubMenu;
         }
     }
     public void clearOutSubMenu() {
@@ -58,7 +59,7 @@ public class GridAccess : UIItem {
                 Destroy(s);
             }
         }
-        
+        inSubMenu = false;
     }
     public void OnSelectUnit(GameObject newUnit) {
         if (newUnit == null) {
@@ -82,6 +83,8 @@ public class GridAccess : UIItem {
                     if (s.product != null) {
                         Grid[i].GetComponent<SpawnScript>().mouseOver = "($" + s.product.initialCost + " | " +
                             s.product.upkeep + "/Day) " + s.mouseOver;
+                    } else {
+                        Grid[i].GetComponent<SpawnScript>().mouseOver = "";
                     }
 					// set the image component of the grid
 					assignButton(Grid[i], cc.commands[i]);

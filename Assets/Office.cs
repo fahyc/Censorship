@@ -14,14 +14,19 @@ public class Office : Spawnable {
 
 	public float captureSpeed = .2f;
 
+    public AudioSource soundObj, soundObj2;
+    bool built = false;
+
 	[SyncVar]
 	NetworkInstanceId slotId;
 	
 
 	// Use this for initialization
 	void Start () {
-		//slot = GetComponentInParent<OfficeSlot>();
-		defenses = 0;
+        soundObj = GameObject.FindGameObjectWithTag("officeLostSound").GetComponent<AudioSource>();
+        soundObj2 = GameObject.FindGameObjectWithTag("officeEstablishedSound").GetComponent<AudioSource>();
+        //slot = GetComponentInParent<OfficeSlot>();
+        defenses = 0;
 		bar = Instantiate(bar);
 		bar.transform.SetParent(transform);
 		bar.transform.localPosition = barOffset;
@@ -38,7 +43,8 @@ public class Office : Spawnable {
 				defenses -= captureSpeed * Time.deltaTime;
 				if (defenses <= 0)
 				{
-					NetworkServer.Destroy(gameObject);
+                    soundObj.Play();
+                    NetworkServer.Destroy(gameObject);
 				}
 			}
 			else
@@ -46,6 +52,12 @@ public class Office : Spawnable {
 				defenses += captureSpeed * Time.deltaTime;
 				defenses = Mathf.Clamp01(defenses);
 			}
+
+            if(defenses >= 1 && !built)
+            {
+                soundObj2.Play();
+                built = true;
+            }
 			//return;
 
 			if (slotId != NetworkInstanceId.Invalid)

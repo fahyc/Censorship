@@ -9,6 +9,7 @@ public class SpawnScript : MonoBehaviour {
 	public Spawnable product;
 	public string mouseOver;
 	public int index;
+    public bool isEnabled=true;
 	Image img;
 
 	//public EventTrigger trigger; 
@@ -55,7 +56,7 @@ public class SpawnScript : MonoBehaviour {
 	{
         //print("activating tooltip with " + mouseOver + " tooltip " + tooltip + "|");
         //print(product + " is a thing " );
-        tooltip.Activate(mouseOver);
+        if(isEnabled) tooltip.Activate(mouseOver);
 	}
 	public void ToolTipOff()
 	{
