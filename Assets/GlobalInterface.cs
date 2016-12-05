@@ -11,6 +11,12 @@ public class GlobalInterface : MonoBehaviour {
         if (global != null)
             global.EnableDummy(dummy);
 	}
+
+    public void EnableDummy(DummyUnit dummy, Color c)
+    {
+        if (global != null)
+            global.EnableDummy(dummy, c);
+    }
 	/*
 	public void SetTool(Spawnable obj, int index)
 	{

@@ -149,11 +149,13 @@ public class GridAccess : UIItem {
         clearButtons(true);
         for (int i = 0; i < IdeaList.instance.list.Length; i++) {
             GameObject temp = Instantiate(buttons);
+            Color c = IdeaList.instance.list[i].color;
             if (inDummy.name == "DummyNode")
                 temp.GetComponent<SpawnScript>().Initiate(tooltips.Replace("[idea]", IdeaList.instance.list[i].name), IdeaList.instance.list[i].color, sref, i);
             else if (inDummy.name == "DummyWall")
                 temp.GetComponent<SpawnScript>().Initiate(tooltips.Replace("[idea]", IdeaList.instance.list[i].name), IdeaList.instance.list[i].color, wref, i);
-            temp.GetComponent<Button>().onClick.AddListener(() => gi.EnableDummy(inDummy));
+
+            temp.GetComponent<Button>().onClick.AddListener(() => gi.EnableDummy(inDummy, c));
 
             submenu[i] = temp;
 

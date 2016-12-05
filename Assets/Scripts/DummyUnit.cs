@@ -20,6 +20,9 @@ public class DummyUnit : MonoBehaviour {
 
 
 		t.position = g.closestSpawnableLoc(position);
+
+        // DISABLE COLORATION FOR LURKER-SPAWNING
+        /*
 		Collider2D[] hits = Physics2D.OverlapPointAll(t.position);
         bool hitLurker = false;
         foreach(Collider2D h in hits)
@@ -47,5 +50,6 @@ public class DummyUnit : MonoBehaviour {
                 r.color = newCol;
             }
         }
+        */
 	}
 }
