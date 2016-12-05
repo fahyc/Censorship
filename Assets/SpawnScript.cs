@@ -16,12 +16,12 @@ public class SpawnScript : MonoBehaviour {
 
 	public Tooltip tooltip;
 
-	public void Initiate(string tooltip, Color color,Spawnable p, int i)
+	public void Initiate(string t, Color color,Spawnable p, int i)
 	{
 
 		product = p;
         img.color = color;
-        mouseOver = tooltip;
+        mouseOver = t;
 		index = i;
 
 	}
@@ -34,6 +34,7 @@ public class SpawnScript : MonoBehaviour {
 	{
 		//		print(GameObject.FindGameObjectWithTag("Tooltip"));
 		tooltip = GameObject.FindGameObjectWithTag("Tooltip").GetComponent<Tooltip>();
+        
 		//print("Getting tooltip " + tooltip + "|");
 	}
 	
@@ -52,8 +53,9 @@ public class SpawnScript : MonoBehaviour {
     }
 	public void ToolTip()
 	{
-		//print("activating tooltip with " + mouseOver + " tooltip " + tooltip + "|");
-		tooltip.Activate(mouseOver);
+        //print("activating tooltip with " + mouseOver + " tooltip " + tooltip + "|");
+        //print(product + " is a thing " );
+        tooltip.Activate(mouseOver);
 	}
 	public void ToolTipOff()
 	{
