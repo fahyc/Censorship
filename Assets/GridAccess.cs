@@ -78,7 +78,8 @@ public class GridAccess : UIItem {
 					Grid[i].GetComponent<Button>().onClick = cc.commands[i].GetComponent<Button>().onClick;
                     SpawnScript s = cc.commands[i].GetComponent<SpawnScript>();
                     
-                    Grid[i].GetComponent<SpawnScript>().mouseOver = "($" + s.product.initialCost + ") " + s.mouseOver;
+                    Grid[i].GetComponent<SpawnScript>().mouseOver = "($" + s.product.initialCost + " | " +
+                        s.product.upkeep + "/Day) " + s.mouseOver;
 					// set the image component of the grid
 					assignButton(Grid[i], cc.commands[i]);
 
