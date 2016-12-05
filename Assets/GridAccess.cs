@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine.Events;
-
+using UnityEngine.EventSystems;
 public class GridAccess : UIItem {
     public string selectedUnit;
     public GameObject[] Grid;
@@ -33,6 +33,7 @@ public class GridAccess : UIItem {
                 g.GetComponent<Button>().onClick = emptySlot.GetComponent<Button>().onClick;
                 // g.GetComponent<Button>().GetComponentInChildren<Text>().text = "Empty";
                 g.GetComponent<Button>().onClick.RemoveAllListeners();
+                g.GetComponent<SpawnScript>().mouseOver = "";
                 assignButton(g, emptySlot);
 
             }
@@ -48,7 +49,9 @@ public class GridAccess : UIItem {
     }
     // Update is called once per frame
     void Update() {
-        
+        foreach(GameObject g in Grid) {
+            g.GetComponent<SpawnScript>().isEnabled = !inSubMenu;
+        }
     }
     public void clearOutSubMenu() {
         foreach (GameObject s in submenu) {
@@ -56,7 +59,7 @@ public class GridAccess : UIItem {
                 Destroy(s);
             }
         }
-        
+        inSubMenu = false;
     }
     public void OnSelectUnit(GameObject newUnit) {
         if (newUnit == null) {
@@ -77,9 +80,12 @@ public class GridAccess : UIItem {
 
 					Grid[i].GetComponent<Button>().onClick = cc.commands[i].GetComponent<Button>().onClick;
                     SpawnScript s = cc.commands[i].GetComponent<SpawnScript>();
-                    
-                    Grid[i].GetComponent<SpawnScript>().mouseOver = "($" + s.product.initialCost + " | " +
-                        s.product.upkeep + "/Day) " + s.mouseOver;
+                    if (s.product != null) {
+                        Grid[i].GetComponent<SpawnScript>().mouseOver = "($" + s.product.initialCost + " | " +
+                            s.product.upkeep + "/Day) " + s.mouseOver;
+                    } else {
+                        Grid[i].GetComponent<SpawnScript>().mouseOver = "";
+                    }
 					// set the image component of the grid
 					assignButton(Grid[i], cc.commands[i]);
 
