@@ -56,7 +56,8 @@ public class VisibilityCheck : NetworkBehaviour {
             if (r.transform.parent != null && !hasAuthority)
             {
                 r.enabled = false;
-            } else
+            } 
+            if(!hasAuthority)
             {
                 soundObj.Play();
             }
