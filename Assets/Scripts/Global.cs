@@ -166,10 +166,13 @@ public class Global : NetworkBehaviour {
     {
 		if (!isLocalPlayer)
 		{
-			//Destroy(gameObject);
+            //Destroy(gameObject);
+            Debug.Log("Not local player, can't spawn");
 			return;
 		}
 
+        // NO NEED TO CHECK FOR VISIBILITY WHEN SPAWNING
+        /**
         // check that we're spawning inside visible FoW zone
         Collider2D[] hits = Physics2D.OverlapPointAll(pos);
         bool hitLurker = false;
@@ -181,8 +184,10 @@ public class Global : NetworkBehaviour {
 
         if (!hitLurker) // we tried to spawn in a disallowed area
         {
+            Debug.Log("Could not spawn because no lurker");
             return;
         }
+        */
 		
         Spawnable costOfUnit = prefabObject.GetComponent<Spawnable>();
 //		print("Spawning with cost: " + costOfUnit);
@@ -376,9 +381,11 @@ public class Global : NetworkBehaviour {
 			selectStart = Vector3.zero;
 			if (currentTool)
 			{//spawn whatever is selected
-				//Vector3 position = Camera.main.ScreenToWorldPoint(Input.mousePosition.append(Camera.main.transform.position.z * -1));
-				if(!overlappingFocusable())
-	                SpawnObj(currentTool, activeDummy.transform.position, toolIndex);
+             //Vector3 position = Camera.main.ScreenToWorldPoint(Input.mousePosition.append(Camera.main.transform.position.z * -1));
+                if (!overlappingFocusable())
+                {
+                    SpawnObj(currentTool, activeDummy.transform.position, toolIndex);
+                }
 			}
 			else {
 				//or if there is nothing to spawn, clear any focus and ui elements, or inspect whatever is below the mouse.
@@ -512,6 +519,12 @@ public class Global : NetworkBehaviour {
         Vector3 pos= Camera.main.ScreenToWorldPoint(Input.mousePosition.append(Camera.main.transform.position.z * -1));
         activeDummy = (DummyUnit) Instantiate(dummyPrefab, pos, Quaternion.identity);
 //        print(activeDummy);
+    }
+
+    public void EnableDummy(DummyUnit dummyPrefab, Color c)
+    {
+        EnableDummy(dummyPrefab);
+        activeDummy.GetComponent<SpriteRenderer>().color = c;
     }
 
 	public void DisableDummy()
