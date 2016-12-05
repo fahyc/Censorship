@@ -48,8 +48,8 @@ public class GridAccess : UIItem {
     }
     // Update is called once per frame
     void Update() {
-        if (inSubMenu) {
-            print("we in there");
+        foreach(GameObject g in Grid) {
+            g.GetComponent<SpawnScript>().isEnabled = !inSubMenu;
         }
     }
     public void clearOutSubMenu() {
@@ -58,7 +58,7 @@ public class GridAccess : UIItem {
                 Destroy(s);
             }
         }
-        
+        inSubMenu = false;
     }
     public void OnSelectUnit(GameObject newUnit) {
         if (newUnit == null) {
