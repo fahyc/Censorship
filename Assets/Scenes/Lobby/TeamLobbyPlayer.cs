@@ -14,8 +14,7 @@ public class TeamLobbyPlayer : NetworkLobbyPlayer {
         TeamLobbyManager._singleton.updateClientNumbers();
     }
 
-    [ClientRpc]
-    public void RpcUpdateClientNumbers(int count)
+    public void updateClientNumbers(int count)
     {
         LobbyMenu._instance.updatePlayerCount(count);
     }
@@ -47,6 +46,7 @@ public class TeamLobbyPlayer : NetworkLobbyPlayer {
         if (isLocalPlayer)
         {
             LobbyMenu._instance.clearList();
+            LobbyMenu._instance.requestGameList();
         }
     }
 }
