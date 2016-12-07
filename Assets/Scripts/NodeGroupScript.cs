@@ -329,13 +329,7 @@ public class NodeGroupScript : NetworkBehaviour {
             float[] ideaStrengths = new float[IdeaList.instance.list.Length];
             for (int j = 0; j < ideaStrengths.Length; j++)
             {
-                if(TeamLobbyManager.playerIdeas.Contains(j))
-                {
-                    ideaStrengths[j] = 0.0f;
-                } else
-                {
-                    ideaStrengths[j] = Random.Range(0f, 1f);
-                }
+                ideaStrengths[j] = Random.Range(0f, 1f);
             }
             if(mainIdea != "")
             {
