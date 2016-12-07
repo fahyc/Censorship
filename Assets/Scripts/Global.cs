@@ -146,8 +146,8 @@ public class Global : NetworkBehaviour {
 		if (gameOverButton)
 		{
 			ggInfo = gameOverButton.GetComponent<Text>();
+			gameOverButton.gameObject.SetActive(false);
 		}
-        gameOverButton.gameObject.SetActive(false);
     }
 	
     [Command]
