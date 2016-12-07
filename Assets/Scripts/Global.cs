@@ -71,6 +71,7 @@ public class Global : NetworkBehaviour {
 
     bool winner = false;
     bool gameOver = false;
+    public Button gameOverButton;
     public Text ggInfo;
 
 	//void Start()
@@ -141,8 +142,10 @@ public class Global : NetworkBehaviour {
 		}
 		WinConditionChecker.instance.activePlayerIdeas.Add(playerIdeaIndex);
 		WinConditionChecker.instance.activePlayerIdeas.Add(playerIdeaIndex);
-		ggInfo = GameObject.FindGameObjectsWithTag("GameOver")[0].GetComponent<Text>();
-	}
+		gameOverButton = GameObject.FindGameObjectsWithTag("GameOver")[0].GetComponent<Button>();
+        ggInfo = gameOverButton.GetComponent<Text>();
+        gameOverButton.gameObject.SetActive(false);
+    }
 	
     [Command]
     void CmdSpawnObj(int prefabIndex, Vector2 position, int index)
@@ -218,6 +221,7 @@ public class Global : NetworkBehaviour {
             {
                 if(ggInfo != null)
                 {
+                    gameOverButton.gameObject.SetActive(true);
                     ggInfo.text = "YOU WON!";
                     ggInfo.enabled = true;
                 }
@@ -225,6 +229,7 @@ public class Global : NetworkBehaviour {
             {
                 if (ggInfo != null)
                 {
+                    gameOverButton.gameObject.SetActive(true);
                     ggInfo.text = "YOU LOST!";
                     ggInfo.enabled = true;
                 }

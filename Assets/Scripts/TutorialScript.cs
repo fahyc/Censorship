@@ -79,7 +79,7 @@ public class TutorialScript : MonoBehaviour {
             openPrompt();
         }
         //promptNum++;
-        if(promptNum > 10)
+        if(promptNum >= 10)
         {
             TeamLobbyManager._singleton.StopHost();
         }
