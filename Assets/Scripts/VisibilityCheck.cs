@@ -101,7 +101,7 @@ public class VisibilityCheck : NetworkBehaviour {
                     bool isSeen = false;
                     foreach (Spawnable l in lurkersWatching)
                     {
-                        if (owner == l.GetComponent<NetworkIdentity>().clientAuthorityOwner && l.GetComponent<BasicVision>().seesAll)
+                        if (l && owner == l.GetComponent<NetworkIdentity>().clientAuthorityOwner && l.GetComponent<BasicVision>().seesAll)
                         {
                             isSeen = true;
                             break;
@@ -110,9 +110,6 @@ public class VisibilityCheck : NetworkBehaviour {
 
                     if (!isSeen && owner != null)
                         ;// TargetPlayFoundSound(owner);
-                    else if (owner == null)
-                        // Client authority holder = null, problemo
-                        Debug.LogWarning("No client authority! Cannot play found sound");
                 }
             }
             lurkersWatching.Add(s);
