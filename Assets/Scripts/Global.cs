@@ -143,7 +143,10 @@ public class Global : NetworkBehaviour {
 		WinConditionChecker.instance.activePlayerIdeas.Add(playerIdeaIndex);
 		WinConditionChecker.instance.activePlayerIdeas.Add(playerIdeaIndex);
 		gameOverButton = GameObject.FindGameObjectsWithTag("GameOver")[0].GetComponent<Button>();
-        ggInfo = gameOverButton.GetComponent<Text>();
+		if (gameOverButton)
+		{
+			ggInfo = gameOverButton.GetComponent<Text>();
+		}
         gameOverButton.gameObject.SetActive(false);
     }
 	
