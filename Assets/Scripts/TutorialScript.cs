@@ -22,7 +22,8 @@ public class TutorialScript : MonoBehaviour {
         //TODO: explain unit movement, firing, and fog of war
         promptText.text = text;
         text = "Click on a prompt or information box to close it.";
-        switch(promptNum)
+        promptButton.GetComponent<RectTransform>().sizeDelta = new Vector2(promptText.preferredWidth, promptText.preferredHeight);
+        switch (promptNum)
         {
             case 1:
                 text = "Select a large node whose idea is the same as yours and choose the \"place office\" action.\n\n" +
@@ -55,6 +56,9 @@ public class TutorialScript : MonoBehaviour {
             case 9:
                 introduceFirewalls();
                 break;
+            case 10:
+                closeTutorial();
+                break;
         }
         //introduce office
         //introduce lurkers
@@ -70,6 +74,10 @@ public class TutorialScript : MonoBehaviour {
     {
         promptButton.gameObject.SetActive(false);
         promptNum++;
+        if(promptNum > 10)
+        {
+            TeamLobbyManager._singleton.StopHost();
+        }
     }
 
     void openPrompt()
@@ -155,6 +163,12 @@ public class TutorialScript : MonoBehaviour {
             "\tCan only be placed around the office hiring it.\n" +
             "\tCan be fired or destroyed by enemy hackers and botnets.\n" +
             "\tCannot move and does not requires upkeep.";
+        openPrompt();
+    }
+
+    void closeTutorial()
+    {
+        text = "Click here to exit the tutorial.\n";
         openPrompt();
     }
 }

@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 public class LobbyMenu : MonoBehaviour, IPListener {
 
-    public TeamLobbyManager manager;
+    TeamLobbyManager manager;
     public GameObject mainPanel;
 
     // prefabs
