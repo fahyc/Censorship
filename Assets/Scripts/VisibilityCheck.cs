@@ -9,7 +9,7 @@ public class VisibilityCheck : NetworkBehaviour {
     public bool visibleToLurkers = true;
 
     HashSet<VisibilityCheck> connectedEntities = new HashSet<VisibilityCheck>();
-    HashSet<Spawnable> lurkersWatching = new HashSet<Spawnable>();
+    protected HashSet<Spawnable> lurkersWatching = new HashSet<Spawnable>();
 
     AudioSource soundObj;
 
@@ -101,7 +101,7 @@ public class VisibilityCheck : NetworkBehaviour {
     }
 
     [Server]
-    public void AddLurker(GameObject lurker)
+    public virtual void AddLurker(GameObject lurker)
     {
         Spawnable s = lurker.GetComponent<Spawnable>();
         if (s != null)
@@ -109,7 +109,7 @@ public class VisibilityCheck : NetworkBehaviour {
     }
 
     [Server]
-    public void RemoveLurker(GameObject lurker)
+    public virtual void RemoveLurker(GameObject lurker)
     {
         Spawnable s = lurker.GetComponent<Spawnable>();
         if (s != null)
