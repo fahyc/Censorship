@@ -44,15 +44,16 @@ public class Spawnable : NetworkBehaviour {
 	{
 		//if (Global.isReady())
 //		print("Destroying " + this);
-		Global global = Global.getLocalPlayer();
-		if (global)
-		{
-			global.addUpkeep(-upkeep);
-		}
+		
 
         if (isClient && hasAuthority)
         {
-            try
+			Global global = Global.getLocalPlayer();
+			if (global)
+			{
+				global.addUpkeep(-upkeep);
+			}
+			try
             {
                 sound = GameObject.FindGameObjectWithTag("unitLostSound").GetComponent<AudioSource>();
             } catch
