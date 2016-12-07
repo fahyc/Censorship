@@ -620,13 +620,21 @@ public class Global : NetworkBehaviour {
 		SpawnCircleManager.Clear();
 		int closestIndex = 0;
 		float closestDist = float.MaxValue;
+		bool canAfford = currentTool.initialCost < currentMoney;
 		for(int i = 0; i < selected.Count; i++)
 		{
 			if(selected[i].spawnRange == 0)
 			{
 				continue;
 			}
-			SpawnCircleManager.Spawn(selected[i].spawnRange * 2, selected[i].transform.position);
+			if (canAfford)
+			{
+				SpawnCircleManager.Spawn(selected[i].spawnRange * 2, selected[i].transform.position,SpawnCircleManager.Green);
+			}
+			else
+			{
+				SpawnCircleManager.Spawn(selected[i].spawnRange * 2, selected[i].transform.position,SpawnCircleManager.Red);
+			}
 			float dist = (position - selected[i].transform.position.xy()).magnitude;
 			if (dist < selected[i].spawnRange)
 			{
