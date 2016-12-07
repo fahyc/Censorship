@@ -71,6 +71,7 @@ public class Global : NetworkBehaviour {
 
     bool winner = false;
     bool gameOver = false;
+    public Button gameOverButton;
     public Text ggInfo;
 
 	//void Start()
@@ -141,8 +142,10 @@ public class Global : NetworkBehaviour {
 		}
 		WinConditionChecker.instance.activePlayerIdeas.Add(playerIdeaIndex);
 		WinConditionChecker.instance.activePlayerIdeas.Add(playerIdeaIndex);
-		ggInfo = GameObject.FindGameObjectsWithTag("GameOver")[0].GetComponent<Text>();
-	}
+		gameOverButton = GameObject.FindGameObjectsWithTag("GameOver")[0].GetComponent<Button>();
+        ggInfo = gameOverButton.GetComponent<Text>();
+        gameOverButton.gameObject.SetActive(false);
+    }
 	
     [Command]
     void CmdSpawnObj(int prefabIndex, Vector2 position, int index)
@@ -218,6 +221,7 @@ public class Global : NetworkBehaviour {
             {
                 if(ggInfo != null)
                 {
+                    gameOverButton.gameObject.SetActive(true);
                     ggInfo.text = "YOU WON!";
                     ggInfo.enabled = true;
                 }
@@ -225,6 +229,7 @@ public class Global : NetworkBehaviour {
             {
                 if (ggInfo != null)
                 {
+                    gameOverButton.gameObject.SetActive(true);
                     ggInfo.text = "YOU LOST!";
                     ggInfo.enabled = true;
                 }
@@ -401,7 +406,7 @@ public class Global : NetworkBehaviour {
 				{//try inspecting something
 					Inspectable temp = hits[i].GetComponent<Inspectable>();
 					// Make sure we have authority on the object we're looking at
-					if (canBeSelected(temp))
+					if (canBeSelected(temp) && !overlappingFocusable())
 					{
 						// print("enabling Inspect");
 						//						inspector.Enable(temp.gameObject);
@@ -620,13 +625,21 @@ public class Global : NetworkBehaviour {
 		SpawnCircleManager.Clear();
 		int closestIndex = 0;
 		float closestDist = float.MaxValue;
+		bool canAfford = currentTool.initialCost < currentMoney;
 		for(int i = 0; i < selected.Count; i++)
 		{
 			if(selected[i].spawnRange == 0)
 			{
 				continue;
 			}
-			SpawnCircleManager.Spawn(selected[i].spawnRange * 2, selected[i].transform.position);
+			if (canAfford)
+			{
+				SpawnCircleManager.Spawn(selected[i].spawnRange * 2, selected[i].transform.position,SpawnCircleManager.Green);
+			}
+			else
+			{
+				SpawnCircleManager.Spawn(selected[i].spawnRange * 2, selected[i].transform.position,SpawnCircleManager.Red);
+			}
 			float dist = (position - selected[i].transform.position.xy()).magnitude;
 			if (dist < selected[i].spawnRange)
 			{

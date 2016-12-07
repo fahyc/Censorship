@@ -7,12 +7,13 @@ public class TutorialScript : MonoBehaviour {
     public Button promptButton;
     public Text promptText;
     string text;
-    int promptNum = 0;
+    public int promptNum = 0;
 
 	// Use this for initialization
 	void Start () {
         //promptButton = GetComponent<Button>();
         //promptText = promptButton.GetComponent<Text>();
+        Global.getLocalPlayer().currentMoney = 1000000;
 	}
 	
 	// Update is called once per frame
@@ -22,15 +23,15 @@ public class TutorialScript : MonoBehaviour {
         //TODO: explain unit movement, firing, and fog of war
         promptText.text = text;
         text = "Click on a prompt or information box to close it.";
-        promptButton.GetComponent<RectTransform>().sizeDelta = new Vector2(promptText.preferredWidth, promptText.preferredHeight);
+        //promptButton.GetComponent<RectTransform>().sizeDelta = new Vector2(promptText.preferredWidth, promptText.preferredHeight);
         switch (promptNum)
         {
             case 1:
-                text = "Select a large node whose idea is the same as yours and choose the \"place office\" action.\n\n" +
+                text = "Select an office slot whose idea is the same as yours and choose the \"place office\" action.\n\n" +
                     "Placing an office will allow you to be able to purchase/hire other units.\n\n" +
                     "The large node and the nodes surrounding it represents a cluster.\n" +
-                    "The large node is influenced by the ideas in the cluster and will take on the most prevalant idea.";
-                openPrompt();
+                    "The large node is influenced by the ideas in the cluster and will take on the most prevalent idea.";
+                //openPrompt();
                 break;
             case 2:
                 introduceOffice();
@@ -73,16 +74,21 @@ public class TutorialScript : MonoBehaviour {
     public void closePrompt()
     {
         promptButton.gameObject.SetActive(false);
-        promptNum++;
-        if(promptNum > 10)
+        if(promptNum == 0)
+        {
+            promptNum++;
+            openPrompt();
+        }
+        //promptNum++;
+        if(promptNum >= 10)
         {
             TeamLobbyManager._singleton.StopHost();
         }
     }
 
-    void openPrompt()
+    public void openPrompt()
     {
-        promptButton.GetComponent<RectTransform>().sizeDelta = new Vector2(promptText.preferredWidth, promptText.preferredHeight);
+        //promptButton.GetComponent<RectTransform>().sizeDelta = new Vector2(promptText.preferredWidth, promptText.preferredHeight);
         promptButton.gameObject.SetActive(true);
     }
 
@@ -91,84 +97,91 @@ public class TutorialScript : MonoBehaviour {
         text = "Office\n" +
             "\tAllows you to purchase/hire other units.\n" +
             "\tHas a bar above it that indicates its health.\n" +
-            "\tLooses health when ever a different idea becomes the majority it's cluster.\n" +
-            "\tCannot move and does not require upkeep.";
-        openPrompt();
+            "\tLoses health whenever a different idea becomes the majority its cluster.\n" +
+            "\tOffices cannot move and does not require upkeep.";
+        //openPrompt();
     }
     
     void introduceLurkers()
     {
-        text = "Lurkers\n" +
-            "\tLift the fog of war and provide permanent vision.\n" +
-            "\tCan only be placed around the office hiring it.\n" +
-            "\tCannot be fired nor destroyed by the enemey.\n" +
-            "\tCannot move and does not require upkeep.";
-        openPrompt();
+        text = 
+            "\tLurkers lift the fog of war and provide permanent vision.\n" +
+            "\tThey can only be placed around the office hiring it.\n" +
+            "\tLurkers cannot be fired nor destroyed by the enemey.\n" +
+            "\tThey cannot move and do not require upkeep.\n\n" +
+            "Place a lurker anywhere around your office.";
+        //openPrompt();
     }
 
     void introduceShills()
     {
-        text = "Shills\n" +
-            "\tPeriodically send out a specific idea to any nodes its connected to.\n" +
-            "\tCan only be placed around the office hiring it.\n" +
-            "\tCan be fired or destroyed by enemy hackers and botnets.\n" +
-            "\tCannot move and does not require upkeep.";
-        openPrompt();
+        text = "Shills:\n" +
+            "\t * Periodically send out a specific idea to any nodes its connected to.\n" +
+            "\t * Can only be placed around the office hiring it.\n" +
+            "\t * Can be fired or destroyed by enemy hackers and botnets.\n" +
+            "\t * Cannot move and does not require upkeep.\n\n" +
+            "Place a shill in the spot marked by the box.";
+        //openPrompt();
     }
 
     void introduceWalls()
     {
-        text = "Walls\n" +
+        text = "Walls:\n" +
             "\tBlock out ideas that are the same color as the wall.\n" +
             "\tCan only be placed around the office hiring it.\n" +
             "\tCan be fired or destroyed by enemy hackers and botnets.\n" +
-            "\tCan move and requires upkeep.";
-        openPrompt();
+            "\tCan move and requires upkeep.\n\n" +
+            "Place a wall in the spot marked by the box.";
+        //openPrompt();
     }
 
     void introduceInvestigators()
     {
-        text = "Investigators\n" +
+        text = "Investigator:\n" +
             "\tProvides vision in a small area around it and reveals hidden enemy units.\n" +
             "\tCan only be placed around the office hiring it.\n" +
             "\tCan be fired or destroyed by enemy hackers and botnets.\n" +
-            "\tCan move and requires upkeep.";
-        openPrompt();
+            "\tCan move and requires upkeep.\n\n" +
+            "Place an investigator in the spot marked by the box.";
+        //openPrompt();
     }
 
     void introduceHackers()
     {
-        text = "Hackers\n" +
-            "\tAttacks and destroys visible enemy units.\n" +
-            "\tCan only be placed around the office hiring it.\n" +
+        text = "Hackers:\n" +
+            "\tAttack and destroy visible enemy units.\n" +
+            "\tCan only be placed around the office hiring them.\n" +
             "\tCan be fired or destroyed by enemy hackers and botnets.\n" +
-            "\tCan move and requires upkeep.";
-        openPrompt();
+            "\tCan move and requires upkeep.\n\n" +
+            "Place an hacker in the spot marked by the box.";
+        //openPrompt();
     }
 
     void introduceBotnets()
     {
-        text = "Botnet\n" +
+        text = "Botnet:\n" +
             "\tAttacks and destroys visible enemy units.\n" +
             "\tCan only be placed around the office hiring it.\n" +
             "\tCan be fired or destroyed by enemy hackers and botnets.\n" +
-            "\tCannot move and does not requires upkeep.";
-        openPrompt();
+            "\tCannot move and does not requires upkeep.\n\n" +
+            "Place a botnet in the spot marked by the box.";
+        //openPrompt();
     }
 
     void introduceFirewalls()
     {
-        text = "Firewalls\n" +
-            "\tProvides vision in a large area around it and reveals hidden enemy units.\n" +
+        text = "Firewalls:\n" +
+            "\tProvide vision in a large area and reveal hidden enemy units.\n" +
             "\tCan only be placed around the office hiring it.\n" +
             "\tCan be fired or destroyed by enemy hackers and botnets.\n" +
-            "\tCannot move and does not requires upkeep.";
-        openPrompt();
+            "\tCannot move and do not requires upkeep.\n\n" +
+            "Place a firewall in the spot marked by the box.";
+        //openPrompt();
     }
 
     void closeTutorial()
     {
         text = "Click here to exit the tutorial.\n";
-        openPrompt();
+        //openPrompt();
     }
 }
