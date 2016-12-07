@@ -400,11 +400,18 @@ public class Node : NetworkBehaviour {
 	{
 		for(int i = 0; i < links.Count; i++)
 		{
+            LineRenderer toDestroy = null;
 			if (i < linkObj.Count && linkObj[i])
 			{
-				Destroy(linkObj[i].gameObject);
+				toDestroy = linkObj[i];
 			}
+
 			links[i].links.Remove(this);
+            if (toDestroy)
+            {
+                links[i].linkObj.Remove(toDestroy);
+                NetworkServer.Destroy(toDestroy.gameObject);
+            }
 		}
 	}
 
