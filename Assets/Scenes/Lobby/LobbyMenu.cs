@@ -54,12 +54,20 @@ public class LobbyMenu : MonoBehaviour, IPListener {
         _instance = this;
         Initialize();
     }
-    
-    public void Start()
+
+    void Start()
     {
+        if (scrollView)
+        {
+            Destroy(scrollView);
+            gameList = null;
+        }
+
         scrollView = Instantiate(scrollViewPrefab);
         scrollView.transform.SetParent(mainPanel.transform);
         gameList = scrollView.transform.Find("Viewport/Content").gameObject;
+
+        requestGameList();
     }
 
     public void Initialize()
@@ -99,7 +107,10 @@ public class LobbyMenu : MonoBehaviour, IPListener {
     void refreshGameList(GameInfo[] info)
     {
         if (gameList == null)
+        {
+            Debug.LogWarning("Could not add game list, null reference");
             return;
+        }
 
         clearList();
 
@@ -169,9 +180,13 @@ public class LobbyMenu : MonoBehaviour, IPListener {
 
     public void requestGameList()
     {
-        // first stop client/host if needed
-        manager.StopHost();
         Debug.Log("requesting game list");
+
+        if (mainPanel == null || aws == null)
+        {
+            return;
+        }
+
         // make refresh button usable again
         mainPanel.transform.Find("ButtonPanel/RefreshButton").GetComponent<Button>().interactable = true;
         mainPanel.transform.Find("ButtonPanel/HostGameButton").GetComponent<Button>().interactable = true;
