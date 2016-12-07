@@ -10,7 +10,7 @@ public class GroupFire : MonoBehaviour {
 		for (int i = 0; i < g.selected.Count; i++)
 		{
 			Inspectable inspecting = g.selected[i].GetComponent<Inspectable>();
-			if (!inspecting)
+			if (!inspecting || inspecting.firable == false)
 			{
 				continue;
 			}

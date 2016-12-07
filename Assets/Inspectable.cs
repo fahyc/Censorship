@@ -8,6 +8,7 @@ public class Inspectable : NetworkBehaviour {
 	public float spawnRange = 0;
 
 	public bool selected;
+	public bool firable = true;
 
 	public SpriteRenderer selectorTemplate;
 
