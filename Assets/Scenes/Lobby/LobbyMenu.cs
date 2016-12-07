@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 public class LobbyMenu : MonoBehaviour, IPListener {
 
-    TeamLobbyManager manager;
+    public TeamLobbyManager manager;
     public GameObject mainPanel;
 
     // prefabs
@@ -20,8 +20,6 @@ public class LobbyMenu : MonoBehaviour, IPListener {
     public static LobbyMenu _instance;
 
     Text playerCountText;
-
-    NetworkManagerHUD managerHUD;
 
     GameObject scrollView;
     GameObject gameList;
@@ -51,15 +49,29 @@ public class LobbyMenu : MonoBehaviour, IPListener {
     List<GameInfo> availableGames;
     // GameInfo hostingGame;
 
-    void Start()
+    void Awake()
     {
         _instance = this;
-        manager = Instantiate(lobbyManagerPrefab).GetComponent<TeamLobbyManager>();
-        Debug.Log(manager);
-        aws = manager.GetComponent<AWSTest>();
+        Initialize();
+    }
+    
+    public void Start()
+    {
         scrollView = Instantiate(scrollViewPrefab);
         scrollView.transform.SetParent(mainPanel.transform);
         gameList = scrollView.transform.Find("Viewport/Content").gameObject;
+    }
+
+    public void Initialize()
+    {
+        if (manager == null)
+        {
+            manager = GameObject.FindObjectOfType<TeamLobbyManager>();
+            if (manager == null)
+                manager = Instantiate(lobbyManagerPrefab).GetComponent<TeamLobbyManager>();
+        }
+        Debug.Log("Initializing lobby menu");
+        aws = manager.GetComponent<AWSTest>();
     }
 
     public void getData(string data)
@@ -161,6 +173,7 @@ public class LobbyMenu : MonoBehaviour, IPListener {
     {
         // first stop client/host if needed
         manager.StopHost();
+        Debug.Log("requesting game list");
         // make refresh button usable again
         mainPanel.transform.Find("ButtonPanel/RefreshButton").GetComponent<Button>().interactable = true;
         mainPanel.transform.Find("ButtonPanel/HostGameButton").GetComponent<Button>().interactable = true;
@@ -173,6 +186,7 @@ public class LobbyMenu : MonoBehaviour, IPListener {
         // cleanly exit lobby stuff
         manager.StopHost();
         manager.dontDestroyOnLoad = false;
+        Debug.Log("Destroying manager!");
         Destroy(manager.gameObject);
         TeamLobbyManager.Shutdown();
         SceneManager.LoadScene(index);
