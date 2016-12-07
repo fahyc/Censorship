@@ -13,34 +13,10 @@ public class VisibilityCheck : NetworkBehaviour {
 
     AudioSource soundObj;
 
-    /*
-	[Server]
-	void Awake()
-	{
-		print("awake");
-	}*/
-
-    public override void OnStartServer()
+    public override void OnStartClient()
     {
         soundObj = GameObject.FindGameObjectWithTag("enemySeenSound").GetComponent<AudioSource>();
-        /*
-        // We need to initialize visibility for lurkers
-        Collider2D c = GetComponent<Collider2D>();
-
-        if (c != null) {
-            Collider2D[] visibleNodes = Physics2D.OverlapCircleAll(transform.position, c.radius);
-
-            foreach (Collider2D other in visibleNodes)
-            {
-                Lurker l = other.GetComponent<Lurker>();
-                if (l != null)
-                {
-                    l.ViewObject(c, true);
-                    lurkersWatching.Add(l.GetComponent<Spawnable>());
-                }
-            }
-        }
-        */
+        soundObj.gameObject.AddComponent<EnemySeenSound>();
     }
 
     // For the host client, disable "invisible" objects
@@ -65,6 +41,15 @@ public class VisibilityCheck : NetworkBehaviour {
     public override bool OnCheckObserver(NetworkConnection conn)
     {
         return false;
+    }
+
+    [TargetRpc]
+    public void TargetPlayFoundSound(NetworkConnection target)
+    {
+        if(soundObj && soundObj.GetComponent<EnemySeenSound>())
+            soundObj.GetComponent<EnemySeenSound>().playSound();
+        else
+            Debug.LogWarning("Sound Object not found to play FoundSound!");
     }
 
     // We only want the owner client to observe their Canvas
@@ -104,8 +89,34 @@ public class VisibilityCheck : NetworkBehaviour {
     public virtual void AddLurker(GameObject lurker)
     {
         Spawnable s = lurker.GetComponent<Spawnable>();
+        NetworkConnection owner = s.GetComponent<NetworkIdentity>().clientAuthorityOwner;
         if (s != null)
+        {
+            if (s.GetComponent<BasicVision>().seesAll && (GetComponent<Spawnable>() || GetComponent<Shill>()))
+            {
+                // don't play sound for ourselves
+                if (GetComponent<NetworkIdentity>().clientAuthorityOwner != owner)
+                {
+                    // now check that the owner can't already see the object
+                    bool isSeen = false;
+                    foreach (Spawnable l in lurkersWatching)
+                    {
+                        if (owner == l.GetComponent<NetworkIdentity>().clientAuthorityOwner && l.GetComponent<BasicVision>().seesAll)
+                        {
+                            isSeen = true;
+                            break;
+                        }
+                    }
+
+                    if (!isSeen && owner != null)
+                        ;// TargetPlayFoundSound(owner);
+                    else if (owner == null)
+                        // Client authority holder = null, problemo
+                        Debug.LogWarning("No client authority! Cannot play found sound");
+                }
+            }
             lurkersWatching.Add(s);
+        }
     }
 
     [Server]

@@ -98,14 +98,12 @@ public class LobbyMenu : MonoBehaviour, IPListener {
 
     void refreshGameList(GameInfo[] info)
     {
-        availableGames = new List<GameInfo>(info);
-
         if (gameList == null)
             return;
 
         clearList();
 
-        foreach (GameInfo i in availableGames)
+        foreach (GameInfo i in info)
         {
             addGame(i);
         }
