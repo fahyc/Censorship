@@ -401,7 +401,7 @@ public class Global : NetworkBehaviour {
 				{//try inspecting something
 					Inspectable temp = hits[i].GetComponent<Inspectable>();
 					// Make sure we have authority on the object we're looking at
-					if (canBeSelected(temp))
+					if (canBeSelected(temp) && !overlappingFocusable())
 					{
 						// print("enabling Inspect");
 						//						inspector.Enable(temp.gameObject);
