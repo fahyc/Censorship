@@ -107,7 +107,7 @@ public class TeamLobbyManager : NetworkLobbyManager {
         foreach(TeamLobbyPlayer p in lobbySlots)
         {
             if (p != null)
-                p.RpcUpdateClientNumbers(playerCount);
+                p.updateClientNumbers(playerCount);
         }
     }
 
