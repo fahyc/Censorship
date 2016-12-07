@@ -13,6 +13,7 @@ public class TutorialScript : MonoBehaviour {
 	void Start () {
         //promptButton = GetComponent<Button>();
         //promptText = promptButton.GetComponent<Text>();
+        Global.getLocalPlayer().currentMoney = 1000000;
 	}
 	
 	// Update is called once per frame
