@@ -16,6 +16,7 @@ public class ObjectPool<T> where T : MonoBehaviour{
 	public T Instantiate(T obj)
 	{
 		T product;
+		//Debug.Log("Instantiating " + obj);
 		if(objects.Count == 0)
 		{
 			product = GameObject.Instantiate(obj);
@@ -31,6 +32,7 @@ public class ObjectPool<T> where T : MonoBehaviour{
 	}
 	public void Destroy(T obj)
 	{
+		//Debug.Log("Destroying " + obj);
 		objects.Add(obj);
 		obj.gameObject.SetActive(false);
 	}
@@ -76,7 +78,7 @@ public class GridAccess : UIItem {
         foreach (GameObject g in Grid) {
             if (g.GetComponent<Button>() != null) {
                 //g.GetComponent<Button>().onClick.RemoveAllListeners();
-                g.GetComponent<Button>().onClick = emptySlot.GetComponent<Button>().onClick;
+                //g.GetComponent<Button>().onClick = emptySlot.GetComponent<Button>().onClick;
                 // g.GetComponent<Button>().GetComponentInChildren<Text>().text = "Empty";
                 g.GetComponent<Button>().onClick.RemoveAllListeners();
                 g.GetComponent<SpawnScript>().mouseOver = "";
