@@ -10,8 +10,8 @@ public class Shill : Spawnable
 	// Use this for initialization
 	[ClientCallback]
 	void Update () {
-		print("Starting shill");
-		print("Authority " + hasAuthority);
+		// print("Starting shill");
+		// print("Authority " + hasAuthority);
 		if (!hasAuthority)
 		{
 			return;
