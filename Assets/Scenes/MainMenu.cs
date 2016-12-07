@@ -7,12 +7,12 @@ public class MainMenu: MonoBehaviour
 
     public void loadLevel(string levelName)
     {
-        SceneManager.LoadSceneAsync(levelName);
+        SceneManager.LoadScene(levelName);
     }
 
     public void loadLevel(int index)
     {
-        SceneManager.LoadSceneAsync(index);
+        SceneManager.LoadScene(index);
     }
 
     public void exitApp()
