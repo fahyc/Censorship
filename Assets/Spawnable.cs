@@ -52,7 +52,13 @@ public class Spawnable : NetworkBehaviour {
 
         if (isClient && hasAuthority)
         {
-            sound = GameObject.FindGameObjectWithTag("unitLostSound").GetComponent<AudioSource>();
+            try
+            {
+                sound = GameObject.FindGameObjectWithTag("unitLostSound").GetComponent<AudioSource>();
+            } catch
+            {
+
+            }
             if(sound != null)
             {
                 sound.Play();

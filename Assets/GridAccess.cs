@@ -4,6 +4,53 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
+
+[System.Serializable]
+public class ObjectPool<T> where T : MonoBehaviour{
+	public List<T> objects = new List<T>();
+
+	public GameObject Instantiate(GameObject obj)
+	{
+		return Instantiate(obj.GetComponent<T>()).gameObject;
+	}
+	public T Instantiate(T obj)
+	{
+		T product;
+		//Debug.Log("Instantiating " + obj);
+		if(objects.Count == 0)
+		{
+			product = GameObject.Instantiate(obj);
+		}
+		else
+		{
+			int i = objects.Count - 1;
+			product = objects[i];
+			product.gameObject.SetActive(true);
+			objects.RemoveAt(i);
+		}
+		return product;
+	}
+	public void Destroy(T obj)
+	{
+		//Debug.Log("Destroying " + obj);
+		objects.Add(obj);
+		obj.gameObject.SetActive(false);
+	}
+	public void Destroy(GameObject obj)
+	{
+		T o = obj.GetComponent<T>();
+		if (o)
+		{
+			Destroy(o);
+		}
+		else
+		{
+			Debug.LogError("Error, when destroying " + obj + " there was no component of type " + typeof(T) + " found. Could not add to object pool.");
+		}
+	}
+}
+
+
 public class GridAccess : UIItem {
     public string selectedUnit;
     public GameObject[] Grid;
@@ -17,6 +64,7 @@ public class GridAccess : UIItem {
     public UnityEvent[] AdditionalOnClicks;
     public bool inSubMenu = false;
     public string tooltips = "[idea]";
+	public ObjectPool<Button> pool = new ObjectPool<Button>();
     Global gi;
     // Use this for initialization
     void Start() {
@@ -30,7 +78,7 @@ public class GridAccess : UIItem {
         foreach (GameObject g in Grid) {
             if (g.GetComponent<Button>() != null) {
                 //g.GetComponent<Button>().onClick.RemoveAllListeners();
-                g.GetComponent<Button>().onClick = emptySlot.GetComponent<Button>().onClick;
+                //g.GetComponent<Button>().onClick = emptySlot.GetComponent<Button>().onClick;
                 // g.GetComponent<Button>().GetComponentInChildren<Text>().text = "Empty";
                 g.GetComponent<Button>().onClick.RemoveAllListeners();
                 g.GetComponent<SpawnScript>().mouseOver = "";
@@ -56,7 +104,7 @@ public class GridAccess : UIItem {
     public void clearOutSubMenu() {
         foreach (GameObject s in submenu) {
             if (s != null) {
-                Destroy(s);
+                pool.Destroy(s);
             }
         }
         inSubMenu = false;
@@ -157,7 +205,7 @@ public class GridAccess : UIItem {
     void SubmenuCreation(DummyUnit inDummy) {
         clearButtons(true);
         for (int i = 0; i < IdeaList.instance.list.Length; i++) {
-            GameObject temp = Instantiate(buttons);
+            GameObject temp = pool.Instantiate(buttons);
             Color c = IdeaList.instance.list[i].color;
             if (inDummy.name == "DummyNode")
                 temp.GetComponent<SpawnScript>().Initiate(tooltips.Replace("[idea]", IdeaList.instance.list[i].name), IdeaList.instance.list[i].color, sref, i);
