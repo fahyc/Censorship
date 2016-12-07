@@ -29,7 +29,7 @@ public class TutorialScript : MonoBehaviour {
                 text = "Select an office slot whose idea is the same as yours and choose the \"place office\" action.\n\n" +
                     "Placing an office will allow you to be able to purchase/hire other units.\n\n" +
                     "The large node and the nodes surrounding it represents a cluster.\n" +
-                    "The large node is influenced by the ideas in the cluster and will take on the most prevalant idea.";
+                    "The large node is influenced by the ideas in the cluster and will take on the most prevalent idea.";
                 //openPrompt();
                 break;
             case 2:
@@ -96,36 +96,36 @@ public class TutorialScript : MonoBehaviour {
         text = "Office\n" +
             "\tAllows you to purchase/hire other units.\n" +
             "\tHas a bar above it that indicates its health.\n" +
-            "\tLooses health when ever a different idea becomes the majority it's cluster.\n" +
-            "\tCannot move and does not require upkeep.";
+            "\tLoses health whenever a different idea becomes the majority its cluster.\n" +
+            "\tOffices cannot move and does not require upkeep.";
         //openPrompt();
     }
     
     void introduceLurkers()
     {
-        text = "Lurkers\n" +
-            "\tLift the fog of war and provide permanent vision.\n" +
-            "\tCan only be placed around the office hiring it.\n" +
-            "\tCannot be fired nor destroyed by the enemey.\n" +
-            "\tCannot move and does not require upkeep.\n\n" +
+        text = 
+            "\tLurkers lift the fog of war and provide permanent vision.\n" +
+            "\tThey can only be placed around the office hiring it.\n" +
+            "\tLurkers cannot be fired nor destroyed by the enemey.\n" +
+            "\tThey cannot move and do not require upkeep.\n\n" +
             "Place a lurker anywhere around your office.";
         //openPrompt();
     }
 
     void introduceShills()
     {
-        text = "Shills\n" +
-            "\tPeriodically send out a specific idea to any nodes its connected to.\n" +
-            "\tCan only be placed around the office hiring it.\n" +
-            "\tCan be fired or destroyed by enemy hackers and botnets.\n" +
-            "\tCannot move and does not require upkeep.\n\n" +
+        text = "Shills:\n" +
+            "\t * Periodically send out a specific idea to any nodes its connected to.\n" +
+            "\t * Can only be placed around the office hiring it.\n" +
+            "\t * Can be fired or destroyed by enemy hackers and botnets.\n" +
+            "\t * Cannot move and does not require upkeep.\n\n" +
             "Place a shill in the spot marked by the box.";
         //openPrompt();
     }
 
     void introduceWalls()
     {
-        text = "Walls\n" +
+        text = "Walls:\n" +
             "\tBlock out ideas that are the same color as the wall.\n" +
             "\tCan only be placed around the office hiring it.\n" +
             "\tCan be fired or destroyed by enemy hackers and botnets.\n" +
@@ -136,7 +136,7 @@ public class TutorialScript : MonoBehaviour {
 
     void introduceInvestigators()
     {
-        text = "Investigators\n" +
+        text = "Investigator:\n" +
             "\tProvides vision in a small area around it and reveals hidden enemy units.\n" +
             "\tCan only be placed around the office hiring it.\n" +
             "\tCan be fired or destroyed by enemy hackers and botnets.\n" +
@@ -147,9 +147,9 @@ public class TutorialScript : MonoBehaviour {
 
     void introduceHackers()
     {
-        text = "Hackers\n" +
-            "\tAttacks and destroys visible enemy units.\n" +
-            "\tCan only be placed around the office hiring it.\n" +
+        text = "Hackers:\n" +
+            "\tAttack and destroy visible enemy units.\n" +
+            "\tCan only be placed around the office hiring them.\n" +
             "\tCan be fired or destroyed by enemy hackers and botnets.\n" +
             "\tCan move and requires upkeep.\n\n" +
             "Place an hacker in the spot marked by the box.";
@@ -158,23 +158,23 @@ public class TutorialScript : MonoBehaviour {
 
     void introduceBotnets()
     {
-        text = "Botnet\n" +
+        text = "Botnet:\n" +
             "\tAttacks and destroys visible enemy units.\n" +
             "\tCan only be placed around the office hiring it.\n" +
             "\tCan be fired or destroyed by enemy hackers and botnets.\n" +
             "\tCannot move and does not requires upkeep.\n\n" +
-            "Place an botnet in the spot marked by the box.";
+            "Place a botnet in the spot marked by the box.";
         //openPrompt();
     }
 
     void introduceFirewalls()
     {
-        text = "Firewalls\n" +
-            "\tProvides vision in a large area around it and reveals hidden enemy units.\n" +
+        text = "Firewalls:\n" +
+            "\tProvide vision in a large area and reveal hidden enemy units.\n" +
             "\tCan only be placed around the office hiring it.\n" +
             "\tCan be fired or destroyed by enemy hackers and botnets.\n" +
-            "\tCannot move and does not requires upkeep.\n\n" +
-            "Place an firewall in the spot marked by the box.";
+            "\tCannot move and do not requires upkeep.\n\n" +
+            "Place a firewall in the spot marked by the box.";
         //openPrompt();
     }
 
